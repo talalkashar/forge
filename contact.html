@@ -22,17 +22,48 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="bg-zinc-950 py-6 shadow-md">
-    <div class="max-w-6xl mx-auto px-6 flex justify-center items-center">
-      <a href="index.html" class="text-4xl font-black tracking-widest text-white">FORGE</a>
+<!-- Header -->
+<header class="bg-zinc-950 py-6 shadow-md sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 flex justify-between items-center relative">
+    <!-- Left side: Questions and phone -->
+    <div class="hidden sm:flex items-center text-sm text-zinc-400 space-x-2">
+      <span>Questions?</span>
+      <a href="tel:+15714160080" class="hover:text-red-500">+1 (571) 416-0080</a>
     </div>
-    <nav class="flex justify-center space-x-6 text-sm text-zinc-400">
+    <div class="sm:hidden flex items-center text-zinc-400 text-2xl">
+      <a href="tel:+15714160080" class="hover:text-red-500" aria-label="Call phone number">📞</a>
+    </div>
+
+    <!-- Center: FORGE title -->
+    <a href="index.html" class="text-4xl font-black tracking-widest text-white absolute left-1/2 transform -translate-x-1/2 bebas">
+      FORGE
+    </a>
+
+    <!-- Right side: Hamburger (mobile) and nav (desktop) -->
+    <button id="menu-toggle" class="sm:hidden text-zinc-400 text-3xl focus:outline-none">
+      ☰
+    </button>
+    <nav class="hidden sm:flex space-x-6 text-sm text-zinc-400">
       <a href="index.html#products" class="hover:text-red-500">Products</a>
       <a href="index.html#footer" class="hover:text-red-500">Subscribe</a>
       <a href="contact.html" class="hover:text-red-500 font-bold">Contact Us</a>
     </nav>
-  </header>
+  </div>
+  <div id="mobile-menu" class="sm:hidden hidden flex-col items-center text-sm text-zinc-400 bg-zinc-900 py-4 space-y-4">
+    <a href="index.html#products" class="hover:text-red-500">Products</a>
+    <a href="index.html#footer" class="hover:text-red-500">Subscribe</a>
+    <a href="contact.html" class="hover:text-red-500 font-bold">Contact Us</a>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    toggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</header>
+
 
   <!-- Contact Form Section -->
   <section class="py-24 px-6 max-w-3xl mx-auto text-center">
