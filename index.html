@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FORGE | Gym Gear</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter&display=swap" rel="stylesheet" />
   <style>
     html {
       scroll-behavior: smooth;
@@ -37,59 +37,49 @@
 <body>
 
   <!-- Header -->
-<header class="bg-zinc-950 py-6 shadow-md sticky top-0 z-50">
-  <div class="max-w-6xl mx-auto px-6 flex justify-between items-center relative">
-    <!-- Left side: Questions and phone -->
-    <div class="hidden sm:flex items-center text-sm text-zinc-400 space-x-2">
-      <span>Questions?</span>
-      <a href="tel:+15714160080" class="hover:text-red-500">+1 (571) 416-0080</a>
-    </div>
-    <div class="sm:hidden flex items-center text-zinc-400 text-2xl">
-      <a href="tel:+15714160080" class="hover:text-red-500" aria-label="Call phone number">📞</a>
-    </div>
+  <header class="bg-zinc-950 py-6 shadow-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center relative">
+      <!-- Left: Contact -->
+      <div class="hidden sm:flex items-center text-sm text-zinc-400 space-x-2">
+        <span>Questions?</span>
+        <a href="tel:+15714160080" class="hover:text-red-500">+1 (571) 416-0080</a>
+      </div>
+      <div class="sm:hidden flex items-center text-zinc-400 text-2xl">
+        <a href="tel:+15714160080" class="hover:text-red-500" aria-label="Call phone number">📞</a>
+      </div>
 
-    <!-- Center: FORGE title -->
-    <h1 class="text-4xl font-black tracking-widest text-white absolute left-1/2 transform -translate-x-1/2 bebas">
-      FORGE
-    </h1>
+      <!-- Center: Logo -->
+      <a href="index.html" class="text-4xl font-black tracking-widest text-white absolute left-1/2 transform -translate-x-1/2 bebas">
+        FORGE
+      </a>
 
-    <!-- Right side: Hamburger (mobile) and nav (desktop) -->
-    <button id="menu-toggle" class="sm:hidden text-zinc-400 text-3xl focus:outline-none">
-      ☰
-    </button>
-    <nav class="hidden sm:flex space-x-6 text-sm text-zinc-400">
+      <!-- Right: Nav -->
+      <button id="menu-toggle" class="sm:hidden text-zinc-400 text-3xl focus:outline-none">
+        ☰
+      </button>
+      <nav class="hidden sm:flex space-x-6 text-sm text-zinc-400">
+        <a href="#products" class="hover:text-red-500">Products</a>
+        <a href="#footer" class="hover:text-red-500">Subscribe</a>
+        <a href="contact.html" class="hover:text-red-500">Contact Us</a>
+      </nav>
+    </div>
+    <div id="mobile-menu" class="sm:hidden hidden flex-col items-center text-sm text-zinc-400 bg-zinc-900 py-4 space-y-4">
       <a href="#products" class="hover:text-red-500">Products</a>
       <a href="#footer" class="hover:text-red-500">Subscribe</a>
       <a href="contact.html" class="hover:text-red-500">Contact Us</a>
-    </nav>
-  </div>
-  <div id="mobile-menu" class="sm:hidden hidden flex-col items-center text-sm text-zinc-400 bg-zinc-900 py-4 space-y-4">
-    <a href="#products" class="hover:text-red-500">Products</a>
-    <a href="#footer" class="hover:text-red-500">Subscribe</a>
-    <a href="contact.html" class="hover:text-red-500">Contact Us</a>
-  </div>
+    </div>
+  </header>
 
-  <script>
-    const toggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    toggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-  </script>
-</header>
-
-
- <!-- Hero Section -->
-<section class="text-center py-32 px-6 hero-bg">
-  <div class="bg-zinc-900 bg-opacity-80 p-12 rounded-2xl max-w-4xl mx-auto">
-    <h2 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">Elevate Your Grip</h2>
-    <p class="text-lg md:text-xl text-zinc-300 leading-relaxed">
-      Elevate your grip with FORGE — where every product represents more than strength. Built for serious lifters who demand serious performance, our gear is durable, comfortable, and unshakable. But FORGE isn’t just equipment — it’s a mindset. Every rep, drop of sweat, failure, and comeback is part of the process. You’re not just building muscle — you’re forging discipline, resilience, and mental power that lasts beyond the gym.
-    </p>
-    <a href="#products" class="btn bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-full text-lg font-semibold mt-8 inline-block">Shop Now</a>
-  </div>
-</section>
-
+  <!-- Hero Section -->
+  <section class="text-center py-32 px-6 hero-bg">
+    <div class="bg-zinc-900 bg-opacity-80 p-12 rounded-2xl max-w-4xl mx-auto">
+      <h2 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">Elevate Your Grip</h2>
+      <p class="text-lg md:text-xl text-zinc-300 leading-relaxed">
+        Elevate your grip with FORGE — where every product represents more than strength. Built for serious lifters who demand serious performance, our gear is durable, comfortable, and unshakable. But FORGE isn’t just equipment — it’s a mindset. Every rep, drop of sweat, failure, and comeback is part of the process. You’re not just building muscle — you’re forging discipline, resilience, and mental power that lasts beyond the gym.
+      </p>
+      <a href="#products" class="btn bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-full text-lg font-semibold mt-8 inline-block">Shop Now</a>
+    </div>
+  </section>
 
   <!-- Products -->
   <section id="products" class="py-24 px-6 max-w-6xl mx-auto">
@@ -108,22 +98,27 @@
     </div>
   </section>
 
+  <!-- Footer -->
+  <footer id="footer" class="bg-zinc-950 pt-10 pb-6 mt-10 text-center text-sm text-zinc-500">
+    <div class="max-w-3xl mx-auto px-4 mb-8">
+      <h4 class="text-2xl font-bold text-white mb-3">Stay Connected</h4>
+      <p class="text-zinc-400 mb-4">Get updates on new drops, gear, and exclusive offers.</p>
+      <form class="flex flex-col sm:flex-row justify-center gap-4">
+        <input type="email" placeholder="Your email" class="w-full sm:w-1/2 px-4 py-3 rounded-xl text-black" required />
+        <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl">Subscribe</button>
+      </form>
+    </div>
+    © 2025 Capacity Gears LLC. All rights reserved.
+  </footer>
 
-
-<!-- Footer -->
-<footer id="footer" class="bg-zinc-950 pt-10 pb-6 mt-10 text-center text-sm text-zinc-500">
-  <div class="max-w-3xl mx-auto px-4 mb-8">
-    <h4 class="text-2xl font-bold text-white mb-3">Stay Connected</h4>
-    <p class="text-zinc-400 mb-4">Get updates on new drops, gear, and exclusive offers.</p>
-    <form class="flex flex-col sm:flex-row justify-center gap-4">
-      <input type="email" placeholder="Your email" class="w-full sm:w-1/2 px-4 py-3 rounded-xl text-black" required />
-      <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl">Subscribe</button>
-    </form>
-  </div>
-  © 2025 Capacity Gears LLC. All rights reserved.
-</footer>
-
-
+  <!-- Script for mobile menu -->
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    toggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
 
 </body>
 </html>
