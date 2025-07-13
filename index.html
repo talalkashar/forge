@@ -8,6 +8,10 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
@@ -15,9 +19,16 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
   <style>
+    /* Global reset & font smoothing */
+    * {
+      font-family: 'Raleway', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      box-sizing: border-box;
+    }
+
     /* Base styles */
     body {
-      font-family: 'Raleway', sans-serif;
       background: linear-gradient(135deg, #1a1a1a, #111);
       color: #f5f5f5;
       margin: 0;
@@ -31,6 +42,12 @@
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.15em;
+    }
+
+    /* Explicit font for nav links */
+    .nav-links a,
+    .mobile-nav a {
+      font-family: 'Raleway', sans-serif;
     }
 
     /* Header */
@@ -112,7 +129,7 @@
     }
     .hamburger span {
       height: 3px;
-      width: 100%; /* Added width to fix visibility */
+      width: 100%;
       background: #EF4444;
       border-radius: 2px;
       transition: all 0.3s ease;
@@ -129,7 +146,7 @@
 
     /* Mobile nav */
     .mobile-nav {
-      display: flex; /* changed to flex */
+      display: flex;
       flex-direction: column;
       position: fixed;
       top: 72px;
@@ -159,6 +176,7 @@
       font-size: 1.1rem;
       border-bottom: 1px solid #333;
       padding-bottom: 0.5rem;
+      font-family: 'Raleway', sans-serif;
     }
     .mobile-nav a:hover {
       color: #EF4444;
@@ -407,9 +425,10 @@
       user-select: none;
     }
 
-    /* Scroll behavior */
+    /* Scroll behavior & font on html */
     html {
       scroll-behavior: smooth;
+      font-family: 'Raleway', sans-serif;
     }
   </style>
 </head>
@@ -494,8 +513,4 @@
   const mobileNav = document.getElementById('mobile-nav');
 
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    mobileNav.classList.toggle('active');
-    hamburger.setAttribute("aria-expanded", hamburger.classList.contains("active"));
-  });
-</script>
+    hamburger.classList.toggle
