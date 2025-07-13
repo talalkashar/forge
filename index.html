@@ -1,126 +1,495 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FORGE | Gym Gear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FORGE | Premium Gym Gear</title>
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter&display=swap" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
+    /* Base styles */
     body {
-      background: #18181b;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a, #111);
+      color: #f5f5f5;
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .btn {
+
+    /* Headings */
+    h1, h2, h3 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      background: rgba(24, 24, 27, 0.85);
+      backdrop-filter: saturate(180%) blur(10px);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.8);
+      transition: background-color 0.3s ease;
+    }
+    header.scrolled {
+      background: rgba(24, 24, 27, 1);
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 72px;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #EF4444;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .logo:hover {
+      color: #f87171;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: #f5f5f5;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      background: #EF4444;
+      bottom: -6px;
+      left: 0;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-links a:hover {
+      color: #EF4444;
+    }
+
+    /* Hamburger menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 6px;
+      width: 28px;
+    }
+    .hamburger span {
+      height: 3px;
+      background: #EF4444;
+      border-radius: 2px;
       transition: all 0.3s ease;
     }
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
     }
-    .hero-bg {
-      background-image: url('https://images.unsplash.com/photo-1605296867304-46d5465a13f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
-      background-size: cover;
-      background-position: center;
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
     }
-    .bebas {
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 1px;
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* Mobile nav */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 72px;
+      right: 0;
+      width: 250px;
+      height: calc(100% - 72px);
+      background: #1a1a1a;
+      padding: 2rem;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.9);
+      z-index: 99;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-nav.active {
+      transform: translateX(0);
+      display: flex;
+    }
+    .mobile-nav a {
+      color: #f5f5f5;
+      font-weight: 600;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.5rem;
+    }
+    .mobile-nav a:hover {
+      color: #EF4444;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 2rem;
+      position: relative;
+      background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite alternate;
+    }
+    @keyframes gradientShift {
+      0% {background-position: 0% 50%;}
+      100% {background-position: 100% 50%;}
+    }
+    .hero-content {
+      max-width: 700px;
+      color: white;
+      text-shadow: 0 0 12px rgba(0,0,0,0.5);
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+      animation-delay: 0.3s;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background-color: #f87171;
+      padding: 1rem 3rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      font-size: 1.1rem;
+      color: #1a1a1a;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      box-shadow: 0 0 25px rgba(248, 113, 113, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn-primary:hover {
+      background-color: #b91c1c;
+      box-shadow: 0 0 35px rgba(185, 28, 28, 0.85);
+      transform: scale(1.05);
+      color: white;
+    }
+
+    /* Products Section */
+    section.products {
+      padding: 6rem 2rem 4rem;
+      background: #111;
+      text-align: center;
+      color: white;
+    }
+    section.products h2 {
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .product-card {
+      background: #222;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .product-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 0 40px rgba(239, 68, 68, 0.8);
+    }
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      background: #18181b;
+      padding: 1.5rem;
+    }
+    .product-info {
+      padding: 1.5rem 2rem 2rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .product-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.1em;
+      color: #ef4444;
+      text-transform: uppercase;
+    }
+    .product-desc {
+      color: #bbb;
+      font-weight: 500;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+    }
+    .product-price {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #4ade80;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    .buy-btn {
+      background-color: #ef4444;
+      padding: 0.8rem 2.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      color: #111;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
+    }
+    .buy-btn:hover {
+      background-color: #b91c1c;
+      box-shadow: 0 0 40px rgba(185, 28, 28, 0.9);
+      transform: scale(1.05);
+      color: white;
+    }
+
+    /* Subscribe Section */
+    section.subscribe {
+      background: #18181b;
+      padding: 4rem 2rem 6rem;
+      color: white;
+      text-align: center;
+    }
+    section.subscribe h2 {
+      font-size: 2rem;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+    section.subscribe p {
+      margin-bottom: 2rem;
+      font-weight: 500;
+      color: #bbb;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .subscribe-form {
+      max-width: 420px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .subscribe-input {
+      flex: 1 1 250px;
+      padding: 1rem 1.25rem;
+      border-radius: 9999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      outline: none;
+    }
+    .subscribe-input::placeholder {
+      color: #666;
+    }
+    .subscribe-btn {
+      background: #ef4444;
+      color: #111;
+      font-weight: 700;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+      user-select: none;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .subscribe-btn:hover {
+      background: #b91c1c;
+      box-shadow: 0 0 40px rgba(185, 28, 28, 0.9);
+      color: white;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      letter-spacing: 0.05em;
+      border-top: 1px solid #333;
+      user-select: none;
+    }
+
+    /* Scroll behavior */
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
 <body>
 
   <!-- Header -->
-  <header class="bg-zinc-950 py-6 shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center relative">
-      <!-- Left: Contact -->
-      <div class="hidden sm:flex items-center text-sm text-zinc-400 space-x-2">
-        <span>Questions?</span>
-        <a href="tel:+15714160080" class="hover:text-red-500">+1 (571) 416-0080</a>
-      </div>
-      <div class="sm:hidden flex items-center text-zinc-400 text-2xl">
-        <a href="tel:+15714160080" class="hover:text-red-500" aria-label="Call phone number">📞</a>
-      </div>
-
-      <!-- Center: Logo -->
-      <a href="index.html" class="text-4xl font-black tracking-widest text-white absolute left-1/2 transform -translate-x-1/2 bebas">
-        FORGE
-      </a>
-
-      <!-- Right: Nav -->
-      <button id="menu-toggle" class="sm:hidden text-zinc-400 text-3xl focus:outline-none">
-        ☰
-      </button>
-      <nav class="hidden sm:flex space-x-6 text-sm text-zinc-400">
-        <a href="#products" class="hover:text-red-500">Products</a>
-        <a href="#footer" class="hover:text-red-500">Subscribe</a>
-        <a href="contact.html" class="hover:text-red-500">Contact Us</a>
-        <a href="privacy.html" class="hover:text-red-500">Privacy Policy</a>
+  <header id="header">
+    <div class="container">
+      <nav>
+        <div class="logo" tabindex="0">FORGE</div>
+        <div class="nav-links">
+          <a href="#products" tabindex="0">Products</a>
+          <a href="#subscribe" tabindex="0">Subscribe</a>
+          <a href="#contact" tabindex="0">Contact</a>
+          <a href="#privacy" tabindex="0">Privacy</a>
+        </div>
+        <div class="hamburger" id="hamburger" tabindex="0" aria-label="Toggle menu" role="button">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </nav>
-    </div>
-    <div id="mobile-menu" class="sm:hidden hidden flex-col items-center text-sm text-zinc-400 bg-zinc-900 py-4 space-y-4">
-      <a href="#products" class="hover:text-red-500">Products</a>
-      <a href="#footer" class="hover:text-red-500">Subscribe</a>
-      <a href="contact.html" class="hover:text-red-500">Contact Us</a>
-      <a href="privacy.html" class="hover:text-red-500">Privacy Policy</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="text-center py-32 px-6 hero-bg">
-    <div class="bg-zinc-900 bg-opacity-80 p-12 rounded-2xl max-w-4xl mx-auto">
-      <h2 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">Elevate Your Grip</h2>
-      <p class="text-lg md:text-xl text-zinc-300 leading-relaxed">
-        Elevate your grip with FORGE — where every product represents more than strength. Built for serious lifters who demand serious performance, our gear is durable, comfortable, and unshakable. But FORGE isn’t just equipment — it’s a mindset. Every rep, drop of sweat, failure, and comeback is part of the process. You’re not just building muscle — you’re forging discipline, resilience, and mental power that lasts beyond the gym.
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <a href="#products" tabindex="0">Products</a>
+    <a href="#subscribe" tabindex="0">Subscribe</a>
+    <a href="#contact" tabindex="0">Contact</a>
+    <a href="#privacy" tabindex="0">Privacy</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" aria-label="Hero section">
+    <div class="hero-content">
+      <h1>Elevate Your Grip</h1>
+      <p>
+        FORGE gear isn’t just equipment—it’s a mindset. Built for serious lifters who demand strength, comfort, and discipline beyond the gym.
       </p>
-      <a href="#products" class="btn bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded-full text-lg font-semibold mt-8 inline-block">Shop Now</a>
+      <button class="btn-primary" onclick="location.href='#products'">Shop Now</button>
     </div>
   </section>
 
-<!-- Products -->
-<section id="products" class="py-20 px-6 max-w-4xl mx-auto">
-  <h3 class="text-4xl md:text-5xl bebas mb-12 text-center text-white tracking-wider">Unleash Your Potential</h3>
-  <div class="bg-zinc-800 p-6 rounded-2xl shadow-lg hover:shadow-red-600/40 transition-shadow transform hover:scale-105 max-w-md mx-auto text-center">
-    <img src="https://raw.githubusercontent.com/talalkashar/forge/refs/heads/main/wrist%20strap%20v1.jpg" alt="FORGE Lifting Straps" class="rounded-xl mb-5 w-36 h-36 mx-auto object-contain" />
-    <h4 class="text-2xl font-semibold mb-2">FORGE Lifting Straps</h4>
-    <p class="text-zinc-400 text-sm mb-4 px-2">Max out your lifts with comfort and control. Built for heavy pulling days and forged for discipline.</p>
-    <span class="block text-lg font-bold text-green-400 mb-4">$10.00</span>
-    <a href="https://buy.stripe.com/aFa8wQ3tudEM00D6VR1sQ00" target="_blank" rel="noopener noreferrer">
-      <button class="btn bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-xl w-full font-medium text-lg">
-        Buy Now
-      </button>
-    </a>
-  </div>
-</section>
+  <!-- Products -->
+  <section class="products" id="products" aria-label="Products section">
+    <h2>Unleash Your Potential</h2>
+    <div class="products-grid">
+      <article class="product-card" tabindex="0">
+        <img src="https://raw.githubusercontent.com/talalkashar/forge/refs/heads/main/wrist%20strap%20v1.jpg" alt="FORGE Lifting Straps" class="product-image" />
+        <div class="product-info">
+          <h3 class="product-title">FORGE Lifting Straps</h3>
+          <p class="product-desc">Max out your lifts with comfort and control. Built for heavy pulling days and forged for discipline.</p>
+          <div>
+            <span class="product-price">$10.00</span>
+          </div>
+          <button class="buy-btn" onclick="window.open('https://buy.stripe.com/aFa8wQ3tudEM00D6VR1sQ00', '_blank', 'noopener')">Buy Now</button>
+        </div>
+      </article>
+    </div>
+  </section>
 
+  <!-- Subscribe -->
+  <section class="subscribe" id="subscribe" aria-label="Subscribe section">
+    <h2>Get Exclusive Offers</h2>
+    <p>Sign up for early access to new drops and exclusive deals.</p>
+    <form class="subscribe-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing!');">
+      <input type="email" class="subscribe-input" placeholder="Enter your email" required aria-label="Email address"/>
+      <button type="submit" class="subscribe-btn">Subscribe</button>
+    </form>
+  </section>
 
   <!-- Footer -->
-<footer id="footer" class="bg-zinc-950 py-6 mt-10 text-center text-sm text-zinc-500">
-  <div class="max-w-xl mx-auto px-4">
-    <p class="text-zinc-400 text-sm mb-4">Get exclusive offers and early access to new drops.</p>
-    <form class="flex flex-col sm:flex-row justify-center gap-3">
-      <input type="email" placeholder="Enter your email" class="w-full sm:w-1/2 px-3 py-2 rounded-md text-black text-sm" required />
-      <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md text-sm">Subscribe</button>
-    </form>
-  </div>
-  <p class="text-xs text-zinc-500 mt-5">© 2025 Capacity Gears LLC. All rights reserved.</p>
-</footer>
+  <footer id="footer" aria-label="Footer">
+    <p>© 2025 Capacity Gears LLC. All rights reserved.</p>
+  </footer>
 
-
-  <!-- Script for mobile menu -->
+  <!-- Scripts -->
   <script>
-    const toggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    toggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    const header = document.getElementById('header');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileNav.classList.toggle('active');
+      mobileNav.setAttribute('aria-hidden', !mobileNav.classList.contains('active'));
+    });
+
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
     });
   </script>
 
-</body>
-</html>
+</
