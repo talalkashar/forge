@@ -5,19 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact Us | FORGE</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
+    * {
+      font-family: 'Raleway', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      box-sizing: border-box;
+    }
+
     body {
       background: #18181b;
       color: #fff;
-      font-family: 'Raleway', sans-serif;
       margin: 0;
     }
-    .btn {
-      transition: all 0.3s ease;
-    }
+
     .btn:hover {
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
@@ -30,6 +37,7 @@
       top: 0;
       z-index: 1000;
     }
+
     .container {
       max-width: 1280px;
       margin: 0 auto;
@@ -39,19 +47,20 @@
       justify-content: space-between;
       height: 72px;
     }
+
     nav.desktop-nav {
       display: flex;
       gap: 2rem;
       font-size: 0.9rem;
-      color: #ccc;
     }
+
     nav.desktop-nav a {
       color: #ccc;
       text-transform: uppercase;
       font-weight: 600;
       transition: color 0.3s ease;
-      font-family: 'Raleway', sans-serif;
     }
+
     nav.desktop-nav a:hover,
     nav.desktop-nav a.active {
       color: #ef4444;
@@ -66,7 +75,6 @@
       text-transform: uppercase;
       letter-spacing: 0.15em;
       flex-shrink: 0;
-      text-align: center;
     }
 
     .hamburger {
@@ -76,21 +84,23 @@
       width: 28px;
       height: 22px;
       cursor: pointer;
-      user-select: none;
     }
+
     .hamburger span {
-      display: block;
       height: 3px;
       background: #ef4444;
       border-radius: 2px;
       transition: all 0.3s ease;
     }
+
     .hamburger.active span:nth-child(1) {
       transform: translateY(9px) rotate(45deg);
     }
+
     .hamburger.active span:nth-child(2) {
       opacity: 0;
     }
+
     .hamburger.active span:nth-child(3) {
       transform: translateY(-9px) rotate(-45deg);
     }
@@ -111,9 +121,11 @@
       transition: transform 0.3s ease;
       z-index: 999;
     }
+
     .mobile-nav.active {
       transform: translateX(0);
     }
+
     .mobile-nav a {
       color: #ccc;
       text-transform: uppercase;
@@ -122,8 +134,8 @@
       border-bottom: 1px solid #333;
       padding-bottom: 0.3rem;
       transition: color 0.3s ease;
-      font-family: 'Raleway', sans-serif;
     }
+
     .mobile-nav a:hover,
     .mobile-nav a.active {
       color: #ef4444;
@@ -143,6 +155,7 @@
       margin: 5rem auto 3rem;
       padding: 0 1.5rem;
     }
+
     section.contact-section h3 {
       font-size: 2.5rem;
       font-weight: 700;
@@ -150,11 +163,13 @@
       text-align: center;
       font-family: 'Oswald', sans-serif;
     }
+
     section.contact-section p {
       color: #aaa;
       text-align: center;
       margin-bottom: 2.5rem;
     }
+
     form input, form textarea {
       width: 100%;
       padding: 0.85rem 1rem;
@@ -162,10 +177,10 @@
       border-radius: 0.75rem;
       border: none;
       font-size: 1rem;
-      font-family: 'Raleway', sans-serif;
       resize: vertical;
       color: #111;
     }
+
     form button {
       width: 100%;
       padding: 1rem;
@@ -179,6 +194,7 @@
       letter-spacing: 0.1em;
       transition: background-color 0.3s ease;
     }
+
     form button:hover {
       background-color: #b91c1c;
       color: white;
@@ -190,7 +206,6 @@
   <header>
     <div class="container">
       <div class="logo" tabindex="0" onclick="location.href='index.html'">FORGE</div>
-
       <nav class="desktop-nav" aria-label="Primary navigation">
         <a href="index.html#products">Products</a>
         <a href="index.html#subscribe">Subscribe</a>
@@ -215,7 +230,7 @@
 
   <section class="contact-section" aria-label="Contact form">
     <h3>Contact Us</h3>
-    <p>Need support or have a business inquiry? We're here to help. Fill out the form below and we’ll get back to you as soon as possible.</p>
+    <p>Need support or have a business inquiry? We’re here to help. Fill out the form and we’ll get back to you soon.</p>
 
     <form action="https://formspree.io/f/xyzjonan" method="POST">
       <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
