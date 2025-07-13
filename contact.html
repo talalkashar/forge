@@ -5,92 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact Us | FORGE</title>
 
-  <!-- Tailwind -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
     * {
       font-family: 'Raleway', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       box-sizing: border-box;
     }
 
     body {
+      margin: 0;
       background: #18181b;
       color: #fff;
-      margin: 0;
     }
 
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    h1, h2, h3 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
     }
 
     header {
-      background-color: #18181b;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
-      position: sticky;
+      position: fixed;
       top: 0;
+      width: 100%;
       z-index: 1000;
+      background: rgba(24, 24, 27, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
     }
 
     .container {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 2rem;
+    }
+
+    nav {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       height: 72px;
-    }
-
-    nav.desktop-nav {
-      display: flex;
-      gap: 2rem;
-      font-size: 0.9rem;
-    }
-
-    nav.desktop-nav a {
-      color: #ccc;
-      text-transform: uppercase;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
-
-    nav.desktop-nav a:hover,
-    nav.desktop-nav a.active {
-      color: #ef4444;
     }
 
     .logo {
       font-family: 'Oswald', sans-serif;
-      font-size: 2.25rem;
-      color: #ef4444;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #EF4444;
       cursor: pointer;
-      user-select: none;
+      letter-spacing: 0.2em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 600;
+      font-size: 1rem;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      flex-shrink: 0;
+    }
+
+    .nav-links a {
+      color: #f5f5f5;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #EF4444;
     }
 
     .hamburger {
       display: none;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 6px;
       width: 28px;
-      height: 22px;
       cursor: pointer;
     }
 
     .hamburger span {
       height: 3px;
-      background: #ef4444;
+      background: #EF4444;
       border-radius: 2px;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
     }
 
     .hamburger.active span:nth-child(1) {
@@ -109,74 +110,60 @@
       position: fixed;
       top: 72px;
       right: 0;
-      width: 220px;
+      width: 250px;
       height: calc(100% - 72px);
       background: #1a1a1a;
-      box-shadow: -3px 0 15px rgba(0,0,0,0.9);
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      padding: 2rem 1.5rem;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.9);
       transform: translateX(100%);
       transition: transform 0.3s ease;
-      z-index: 999;
+      visibility: hidden;
+      opacity: 0;
     }
 
     .mobile-nav.active {
       transform: translateX(0);
+      visibility: visible;
+      opacity: 1;
     }
 
     .mobile-nav a {
-      color: #ccc;
-      text-transform: uppercase;
+      color: #f5f5f5;
       font-weight: 600;
-      font-size: 1rem;
+      text-transform: uppercase;
+      font-size: 1.1rem;
       border-bottom: 1px solid #333;
-      padding-bottom: 0.3rem;
-      transition: color 0.3s ease;
-    }
-
-    .mobile-nav a:hover,
-    .mobile-nav a.active {
-      color: #ef4444;
+      padding-bottom: 0.5rem;
     }
 
     @media (max-width: 768px) {
-      nav.desktop-nav {
+      .nav-links {
         display: none;
       }
+
       .hamburger {
         display: flex;
       }
     }
 
     section.contact-section {
-      max-width: 480px;
-      margin: 5rem auto 3rem;
+      max-width: 520px;
+      margin: 8rem auto 3rem;
       padding: 0 1.5rem;
-    }
-
-    section.contact-section h3 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
       text-align: center;
-      font-family: 'Oswald', sans-serif;
-    }
-
-    section.contact-section p {
-      color: #aaa;
-      text-align: center;
-      margin-bottom: 2.5rem;
     }
 
     form input, form textarea {
       width: 100%;
-      padding: 0.85rem 1rem;
+      padding: 1rem;
       margin-bottom: 1.5rem;
       border-radius: 0.75rem;
       border: none;
       font-size: 1rem;
+      font-family: 'Raleway', sans-serif;
       resize: vertical;
       color: #111;
     }
@@ -199,51 +186,64 @@
       background-color: #b91c1c;
       color: white;
     }
+
+    footer {
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #333;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <div class="container">
-      <div class="logo" tabindex="0" onclick="location.href='index.html'">FORGE</div>
-      <nav class="desktop-nav" aria-label="Primary navigation">
-        <a href="index.html#products">Products</a>
-        <a href="index.html#subscribe">Subscribe</a>
-        <a href="contact.html" class="active">Contact Us</a>
-        <a href="privacy.html">Privacy Policy</a>
+      <nav>
+        <div class="logo" onclick="location.href='index.html'">FORGE</div>
+        <div class="nav-links">
+          <a href="index.html#products">Products</a>
+          <a href="index.html#subscribe">Subscribe</a>
+          <a href="contact.html" class="active">Contact</a>
+          <a href="privacy.html">Privacy</a>
+        </div>
+        <div class="hamburger" id="hamburger" role="button" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </nav>
-
-      <div class="hamburger" id="hamburger" role="button" aria-label="Toggle menu" tabindex="0">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
     </div>
-
-    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
-      <a href="index.html#products">Products</a>
-      <a href="index.html#subscribe">Subscribe</a>
-      <a href="contact.html" class="active">Contact Us</a>
-      <a href="privacy.html">Privacy Policy</a>
-    </nav>
   </header>
 
-  <section class="contact-section" aria-label="Contact form">
-    <h3>Contact Us</h3>
-    <p>Need support or have a business inquiry? We’re here to help. Fill out the form and we’ll get back to you soon.</p>
+  <!-- Mobile Nav -->
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <a href="index.html#products">Products</a>
+    <a href="index.html#subscribe">Subscribe</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
 
+  <!-- Contact Section -->
+  <section class="contact-section" aria-label="Contact Form">
+    <h3>Contact Us</h3>
+    <p>Need support or have a business inquiry? Fill out the form and we’ll get back to you.</p>
     <form action="https://formspree.io/f/xyzjonan" method="POST">
       <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
       <input type="email" name="email" placeholder="Your Email" required aria-label="Your Email" />
       <textarea name="message" placeholder="Your Message" required rows="5" aria-label="Your Message"></textarea>
-      <button type="submit" class="btn">Send Message</button>
+      <button type="submit">Send Message</button>
     </form>
   </section>
 
-  <footer style="text-align:center; padding:1.5rem 0; color:#777; font-size:0.9rem; border-top:1px solid #333;">
+  <!-- Footer -->
+  <footer>
     © 2025 Capacity Gears LLC. All rights reserved.
   </footer>
 
+  <!-- Script -->
   <script>
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobile-nav');
@@ -251,8 +251,7 @@
     function toggleMenu() {
       hamburger.classList.toggle('active');
       mobileNav.classList.toggle('active');
-      const isExpanded = hamburger.classList.contains('active');
-      mobileNav.setAttribute('aria-hidden', !isExpanded);
+      mobileNav.setAttribute('aria-hidden', !mobileNav.classList.contains('active'));
     }
 
     hamburger.addEventListener('click', toggleMenu);
