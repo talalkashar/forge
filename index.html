@@ -112,6 +112,7 @@
     }
     .hamburger span {
       height: 3px;
+      width: 100%; /* Added width to fix visibility */
       background: #EF4444;
       border-radius: 2px;
       transition: all 0.3s ease;
@@ -128,7 +129,8 @@
 
     /* Mobile nav */
     .mobile-nav {
-      display: none;
+      display: flex; /* changed to flex */
+      flex-direction: column;
       position: fixed;
       top: 72px;
       right: 0;
@@ -136,16 +138,18 @@
       height: calc(100% - 72px);
       background: #1a1a1a;
       padding: 2rem;
-      flex-direction: column;
       gap: 1.5rem;
       box-shadow: -4px 0 15px rgba(0,0,0,0.9);
       z-index: 99;
       transform: translateX(100%);
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+      visibility: hidden;
+      opacity: 0;
     }
     .mobile-nav.active {
       transform: translateX(0);
-      display: flex;
+      visibility: visible;
+      opacity: 1;
     }
     .mobile-nav a {
       color: #f5f5f5;
@@ -160,6 +164,16 @@
       color: #EF4444;
     }
 
+    /* Responsive: show hamburger, hide nav-links on mobile */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+
     /* Hero Section */
     .hero {
       height: 100vh;
@@ -169,7 +183,7 @@
       text-align: center;
       padding: 0 2rem;
       position: relative;
-      background: linear-gradient(135deg, ##000000 0%, #000000 100%);
+      background: linear-gradient(135deg, #000000 0%, #000000 100%);
       background-size: 400% 400%;
       animation: gradientShift 10s ease infinite alternate;
     }
@@ -310,6 +324,8 @@
       box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
       transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
       user-select: none;
+      border: none;
+      cursor: pointer;
     }
     .buy-btn:hover {
       background-color: #b91c1c;
@@ -420,12 +436,12 @@
   </header>
 
   <!-- Mobile nav -->
-  <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
     <a href="#products" tabindex="0">Products</a>
     <a href="#subscribe" tabindex="0">Subscribe</a>
     <a href="#contact" tabindex="0">Contact</a>
     <a href="#privacy" tabindex="0">Privacy</a>
-  </div>
+  </nav>
 
   <!-- Hero -->
   <section class="hero" aria-label="Hero section">
@@ -474,22 +490,4 @@
   <!-- Scripts -->
   <script>
     const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobile-nav');
-    const header = document.getElementById('header');
-
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      mobileNav.classList.toggle('active');
-      mobileNav.setAttribute('aria-hidden', !mobileNav.classList.contains('active'));
-    });
-
-    window.addEventListener('scroll', () => {
-      if(window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
-  </script>
-
-</
+    const mobile
