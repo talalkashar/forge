@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact Us | FORGE</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Bebas+Neue&display=swap" rel="stylesheet" />
+
   <style>
     body {
       background: #18181b;
       color: #fff;
       font-family: 'Inter', sans-serif;
+      margin: 0;
     }
     .btn {
       transition: all 0.3s ease;
@@ -22,76 +25,245 @@
     .bebas {
       font-family: 'Bebas Neue', sans-serif;
     }
+
+    /* Header styles */
+    header {
+      background-color: #18181b;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    nav.desktop-nav {
+      display: flex;
+      gap: 2rem;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    nav.desktop-nav a {
+      color: #ccc;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    nav.desktop-nav a:hover,
+    nav.desktop-nav a.active {
+      color: #ef4444;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 2.25rem;
+      color: #ef4444;
+      cursor: pointer;
+      user-select: none;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 28px;
+      height: 22px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: #ef4444;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* Mobile nav */
+    .mobile-nav {
+      position: fixed;
+      top: 72px;
+      right: 0;
+      width: 220px;
+      height: calc(100% - 72px);
+      background: #1a1a1a;
+      box-shadow: -3px 0 15px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 2rem 1.5rem;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+    .mobile-nav.active {
+      transform: translateX(0);
+    }
+    .mobile-nav a {
+      color: #ccc;
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 1rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.3rem;
+      transition: color 0.3s ease;
+    }
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: #ef4444;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav.desktop-nav {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    /* Form styling */
+    section.contact-section {
+      max-width: 480px;
+      margin: 5rem auto 3rem;
+      padding: 0 1.5rem;
+    }
+    section.contact-section h3 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    section.contact-section p {
+      color: #aaa;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 0.75rem;
+      border: none;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      color: #111;
+    }
+    form button {
+      width: 100%;
+      padding: 1rem;
+      background-color: #ef4444;
+      color: #111;
+      font-weight: 700;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #b91c1c;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="bg-zinc-950 py-6 shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center relative">
-      <!-- Left side: Questions and phone -->
-      <div class="hidden sm:flex items-center text-sm text-zinc-400 space-x-2">
-        <span>Questions?</span>
-        <a href="tel:+15714160080" class="hover:text-red-500">+1 (571) 416-0080</a>
-      </div>
+  <header>
+    <div class="container">
+      <div class="logo" tabindex="0" onclick="location.href='index.html'">FORGE</div>
 
-      <!-- Mobile phone icon -->
-      <div class="sm:hidden flex items-center text-zinc-400 text-2xl">
-        <a href="tel:+15714160080" class="hover:text-red-500" aria-label="Call phone number">📞</a>
-      </div>
-
-      <!-- Center: Logo -->
-      <a href="index.html" class="text-4xl font-black tracking-widest text-white absolute left-1/2 transform -translate-x-1/2 bebas">
-        FORGE
-      </a>
-
-      <!-- Hamburger icon and nav -->
-      <button id="menu-toggle" class="sm:hidden text-zinc-400 text-3xl focus:outline-none">
-        ☰
-      </button>
-
-      <nav class="hidden sm:flex space-x-6 text-sm text-zinc-400">
-        <a href="index.html#products" class="hover:text-red-500">Products</a>
-        <a href="index.html#footer" class="hover:text-red-500">Subscribe</a>
-        <a href="contact.html" class="hover:text-red-500 font-bold">Contact Us</a>
-        <a href="privacy.html" class="hover:text-red-500">Privacy Policy</a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="index.html#products">Products</a>
+        <a href="index.html#subscribe">Subscribe</a>
+        <a href="contact.html" class="active">Contact Us</a>
+        <a href="privacy.html">Privacy Policy</a>
       </nav>
+
+      <div class="hamburger" id="hamburger" role="button" aria-label="Toggle menu" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
 
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="sm:hidden hidden flex-col items-center text-sm text-zinc-400 bg-zinc-900 py-4 space-y-4">
-      <a href="index.html#products" class="hover:text-red-500">Products</a>
-      <a href="index.html#footer" class="hover:text-red-500">Subscribe</a>
-      <a href="contact.html" class="hover:text-red-500 font-bold">Contact Us</a>
-      <a href="privacy.html" class="hover:text-red-500">Privacy Policy</a>
-    </div>
-
-    <script>
-      const toggle = document.getElementById('menu-toggle');
-      const mobileMenu = document.getElementById('mobile-menu');
-      toggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-    </script>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
+      <a href="index.html#products">Products</a>
+      <a href="index.html#subscribe">Subscribe</a>
+      <a href="contact.html" class="active">Contact Us</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </nav>
   </header>
 
   <!-- Contact Form Section -->
-  <section class="py-24 px-6 max-w-3xl mx-auto text-center">
-    <h3 class="text-4xl font-bold mb-6">Contact Us</h3>
-    <p class="text-zinc-400 mb-10">Need support or have a business inquiry? We're here to help. Fill out the form below and we’ll get back to you as soon as possible.</p>
+  <section class="contact-section" aria-label="Contact form">
+    <h3>Contact Us</h3>
+    <p>Need support or have a business inquiry? We're here to help. Fill out the form below and we’ll get back to you as soon as possible.</p>
 
-    <form action="https://formspree.io/f/xyzjonan" method="POST" class="text-left space-y-6">
-      <input type="text" name="name" placeholder="Your Name" required class="w-full px-4 py-3 rounded-xl text-black" />
-      <input type="email" name="email" placeholder="Your Email" required class="w-full px-4 py-3 rounded-xl text-black" />
-      <textarea name="message" placeholder="Your Message" required class="w-full px-4 py-3 rounded-xl text-black" rows="5"></textarea>
-      <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl w-full">Send Message</button>
+    <form action="https://formspree.io/f/xyzjonan" method="POST">
+      <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
+      <input type="email" name="email" placeholder="Your Email" required aria-label="Your Email" />
+      <textarea name="message" placeholder="Your Message" required rows="5" aria-label="Your Message"></textarea>
+      <button type="submit" class="btn">Send Message</button>
     </form>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-zinc-950 py-6 mt-10 text-center text-sm text-zinc-500">
+  <footer style="text-align:center; padding:1.5rem 0; color:#777; font-size:0.9rem; border-top:1px solid #333;">
     © 2025 Capacity Gears LLC. All rights reserved.
   </footer>
 
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    function toggleMenu() {
+      hamburger.classList.toggle('active');
+      mobileNav.classList.toggle('active');
+      const isExpanded = hamburger.classList.contains('active');
+      mobileNav.setAttribute('aria-hidden', !isExpanded);
+    }
+
+    hamburger.addEventListener('click', toggleMenu);
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleMenu();
+      }
+    });
+
+    // Optional: Close mobile menu when clicking a mobile nav link
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileNav.classList.remove('active');
+        mobileNav.setAttribute('aria-hidden', 'true');
+      });
+    });
+  </script>
 </body>
 </html>
