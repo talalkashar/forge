@@ -488,7 +488,14 @@
     <p>© 2025 Capacity Gears LLC. All rights reserved.</p>
   </footer>
 
-  <!-- Scripts -->
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const mobile
+ <!-- Scripts -->
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobile-nav');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    mobileNav.classList.toggle('active');
+    hamburger.setAttribute("aria-expanded", hamburger.classList.contains("active"));
+  });
+</script>
