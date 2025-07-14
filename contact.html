@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,17 +11,15 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
   <style>
     * {
       font-family: 'Raleway', sans-serif;
       box-sizing: border-box;
     }
 
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init({ duration: 800, once: true });
-</script>
-    
     body {
       margin: 0;
       background: #18181b;
@@ -128,6 +125,7 @@
       transition: transform 0.3s ease;
       visibility: hidden;
       opacity: 0;
+      z-index: 9999;
     }
 
     .mobile-nav.active {
@@ -233,25 +231,27 @@
   </nav>
 
   <!-- Contact Section -->
-<section class="contact-section" aria-label="Contact Form" data-aos="fade-up">
-  <h3 data-aos="fade-down" data-aos-delay="100">Contact Us</h3>
-  <p data-aos="fade-up" data-aos-delay="200">Need support or have a business inquiry? Fill out the form and we’ll get back to you.</p>
-  <form action="https://formspree.io/f/xyzjonan" method="POST" data-aos="zoom-in" data-aos-delay="300">
-    <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
-    <input type="email" name="email" placeholder="Your Email" required aria-label="Your Email" />
-    <textarea name="message" placeholder="Your Message" required rows="5" aria-label="Your Message"></textarea>
-    <button type="submit">Send Message</button>
-  </form>
-</section>
-
+  <section class="contact-section" aria-label="Contact Form" data-aos="fade-up">
+    <h3 data-aos="fade-down" data-aos-delay="100">Contact Us</h3>
+    <p data-aos="fade-up" data-aos-delay="200">Need support or have a business inquiry? Fill out the form and we’ll get back to you.</p>
+    <form action="https://formspree.io/f/xyzjonan" method="POST" data-aos="zoom-in" data-aos-delay="300">
+      <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
+      <input type="email" name="email" placeholder="Your Email" required aria-label="Your Email" />
+      <textarea name="message" placeholder="Your Message" required rows="5" aria-label="Your Message"></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
 
   <!-- Footer -->
   <footer>
     © 2025 Capacity Gears LLC. All rights reserved.
   </footer>
 
-  <!-- Script -->
+  <!-- AOS and Script -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
+    AOS.init({ duration: 800, once: true });
+
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobile-nav');
 
