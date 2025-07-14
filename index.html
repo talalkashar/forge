@@ -11,7 +11,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
-  <!-- AOS Animations (optional if not used) -->
+  <!-- AOS Animations -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
   <style>
@@ -126,8 +126,8 @@
       transition: transform 0.3s ease;
       visibility: hidden;
       opacity: 0;
-      z-index: 9999;  /* Fix: Ensure mobile nav is on top */
-      overflow-y: auto; /* Fix: Allow scrolling if menu is tall */
+      z-index: 9999;
+      overflow-y: auto;
     }
 
     .mobile-nav.active {
@@ -208,8 +208,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Header -->
   <header>
     <div class="container">
       <nav>
@@ -229,7 +227,6 @@
     </div>
   </header>
 
-  <!-- Mobile Nav -->
   <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
     <a href="#products">Products</a>
     <a href="#subscribe">Subscribe</a>
@@ -237,20 +234,18 @@
     <a href="privacy.html">Privacy</a>
   </nav>
 
-  <!-- Hero -->
-  <section class="hero" id="hero">
+  <section class="hero" id="hero" data-aos="fade-up">
     <div class="hero-content">
-      <h1>Elevate Your Grip</h1>
-      <p>FORGE gear isn’t just equipment—it’s a mindset. Built for serious lifters who demand strength, comfort, and discipline beyond the gym.</p>
-      <button class="btn-primary" onclick="location.href='#products'">Shop Now</button>
+      <h1 data-aos="zoom-in">Elevate Your Grip</h1>
+      <p data-aos="fade-up" data-aos-delay="100">FORGE gear isn’t just equipment—it’s a mindset. Built for serious lifters who demand strength, comfort, and discipline beyond the gym.</p>
+      <button class="btn-primary" onclick="location.href='#products'" data-aos="zoom-in" data-aos-delay="200">Shop Now</button>
     </div>
   </section>
 
-  <!-- Products -->
   <section class="products" id="products">
-    <h2 style="text-align: center; margin-top: 2rem;">Unleash Your Potential</h2>
+    <h2 style="text-align: center; margin-top: 2rem;" data-aos="zoom-in">Unleash Your Potential</h2>
     <div class="products-grid" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-      <div class="product-card" style="text-align: center; background: #222; padding: 2rem; border-radius: 1rem;">
+      <div class="product-card" style="text-align: center; background: #222; padding: 2rem; border-radius: 1rem;" data-aos="fade-up" data-aos-delay="100">
         <img src="https://raw.githubusercontent.com/talalkashar/forge/refs/heads/main/wrist%20strap%20v1.jpg" alt="FORGE Lifting Straps" style="width: 100%; max-width: 300px; margin: 0 auto;" />
         <h3 style="font-family: 'Oswald', sans-serif; color: #ef4444; margin-top: 1rem;">FORGE Lifting Straps</h3>
         <p style="color: #aaa;">Max out your lifts with comfort and control. Built for heavy pulling days and forged for discipline.</p>
@@ -260,22 +255,19 @@
     </div>
   </section>
 
-  <!-- Subscribe -->
-  <section class="subscribe" id="subscribe" style="text-align: center; background: #18181b; padding: 4rem 2rem;">
-    <h2>Get Exclusive Offers</h2>
+  <section class="subscribe" id="subscribe" style="text-align: center; background: #18181b; padding: 4rem 2rem;" data-aos="fade-up">
+    <h2 data-aos="zoom-in">Get Exclusive Offers</h2>
     <p style="max-width: 500px; margin: 0 auto; color: #bbb;">Sign up for early access to new drops and exclusive deals.</p>
-    <form onsubmit="event.preventDefault(); alert('Thank you for subscribing!');" style="margin-top: 1.5rem;">
+    <form onsubmit="event.preventDefault(); alert('Thank you for subscribing!');" style="margin-top: 1.5rem;" data-aos="fade-up" data-aos-delay="200">
       <input type="email" placeholder="Enter your email" required style="padding: 1rem; border-radius: 9999px; border: none; margin-right: 1rem;" />
       <button type="submit" class="btn-primary">Subscribe</button>
     </form>
   </section>
 
-  <!-- Footer -->
   <footer>
     <p>© 2025 Capacity Gears LLC. All rights reserved.</p>
   </footer>
 
-  <!-- Scripts -->
   <script>
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobile-nav');
@@ -312,6 +304,5 @@
       once: true,
     });
   </script>
-
 </body>
 </html>
