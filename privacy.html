@@ -5,46 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Privacy Policy | FORGE</title>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Raleway:wght@400;600&display=swap" rel="stylesheet" />
 
-  <!-- AOS Animations -->
+  <!-- AOS Animation -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
 
   <style>
-    body {
+    * {
       font-family: 'Raleway', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a, #111);
-      color: #f5f5f5;
-      margin: 0;
-      overflow-x: hidden;
+      box-sizing: border-box;
     }
-    h1, h2, h3 {
+    body {
+      margin: 0;
+      background: #18181b;
+      color: #fff;
+    }
+    h1, h2 {
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.15em;
       color: #ef4444;
     }
+
     header {
       position: fixed;
-      width: 100%;
       top: 0;
-      left: 0;
+      width: 100%;
       z-index: 1000;
-      background: rgba(24, 24, 27, 0.9);
+      background: rgba(24, 24, 27, 0.95);
       backdrop-filter: blur(10px);
       box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
     }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       height: 72px;
-      padding: 0 2rem;
     }
+
     .logo {
       font-family: 'Oswald', sans-serif;
       font-size: 2rem;
@@ -53,43 +66,52 @@
       cursor: pointer;
       letter-spacing: 0.2em;
     }
+
     .nav-links {
       display: flex;
       gap: 2.5rem;
       font-weight: 600;
+      font-size: 1rem;
       text-transform: uppercase;
     }
+
     .nav-links a {
       color: #f5f5f5;
-      position: relative;
       transition: color 0.3s ease;
-      text-decoration: none;
     }
-    .nav-links a:hover {
+
+    .nav-links a:hover,
+    .nav-links a.active {
       color: #EF4444;
     }
+
     .hamburger {
       display: none;
       flex-direction: column;
-      cursor: pointer;
       gap: 6px;
       width: 28px;
+      cursor: pointer;
     }
+
     .hamburger span {
       height: 3px;
       background: #EF4444;
       border-radius: 2px;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
     }
+
     .hamburger.active span:nth-child(1) {
       transform: translateY(9px) rotate(45deg);
     }
+
     .hamburger.active span:nth-child(2) {
       opacity: 0;
     }
+
     .hamburger.active span:nth-child(3) {
       transform: translateY(-9px) rotate(-45deg);
     }
+
     .mobile-nav {
       position: fixed;
       top: 72px;
@@ -98,34 +120,49 @@
       height: calc(100% - 72px);
       background: #1a1a1a;
       padding: 2rem;
+      display: flex;
       flex-direction: column;
       gap: 1.5rem;
       box-shadow: -4px 0 15px rgba(0,0,0,0.9);
-      z-index: 99;
       transform: translateX(100%);
       transition: transform 0.3s ease;
-      display: none;
+      visibility: hidden;
+      opacity: 0;
+      z-index: 9999;
     }
+
     .mobile-nav.active {
       transform: translateX(0);
-      display: flex;
+      visibility: visible;
+      opacity: 1;
     }
+
     .mobile-nav a {
       color: #f5f5f5;
       font-weight: 600;
-      letter-spacing: 0.1em;
       text-transform: uppercase;
       font-size: 1.1rem;
       border-bottom: 1px solid #333;
       padding-bottom: 0.5rem;
-      text-decoration: none;
     }
-    main.content {
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    main {
       max-width: 720px;
       margin: 120px auto 60px;
       padding: 0 2rem;
       line-height: 1.6;
+      color: #ddd;
     }
+
     footer {
       padding: 2rem;
       text-align: center;
@@ -136,39 +173,45 @@
   </style>
 </head>
 <body>
+
   <!-- Header -->
   <header>
-    <nav>
-      <div class="logo" onclick="location.href='index.html'">FORGE</div>
-      <div class="nav-links">
-        <a href="index.html#products">Products</a>
-        <a href="index.html#subscribe">Subscribe</a>
-        <a href="contact.html">Contact</a>
-        <a href="privacy.html" aria-current="page">Privacy</a>
-      </div>
-      <div class="hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </nav>
+    <div class="container">
+      <nav>
+        <div class="logo" onclick="location.href='index.html'">FORGE</div>
+        <div class="nav-links">
+          <a href="index.html#products">Products</a>
+          <a href="index.html#subscribe">Subscribe</a>
+          <a href="contact.html">Contact</a>
+          <a href="privacy.html" class="active">Privacy</a>
+        </div>
+        <div class="hamburger" id="hamburger" role="button" aria-label="Toggle menu" tabindex="0">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+    </div>
   </header>
 
   <!-- Mobile Nav -->
-  <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
     <a href="index.html#products">Products</a>
     <a href="index.html#subscribe">Subscribe</a>
     <a href="contact.html">Contact</a>
-    <a href="privacy.html" aria-current="page">Privacy</a>
-  </div>
+    <a href="privacy.html" class="active">Privacy</a>
+  </nav>
 
-  <!-- Privacy Content -->
-  <main class="content" aria-label="Privacy policy content" data-aos="fade-up">
+  <!-- Main Content -->
+  <main data-aos="fade-up">
     <h1>Privacy Policy</h1>
-    <p>This privacy policy explains how we collect and use your data. We are committed to protecting your privacy.</p>
 
     <!-- ======= INSERT YOUR EXTERNAL EMBEDDED HTML CODE SNIPPET BELOW THIS LINE ======= -->
-    <style>
+    <!--
+      Paste your full Termly privacy policy embed code here.
+      It will show your privacy policy content dynamically.
+    -->
+<style>
   [data-custom-class='body'], [data-custom-class='body'] * {
           background: transparent !important;
         }
@@ -225,6 +268,7 @@ word-break: break-word !important;
     </style>
       </div>
       
+    <!-- ======= END OF EMBEDDED HTML CODE SNIPPET ======= -->
 
   </main>
 
@@ -233,24 +277,22 @@ word-break: break-word !important;
     © 2025 Capacity Gears LLC. All rights reserved.
   </footer>
 
-  <!-- Scripts -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <!-- Hamburger Menu Script -->
   <script>
-    AOS.init({ duration: 800, once: true });
-
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobile-nav');
 
-    hamburger.addEventListener('click', () => {
+    function toggleMenu() {
       hamburger.classList.toggle('active');
       mobileNav.classList.toggle('active');
       mobileNav.setAttribute('aria-hidden', !mobileNav.classList.contains('active'));
-    });
+    }
 
+    hamburger.addEventListener('click', toggleMenu);
     hamburger.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        hamburger.click();
+        toggleMenu();
       }
     });
 
@@ -262,5 +304,6 @@ word-break: break-word !important;
       });
     });
   </script>
+
 </body>
 </html>
