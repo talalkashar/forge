@@ -3,80 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FORGE | Strength Built Different</title>
+  <title>Shop | FORGE</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts - Montserrat Bold -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="src/styles/animations.css">
   
   <style>
-    * {
-      font-family: 'Montserrat', sans-serif;
-    }
-    
-    body {
-      background: #000000;
-      color: #ffffff;
-      overflow-x: hidden;
-    }
-    
-    /* Floating Particles Background */
-    .particles-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 0;
-    }
-    
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #e50914;
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-    
-    /* Hero Section */
-    .hero-section {
-      position: relative;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-    }
-    
-    .hero-title {
-      font-size: clamp(3rem, 8vw, 7rem);
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    
-    /* Gradient Text */
-    .gradient-text-red {
-      background: linear-gradient(135deg, #ffffff 0%, #e50914 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    * { font-family: 'Montserrat', sans-serif; }
+    body { background: #000000; color: #ffffff; }
   </style>
 </head>
 <body>
@@ -85,166 +22,156 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         <a href="index.html" class="flex items-center space-x-2 group">
-          <span class="text-3xl font-bold text-white tracking-wider transform transition-transform duration-300 group-hover:scale-110">
-            FORGE
-          </span>
+          <span class="text-3xl font-bold text-white tracking-wider transform transition-transform duration-300 group-hover:scale-110">FORGE</span>
           <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
         </a>
         <div class="hidden md:flex items-center space-x-8">
           <a href="index.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Home</a>
-          <a href="shop.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Shop</a>
+          <a href="shop.html" class="text-red-600 font-semibold">Shop</a>
           <a href="about.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">About</a>
           <a href="contact.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Contact</a>
-          <button class="cart-btn bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-            Cart (0)
-          </button>
+          <button class="cart-btn bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">Cart (0)</button>
         </div>
         <button class="md:hidden flex flex-col space-y-1.5 p-2" id="mobile-menu-btn" aria-label="Toggle menu">
-          <span class="w-6 h-0.5 bg-white transition-all duration-300" id="line1"></span>
-          <span class="w-6 h-0.5 bg-white transition-all duration-300" id="line2"></span>
-          <span class="w-6 h-0.5 bg-white transition-all duration-300" id="line3"></span>
+          <span class="w-6 h-0.5 bg-white transition-all duration-300"></span>
+          <span class="w-6 h-0.5 bg-white transition-all duration-300"></span>
+          <span class="w-6 h-0.5 bg-white transition-all duration-300"></span>
         </button>
       </div>
     </div>
     <div class="md:hidden fixed top-20 left-0 right-0 bg-black/98 backdrop-blur-md border-b border-red-600/20 transform -translate-y-full transition-transform duration-300 z-40" id="mobile-menu">
       <div class="px-4 py-6 space-y-4">
         <a href="index.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2">Home</a>
-        <a href="shop.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2">Shop</a>
+        <a href="shop.html" class="block text-red-600 font-semibold py-2">Shop</a>
         <a href="about.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2">About</a>
         <a href="contact.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2">Contact</a>
-        <button class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold transition-all duration-300 mt-4">
-          Cart (0)
-        </button>
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold transition-all duration-300 mt-4">Cart (0)</button>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="hero-section hero-parallax">
-    <div class="particles-container">
-      <div class="particle" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
-      <div class="particle" style="left: 20%; top: 60%; animation-delay: 1s;"></div>
-      <div class="particle" style="left: 30%; top: 40%; animation-delay: 2s;"></div>
-      <div class="particle" style="left: 50%; top: 80%; animation-delay: 3s;"></div>
-      <div class="particle" style="left: 70%; top: 30%; animation-delay: 4s;"></div>
-      <div class="particle" style="left: 80%; top: 70%; animation-delay: 5s;"></div>
-      <div class="particle" style="left: 90%; top: 50%; animation-delay: 6s;"></div>
-    </div>
-    <div class="hero-content">
-      <h1 class="hero-title fade-in-up">
-        <span class="gradient-text-red">FORGE:</span><br>
-        <span class="text-white">Strength Built Different</span>
-      </h1>
-      <p class="text-xl md:text-2xl text-gray-300 mb-8 fade-in-up-delay-1 max-w-2xl mx-auto px-4">
-        Premium gym gear engineered for the relentless. Built for performance. Forged for discipline.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in-up-delay-2">
-        <a href="shop.html" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 glow-red">
-          Shop Now
-        </a>
-        <a href="#products" class="bg-transparent border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105">
-          Explore
-        </a>
-      </div>
+  <!-- Shop Header -->
+  <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 bg-black">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-5xl md:text-7xl font-bold mb-4 fade-in-up">Shop FORGE</h1>
+      <p class="text-xl text-gray-400 fade-in-up-delay-1">Premium gear for serious athletes</p>
     </div>
   </section>
 
-  <!-- Product Showcase Section -->
-  <section id="products" class="py-20 px-4 sm:px-6 lg:px-8 bg-black">
+  <!-- Products Grid -->
+  <section class="py-12 px-4 sm:px-6 lg:px-8 bg-black">
     <div class="max-w-7xl mx-auto">
-      <h2 class="text-4xl md:text-6xl font-bold text-center mb-4 slide-up">
-        Unleash Your Potential
-      </h2>
-      <p class="text-gray-400 text-center mb-12 text-lg slide-up-delay-1">
-        Premium gear designed for serious athletes
-      </p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-        <!-- Product Card 1 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Product 1 -->
         <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <img src="https://i.imgur.com/ic0kenp.png" alt="FORGE Lifting Straps" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
-          </div>
+          <a href="product.html?id=1">
+            <div class="relative h-80 bg-gradient-to-br from-gray-800 to-black overflow-hidden">
+              <img src="https://i.imgur.com/ic0kenp.png" alt="Lifting Straps" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
+            </div>
+          </a>
           <div class="p-6">
             <h3 class="text-2xl font-bold text-white mb-2">Lifting Straps</h3>
-            <p class="text-gray-400 mb-4">Max out your lifts with comfort and control. Built for heavy pulling days.</p>
+            <p class="text-gray-400 mb-4">Max out your lifts with comfort and control.</p>
             <div class="flex items-center justify-between">
               <span class="text-2xl font-bold text-red-600">$9.99</span>
-              <a href="product.html?id=1" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
+              <button onclick="addToCart(1, 'Lifting Straps', 9.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Product Card 2 -->
+        <!-- Product 2 -->
         <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <div class="w-full h-full bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
-              <span class="text-6xl">💪</span>
+          <a href="product.html?id=2">
+            <div class="relative h-80 bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
+              <span class="text-8xl">💪</span>
             </div>
-          </div>
+          </a>
           <div class="p-6">
             <h3 class="text-2xl font-bold text-white mb-2">Wrist Wraps</h3>
-            <p class="text-gray-400 mb-4">Ultimate wrist support for heavy pressing movements. Maximum stability.</p>
+            <p class="text-gray-400 mb-4">Ultimate wrist support for heavy pressing movements.</p>
             <div class="flex items-center justify-between">
               <span class="text-2xl font-bold text-red-600">$14.99</span>
-              <a href="product.html?id=2" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
+              <button onclick="addToCart(2, 'Wrist Wraps', 14.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Product Card 3 -->
+        <!-- Product 3 -->
         <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <div class="w-full h-full bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
-              <span class="text-6xl">🏋️</span>
+          <a href="product.html?id=3">
+            <div class="relative h-80 bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
+              <span class="text-8xl">🏋️</span>
             </div>
-          </div>
+          </a>
           <div class="p-6">
             <h3 class="text-2xl font-bold text-white mb-2">Knee Sleeves</h3>
-            <p class="text-gray-400 mb-4">Compression support for squats and heavy leg days. Built to last.</p>
+            <p class="text-gray-400 mb-4">Compression support for squats and heavy leg days.</p>
             <div class="flex items-center justify-between">
               <span class="text-2xl font-bold text-red-600">$24.99</span>
-              <a href="product.html?id=3" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
+              <button onclick="addToCart(3, 'Knee Sleeves', 24.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Gym Lifestyle Section -->
-  <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class="animate-on-scroll">
-          <h2 class="text-4xl md:text-6xl font-bold mb-6">
-            Built for the <span class="text-red-600">Relentless</span>
-          </h2>
-          <p class="text-gray-400 text-lg mb-6 leading-relaxed">
-            FORGE isn't just gear—it's a mindset. Every product is engineered for athletes who refuse to settle. 
-            We understand that your training demands equipment that matches your intensity.
-          </p>
-          <p class="text-gray-400 text-lg mb-8 leading-relaxed">
-            From the gym floor to the platform, FORGE gear delivers uncompromising performance, durability, 
-            and the confidence to push beyond your limits.
-          </p>
-          <a href="about.html" class="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105">
-            Our Story
+        <!-- Product 4 -->
+        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
+          <a href="product.html?id=4">
+            <div class="relative h-80 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+              <span class="text-8xl">⚡</span>
+            </div>
           </a>
+          <div class="p-6">
+            <h3 class="text-2xl font-bold text-white mb-2">Lifting Belt</h3>
+            <p class="text-gray-400 mb-4">Premium leather belt for maximum core support.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-red-600">$49.99</span>
+              <button onclick="addToCart(4, 'Lifting Belt', 49.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="animate-on-scroll">
-          <div class="relative h-96 bg-gradient-to-br from-red-900/30 to-black rounded-2xl overflow-hidden">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="text-center">
-                <div class="text-8xl mb-4">🔥</div>
-                <p class="text-2xl font-bold text-white">No Limits</p>
-              </div>
+
+        <!-- Product 5 -->
+        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
+          <a href="product.html?id=5">
+            <div class="relative h-80 bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
+              <span class="text-8xl">🔥</span>
+            </div>
+          </a>
+          <div class="p-6">
+            <h3 class="text-2xl font-bold text-white mb-2">Resistance Bands</h3>
+            <p class="text-gray-400 mb-4">Heavy-duty resistance bands for versatile training.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-red-600">$19.99</span>
+              <button onclick="addToCart(5, 'Resistance Bands', 19.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
+          <a href="product.html?id=6">
+            <div class="relative h-80 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+              <span class="text-8xl">💎</span>
+            </div>
+          </a>
+          <div class="p-6">
+            <h3 class="text-2xl font-bold text-white mb-2">Gym Bag</h3>
+            <p class="text-gray-400 mb-4">Durable gym bag with multiple compartments.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-red-600">$34.99</span>
+              <button onclick="addToCart(6, 'Gym Bag', 34.99)" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
@@ -258,9 +185,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-2">
           <h3 class="text-2xl font-bold text-white mb-4 tracking-wider">FORGE</h3>
-          <p class="text-gray-400 mb-4 max-w-md">
-            Premium gym gear built for performance. Where strength meets discipline.
-          </p>
+          <p class="text-gray-400 mb-4 max-w-md">Premium gym gear built for performance. Where strength meets discipline.</p>
           <div class="flex space-x-4">
             <a href="https://www.amazon.com/dp/B0FN79GGQ9?tag=68326-forgexfit-20&linkCode=ogi&th=1&psc=1&ascsubtag=srctok-c64406ef1da9d8bb&btn_ref=srctok-c64406ef1da9d8bb" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-red-600/20 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110">
               <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -299,14 +224,12 @@
         </div>
       </div>
       <div class="border-t border-red-600/20 mt-8 pt-8 text-center">
-        <p class="text-gray-400 text-sm">
-          © 2025 Capacity Gears LLC. All rights reserved. | FORGE - Strength Built Different
-        </p>
+        <p class="text-gray-400 text-sm">© 2025 Capacity Gears LLC. All rights reserved. | FORGE - Strength Built Different</p>
       </div>
     </div>
   </footer>
 
-  <!-- JavaScript -->
   <script src="src/js/main.js"></script>
 </body>
 </html>
+
