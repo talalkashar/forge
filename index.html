@@ -49,16 +49,30 @@
     .hero-section {
       position: relative;
       height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      margin-bottom: 12rem;
+      padding: 0;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+    
+    /* Scroll padding for anchor links */
+    html {
+      scroll-padding-top: 80px;
     }
     
     .hero-content {
       position: relative;
       z-index: 10;
       text-align: center;
+      width: 100%;
+      max-width: 100%;
+      padding: 2rem 1rem;
     }
     
     .hero-title {
@@ -77,6 +91,59 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    
+    /* Product Carousel */
+    .product-carousel-container {
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .carousel-slides {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.7s ease-in-out;
+    }
+    
+    .carousel-slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+    
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .carousel-prev,
+    .carousel-next {
+      opacity: 0.8;
+    }
+    
+    .carousel-prev:hover,
+    .carousel-next:hover {
+      opacity: 1;
+    }
+    
+    .carousel-dot {
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+    
+    .carousel-dot.active {
+      transform: scale(1.2);
+    }
   </style>
 </head>
 <body>
@@ -92,7 +159,7 @@
         </a>
         <div class="hidden md:flex items-center space-x-8">
           <a href="index.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Home</a>
-          <a href="shop.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Shop</a>
+          <a href="product.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Shop</a>
           <a href="about.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">About</a>
           <a href="contact.html" class="text-white hover:text-red-600 transition-colors duration-300 font-semibold">Contact</a>
           <button class="cart-btn bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
@@ -132,94 +199,22 @@
     </div>
     <div class="hero-content">
       <h1 class="hero-title fade-in-up">
-        <span class="gradient-text-red">FORGE:</span><br>
-        <span class="text-white">Strength Built Different</span>
+        <span class="gradient-text-red">FORGE</span><br>
+        <span class="text-white">where strength meets purpose</span>
       </h1>
       <p class="text-xl md:text-2xl text-gray-300 mb-8 fade-in-up-delay-1 max-w-2xl mx-auto px-4">
         Premium gym gear engineered for the relentless. Built for performance. Forged for discipline.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in-up-delay-2">
-        <a href="shop.html" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 glow-red">
+        <a href="product.html" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 glow-red">
           Shop Now
         </a>
-        <a href="#products" class="bg-transparent border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105">
-          Explore
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Product Showcase Section -->
-  <section id="products" class="py-20 px-4 sm:px-6 lg:px-8 bg-black">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="text-4xl md:text-6xl font-bold text-center mb-4 slide-up">
-        Unleash Your Potential
-      </h2>
-      <p class="text-gray-400 text-center mb-12 text-lg slide-up-delay-1">
-        Premium gear designed for serious athletes
-      </p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-        <!-- Product Card 1 -->
-        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <img src="https://i.imgur.com/ic0kenp.png" alt="FORGE Lifting Straps" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
-          </div>
-          <div class="p-6">
-            <h3 class="text-2xl font-bold text-white mb-2">Lifting Straps</h3>
-            <p class="text-gray-400 mb-4">Max out your lifts with comfort and control. Built for heavy pulling days.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-red-600">$9.99</span>
-              <a href="product.html?id=1" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product Card 2 -->
-        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <div class="w-full h-full bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
-              <span class="text-6xl">💪</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-2xl font-bold text-white mb-2">Wrist Wraps</h3>
-            <p class="text-gray-400 mb-4">Ultimate wrist support for heavy pressing movements. Maximum stability.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-red-600">$14.99</span>
-              <a href="product.html?id=2" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product Card 3 -->
-        <div class="product-card bg-gray-900 rounded-2xl overflow-hidden animate-on-scroll">
-          <div class="relative h-64 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-            <div class="w-full h-full bg-gradient-to-br from-red-900/20 to-black flex items-center justify-center">
-              <span class="text-6xl">🏋️</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-2xl font-bold text-white mb-2">Knee Sleeves</h3>
-            <p class="text-gray-400 mb-4">Compression support for squats and heavy leg days. Built to last.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-red-600">$24.99</span>
-              <a href="product.html?id=3" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105">
-                View
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- Gym Lifestyle Section -->
-  <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
+  <section class="pt-24 md:pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900 relative z-10">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div class="animate-on-scroll">
@@ -239,12 +234,41 @@
           </a>
         </div>
         <div class="animate-on-scroll">
-          <div class="relative h-96 bg-gradient-to-br from-red-900/30 to-black rounded-2xl overflow-hidden">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="text-center">
-                <div class="text-8xl mb-4">🔥</div>
-                <p class="text-2xl font-bold text-white">No Limits</p>
+          <div class="product-carousel-container relative h-96 bg-gradient-to-br from-red-900/30 to-black rounded-2xl overflow-hidden">
+            <!-- Carousel Images -->
+            <div class="carousel-slides relative w-full h-full">
+              <div class="carousel-slide active absolute inset-0 opacity-100 transition-opacity duration-700">
+                <img src="product%20in%20use%20images/IMG_2008.JPG" alt="FORGE Product in Use" class="w-full h-full object-cover">
               </div>
+              <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-700">
+                <img src="product%20in%20use%20images/IMG_2009.JPG" alt="FORGE Product in Use" class="w-full h-full object-cover">
+              </div>
+              <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-700">
+                <img src="product%20in%20use%20images/IMG_2029.JPG" alt="FORGE Product in Use" class="w-full h-full object-cover">
+              </div>
+              <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-700">
+                <img src="product%20in%20use%20images/IMG_2033.JPG" alt="FORGE Product in Use" class="w-full h-full object-cover">
+              </div>
+            </div>
+            
+            <!-- Navigation Arrows -->
+            <button class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10 transform hover:scale-110" aria-label="Previous image">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10 transform hover:scale-110" aria-label="Next image">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            
+            <!-- Dot Indicators -->
+            <div class="carousel-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+              <button class="carousel-dot active w-3 h-3 rounded-full bg-white transition-all duration-300" aria-label="Go to slide 1"></button>
+              <button class="carousel-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white/75 transition-all duration-300" aria-label="Go to slide 2"></button>
+              <button class="carousel-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white/75 transition-all duration-300" aria-label="Go to slide 3"></button>
+              <button class="carousel-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white/75 transition-all duration-300" aria-label="Go to slide 4"></button>
             </div>
           </div>
         </div>
@@ -283,7 +307,7 @@
           <h4 class="text-white font-bold mb-4">Quick Links</h4>
           <ul class="space-y-2">
             <li><a href="index.html" class="text-gray-400 hover:text-red-600 transition-colors duration-300">Home</a></li>
-            <li><a href="shop.html" class="text-gray-400 hover:text-red-600 transition-colors duration-300">Shop</a></li>
+            <li><a href="product.html" class="text-gray-400 hover:text-red-600 transition-colors duration-300">Shop</a></li>
             <li><a href="about.html" class="text-gray-400 hover:text-red-600 transition-colors duration-300">About</a></li>
             <li><a href="contact.html" class="text-gray-400 hover:text-red-600 transition-colors duration-300">Contact</a></li>
           </ul>

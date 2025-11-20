@@ -168,5 +168,116 @@ function initProductGallery() {
 // Initialize product gallery on page load
 document.addEventListener('DOMContentLoaded', function() {
   initProductGallery();
+  initProductCarousel();
 });
+
+// Product Image Carousel
+function initProductCarousel() {
+  const carousel = document.querySelector('.product-carousel-container');
+  if (!carousel) return;
+
+  const slides = carousel.querySelectorAll('.carousel-slide');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  const prevBtn = carousel.querySelector('.carousel-prev');
+  const nextBtn = carousel.querySelector('.carousel-next');
+  
+  let currentSlide = 0;
+  let autoPlayInterval = null;
+  const autoPlayDelay = 5000; // 5 seconds
+
+  // Function to show a specific slide
+  function showSlide(index) {
+    // Remove active class from all slides and dots
+    slides.forEach((slide, i) => {
+      if (i === index) {
+        slide.classList.add('active');
+        slide.style.opacity = '1';
+      } else {
+        slide.classList.remove('active');
+        slide.style.opacity = '0';
+      }
+    });
+
+    dots.forEach((dot, i) => {
+      if (i === index) {
+        dot.classList.add('active');
+        dot.classList.remove('bg-white/50');
+        dot.classList.add('bg-white');
+      } else {
+        dot.classList.remove('active');
+        dot.classList.remove('bg-white');
+        dot.classList.add('bg-white/50');
+      }
+    });
+
+    currentSlide = index;
+  }
+
+  // Function to go to next slide
+  function nextSlide() {
+    const next = (currentSlide + 1) % slides.length;
+    showSlide(next);
+  }
+
+  // Function to go to previous slide
+  function prevSlide() {
+    const prev = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(prev);
+  }
+
+  // Start auto-play
+  function startAutoPlay() {
+    autoPlayInterval = setInterval(nextSlide, autoPlayDelay);
+  }
+
+  // Stop auto-play
+  function stopAutoPlay() {
+    if (autoPlayInterval) {
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = null;
+    }
+  }
+
+  // Event listeners for navigation buttons
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      stopAutoPlay();
+      startAutoPlay(); // Restart auto-play after manual navigation
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      stopAutoPlay();
+      startAutoPlay(); // Restart auto-play after manual navigation
+    });
+  }
+
+  // Event listeners for dot indicators
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      showSlide(index);
+      stopAutoPlay();
+      startAutoPlay(); // Restart auto-play after manual navigation
+    });
+  });
+
+  // Pause auto-play on hover
+  carousel.addEventListener('mouseenter', stopAutoPlay);
+  carousel.addEventListener('mouseleave', startAutoPlay);
+
+  // Start auto-play on initialization
+  startAutoPlay();
+
+  // Pause auto-play when page is not visible (tab switching)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopAutoPlay();
+    } else {
+      startAutoPlay();
+    }
+  });
+}
 
