@@ -9,23 +9,28 @@ document.addEventListener('DOMContentLoaded', function() {
   if (mobileMenuBtn && mobileMenu) {
     mobileMenuBtn.addEventListener('click', function(e) {
       e.stopPropagation();
-      const isOpen = !mobileMenu.classList.contains('hidden');
+      const isOpen = mobileMenu.classList.contains('max-h-screen');
       
       if (isOpen) {
-        mobileMenu.classList.add('hidden');
+        // Close menu
+        mobileMenu.classList.remove('max-h-screen');
+        mobileMenu.classList.add('max-h-0');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       } else {
-        mobileMenu.classList.remove('hidden');
+        // Open menu
+        mobileMenu.classList.remove('max-h-0');
+        mobileMenu.classList.add('max-h-screen');
         mobileMenuBtn.classList.add('active');
         document.body.classList.add('menu-open');
       }
     });
 
     // Close menu when clicking on a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
+    mobileMenu.querySelectorAll('a, button').forEach(link => {
       link.addEventListener('click', function() {
-        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('max-h-screen');
+        mobileMenu.classList.add('max-h-0');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       });
@@ -34,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {
       if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
-        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('max-h-screen');
+        mobileMenu.classList.add('max-h-0');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       }

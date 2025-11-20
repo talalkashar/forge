@@ -37,6 +37,22 @@
       overflow: hidden;
     }
     
+    /* Mobile menu visibility and animation */
+    #mobile-menu {
+      display: block !important;
+    }
+    
+    #mobile-menu.max-h-0 {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    #mobile-menu.max-h-screen {
+      max-height: 500px !important; /* Reasonable max height for menu */
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
     /* Scroll padding for anchor links */
     html {
       scroll-padding-top: 80px;
@@ -102,13 +118,20 @@
       </div>
     </div>
     
-    <!-- Mobile Menu (Normal Flow) -->
-    <div class="md:hidden hidden bg-black border-b border-red-600/20" id="mobile-menu">
-      <div class="px-4 py-6 space-y-3">
+    <!-- Mobile Menu (Normal Flow - Pushes Content Down) -->
+    <div class="md:hidden w-full bg-black border-b border-red-600/20 overflow-hidden transition-all duration-300 ease-in-out max-h-0" id="mobile-menu">
+      <div class="px-4 py-6 space-y-4">
         <a href="index.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2 text-lg">Home</a>
         <a href="product.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2 text-lg">Shop</a>
         <a href="about.html" class="block text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2 text-lg">About</a>
         <a href="contact.html" class="block text-red-600 font-semibold py-2 text-lg">Contact</a>
+        <button class="w-full flex items-center justify-center space-x-2 text-white hover:text-red-600 transition-colors duration-300 font-semibold py-2 text-lg" aria-label="Shopping cart">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span>Cart</span>
+          <span class="cart-count bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
+        </button>
       </div>
     </div>
   </nav>
