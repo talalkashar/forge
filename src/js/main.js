@@ -7,9 +7,28 @@ document.addEventListener('DOMContentLoaded', function() {
   const lines = ['line1', 'line2', 'line3'];
 
   if (mobileMenuBtn && mobileMenu) {
-    mobileMenuBtn.addEventListener('click', function() {
-      mobileMenu.classList.toggle('-translate-y-full');
-      mobileMenuBtn.classList.toggle('active');
+    mobileMenuBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isOpen = !mobileMenu.classList.contains('-translate-y-full');
+      
+      if (isOpen) {
+        mobileMenu.classList.add('-translate-y-full');
+        mobileMenuBtn.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      } else {
+        mobileMenu.classList.remove('-translate-y-full');
+        mobileMenuBtn.classList.add('active');
+        document.body.classList.add('menu-open');
+      }
+    });
+
+    // Close menu when clicking on a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.add('-translate-y-full');
+        mobileMenuBtn.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
     });
 
     // Close menu when clicking outside
@@ -17,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
         mobileMenu.classList.add('-translate-y-full');
         mobileMenuBtn.classList.remove('active');
+        document.body.classList.remove('menu-open');
       }
     });
   }
