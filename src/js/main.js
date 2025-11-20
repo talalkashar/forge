@@ -9,14 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
   if (mobileMenuBtn && mobileMenu) {
     mobileMenuBtn.addEventListener('click', function(e) {
       e.stopPropagation();
-      const isOpen = !mobileMenu.classList.contains('-translate-y-full');
+      const isOpen = !mobileMenu.classList.contains('hidden');
       
       if (isOpen) {
-        mobileMenu.classList.add('-translate-y-full');
+        mobileMenu.classList.add('hidden');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       } else {
-        mobileMenu.classList.remove('-translate-y-full');
+        mobileMenu.classList.remove('hidden');
         mobileMenuBtn.classList.add('active');
         document.body.classList.add('menu-open');
       }
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close menu when clicking on a link
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function() {
-        mobileMenu.classList.add('-translate-y-full');
+        mobileMenu.classList.add('hidden');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       });
@@ -34,12 +34,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {
       if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
-        mobileMenu.classList.add('-translate-y-full');
+        mobileMenu.classList.add('hidden');
         mobileMenuBtn.classList.remove('active');
         document.body.classList.remove('menu-open');
       }
     });
   }
+  
+  // Initialize cart display - hide badge if count is 0
+  const cartCounts = document.querySelectorAll('.cart-count');
+  cartCounts.forEach(countEl => {
+    const count = parseInt(countEl.textContent) || 0;
+    if (count === 0) {
+      countEl.classList.add('hidden');
+    }
+  });
 
   // Navbar scroll effect
   const navbar = document.getElementById('navbar');
@@ -139,10 +148,14 @@ function addToCart(productId, productName, price) {
   console.log('Adding to cart:', productId, productName, price);
   
   // Update cart count
-  const cartBtns = document.querySelectorAll('.cart-btn');
-  cartBtns.forEach(btn => {
-    const currentCount = parseInt(btn.textContent.match(/\d+/)?.[0] || '0');
-    btn.textContent = `Cart (${currentCount + 1})`;
+  const cartCounts = document.querySelectorAll('.cart-count');
+  cartCounts.forEach(countEl => {
+    const currentCount = parseInt(countEl.textContent) || 0;
+    const newCount = currentCount + 1;
+    countEl.textContent = newCount;
+    if (newCount > 0) {
+      countEl.classList.remove('hidden');
+    }
   });
 
   // Show notification
