@@ -47,14 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Initialize cart display - hide badge if count is 0
-  const cartCounts = document.querySelectorAll('.cart-count');
-  cartCounts.forEach(countEl => {
-    const count = parseInt(countEl.textContent) || 0;
-    if (count === 0) {
-      countEl.classList.add('hidden');
-    }
-  });
+  // Cart icon will be updated by cart.js
+  // No need to initialize here - cart.js handles it
 
   // Navbar scroll effect
   const navbar = document.getElementById('navbar');
@@ -170,24 +164,20 @@ function validateForm(formId) {
   return isValid;
 }
 
-// Add to Cart (Stub)
+// Add to Cart - Uses cart.js localStorage system
 function addToCart(productId, productName, price) {
-  // This is a stub - implement actual cart logic
-  console.log('Adding to cart:', productId, productName, price);
+  // Get quantity from input if available
+  const quantityInput = document.getElementById('quantity');
+  const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
   
-  // Update cart count
-  const cartCounts = document.querySelectorAll('.cart-count');
-  cartCounts.forEach(countEl => {
-    const currentCount = parseInt(countEl.textContent) || 0;
-    const newCount = currentCount + 1;
-    countEl.textContent = newCount;
-    if (newCount > 0) {
-      countEl.classList.remove('hidden');
-    }
-  });
-
-  // Show notification
-  showNotification(`${productName} added to cart!`);
+  // Add to cart using cart.js
+  if (window.cart) {
+    window.cart.addToCart(productId, productName, price, quantity);
+    showNotification(`${productName} added to cart!`);
+  } else {
+    console.error('Cart system not loaded');
+    showNotification('Error: Cart system not available');
+  }
 }
 
 // Show Notification
