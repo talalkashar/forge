@@ -71,6 +71,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     lastScroll = currentScroll;
   });
+  
+  // Fire animation fade on scroll (homepage only)
+  const emberCanvas = document.getElementById('ember-canvas');
+  const heroSection = document.querySelector('.hero-section');
+  
+  if (emberCanvas && heroSection) {
+    window.addEventListener('scroll', function() {
+      const scrollY = window.pageYOffset;
+      const heroHeight = heroSection.offsetHeight;
+      
+      // Fade canvas when scrolling past 60% of hero
+      if (scrollY >= heroHeight * 0.6) {
+        const fadeProgress = Math.min((scrollY - heroHeight * 0.6) / (heroHeight * 0.3), 1);
+        const opacity = 1 - (fadeProgress * 0.7); // Fade to 30% opacity
+        emberCanvas.style.opacity = opacity;
+        document.body.classList.add('scrolled');
+      } else {
+        emberCanvas.style.opacity = 1;
+        document.body.classList.remove('scrolled');
+      }
+    }, { passive: true });
+  }
 
   // Intersection Observer for scroll animations
   const observerOptions = {
