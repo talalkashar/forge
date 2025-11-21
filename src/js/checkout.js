@@ -18,9 +18,10 @@ async function createCheckoutSession(quantity = 1) {
     // Update this URL to match your production server URL
     // For local development: http://localhost:5001/api
     // For production: Replace with your actual server URL
-    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:5001/api' 
-      : 'https://your-server-domain.com/api'; // TODO: Replace with your production server URL
+    const API_URL =
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5001/api'
+    : 'https://forge-stripe-server.onrender.com/api';// TODO: Replace with your production server URL
     
     const response = await fetch(`${API_URL}/create-checkout-session`, {
       method: 'POST',
