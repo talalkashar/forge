@@ -278,7 +278,7 @@
             Add to Cart
           </button>
           
-          <button class="w-full bg-transparent border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300">
+          <button onclick="handleBuyNow()" id="buy-now-btn" class="w-full bg-transparent border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105">
             Buy Now
           </button>
         </div>
@@ -566,7 +566,16 @@
     </div>
   </footer>
 
+  <!-- Checkout Handler -->
+  <script src="src/js/checkout.js"></script>
+  
   <script>
+    // Handle Buy Now button click
+    function handleBuyNow() {
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+      createCheckoutSession(quantity);
+    }
+    
     // Product Image Gallery
     const productImages = [
       'product%20listing%20images/1-removebg.png', // Image 1

@@ -1,0 +1,30 @@
+# Environment variables - NEVER commit these!
+.env
+server/.env
+
+# Node modules
+node_modules/
+server/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build files
+dist/
+build/
+
+# Config file with keys (optional - you may want to commit config.js with empty values)
+# Uncomment the line below if you want to ignore config.js
+# config.js
+
