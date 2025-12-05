@@ -11,9 +11,31 @@
   <style>
     * { font-family: 'Montserrat', sans-serif; }
     body { background: #000000; color: #ffffff; }
+    
+    /* Skip Link for Accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: -999px;
+      z-index: 999;
+    }
+    
+    .skip-link:focus {
+      left: 10px;
+      top: 10px;
+      background: yellow;
+      color: #000;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <!-- Skip to Main Content Link -->
+  <a href="#maincontent" class="skip-link">Skip to Main Content</a>
+  <main id="maincontent" tabindex="-1">
   <div class="min-h-screen flex items-center justify-center px-4">
     <div class="text-center max-w-md w-full">
       <div class="mb-8">
@@ -36,6 +58,8 @@
       </div>
     </div>
   </div>
+  </main>
+  <!-- End Main Content -->
 </body>
 </html>
 

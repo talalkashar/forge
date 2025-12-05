@@ -125,9 +125,30 @@
         min-width: 44px;
       }
     }
+    
+    /* Skip Link for Accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: -999px;
+      z-index: 999;
+    }
+    
+    .skip-link:focus {
+      left: 10px;
+      top: 10px;
+      background: yellow;
+      color: #000;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <!-- Skip to Main Content Link -->
+  <a href="#maincontent" class="skip-link">Skip to Main Content</a>
   <!-- Navbar -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-b border-red-600/20 transition-all duration-300" id="navbar">
     <div class="w-full flex items-center justify-between px-4 py-3 h-16 sm:h-20">
@@ -345,6 +366,8 @@
       </div>
     </div>
   </footer>
+  </main>
+  <!-- End Main Content -->
 
   <script src="src/js/cart.js"></script>
   <script src="src/js/main.js"></script>
