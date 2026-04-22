@@ -1,21 +1,25 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing STRIPE_SECRET_KEY");
-}
+type CheckoutItem = {
+  name: string;
+  price: number;
+  quantity: number;
+};
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => null);
-    const items = Array.isArray(body?.items) ? body.items : [];
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const body: { items?: CheckoutItem[] } = await req.json();
+    const items: CheckoutItem[] = Array.isArray(body?.items) ? body.items : [];
     const normalizedItems = items
       .map((item) => ({
-        name: typeof item?.name === "string" && item.name.trim() ? item.name.trim() : "FORGE Product",
-        price: Math.round(Number(item?.price || 0) * 100),
-        quantity: Math.max(1, Number(item?.quantity) || 1),
+        name: item.name.trim() ? item.name.trim() : "FORGE Product",
+        price: Math.round(item.price * 100),
+        quantity: Math.max(1, item.quantity),
       }))
       .filter((item) => Number.isFinite(item.price) && item.price > 0);
 
@@ -48,8 +52,9 @@ export async function POST(req) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("STRIPE ERROR FULL:", err);
+    const message = err instanceof Error ? err.message : "Stripe failed";
     return NextResponse.json(
-      { error: err?.message || "Stripe failed" },
+      { error: message },
       { status: 500 },
     );
   }
