@@ -1,4 +1,1 @@
-declare module "three" {
-  const THREE: unknown;
-  export = THREE;
-}
+declare module "three";
