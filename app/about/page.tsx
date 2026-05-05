@@ -29,12 +29,9 @@ const storyCards = [
 export default function AboutPage() {
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1}>
+      <main>
         <section className="pt-12 pb-16 px-4 sm:px-6 lg:px-8 bg-black">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 fade-in-up">

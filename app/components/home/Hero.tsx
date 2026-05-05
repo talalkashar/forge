@@ -63,15 +63,12 @@ interface HeroUniforms {
   uColor2: { value: unknown };
   uColor3: { value: unknown };
   uColor4: { value: unknown };
-  uColor5: { value: unknown };
-  uColor6: { value: unknown };
   uSpeed: { value: number };
   uIntensity: { value: number };
   uTouchTexture: { value: ThreeTextureLike };
   uGrainIntensity: { value: number };
   uDarkBase: { value: unknown };
   uGradientSize: { value: number };
-  uGradientCount: { value: number };
   uColor1Weight: { value: number };
   uColor2Weight: { value: number };
 }
@@ -207,7 +204,11 @@ class HeroAnimationApp {
     this.container = container;
     this.lowEnd = isLowEndDevice();
     this.frameInterval = getTargetFrameInterval(this.lowEnd);
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: false,
+      powerPreference: this.lowEnd ? "low-power" : "high-performance",
+    });
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       45,
@@ -228,19 +229,16 @@ class HeroAnimationApp {
       },
       uColor1: { value: new THREE.Vector3(0.93, 0.06, 0.08) },
       uColor2: { value: new THREE.Vector3(0.05, 0.01, 0.01) },
-      uColor3: { value: new THREE.Vector3(0.72, 0.02, 0.05) },
-      uColor4: { value: new THREE.Vector3(0.12, 0.01, 0.01) },
-      uColor5: { value: new THREE.Vector3(1.0, 0.16, 0.14) },
-      uColor6: { value: new THREE.Vector3(0.02, 0.02, 0.02) },
-      uSpeed: { value: this.lowEnd ? 0.82 : 1.2 },
-      uIntensity: { value: this.lowEnd ? 1.28 : 1.8 },
+      uColor3: { value: new THREE.Vector3(0.58, 0.03, 0.05) },
+      uColor4: { value: new THREE.Vector3(0.11, 0.02, 0.02) },
+      uSpeed: { value: this.lowEnd ? 0.6 : 0.78 },
+      uIntensity: { value: this.lowEnd ? 0.9 : 1.1 },
       uTouchTexture: { value: this.touchTexture.texture },
-      uGrainIntensity: { value: this.lowEnd ? 0.035 : 0.08 },
+      uGrainIntensity: { value: this.lowEnd ? 0.015 : 0.03 },
       uDarkBase: { value: new THREE.Vector3(0.0, 0.0, 0.0) },
-      uGradientSize: { value: 0.45 },
-      uGradientCount: { value: 12.0 },
-      uColor1Weight: { value: 1.2 },
-      uColor2Weight: { value: 0.9 },
+      uGradientSize: { value: this.lowEnd ? 0.58 : 0.5 },
+      uColor1Weight: { value: 1.0 },
+      uColor2Weight: { value: 0.72 },
     };
 
     this.scene.background = new THREE.Color(0x000000);
@@ -274,9 +272,9 @@ class HeroAnimationApp {
         }
       `,
       fragmentShader: `
-        uniform float uTime, uSpeed, uIntensity, uGrainIntensity, uGradientSize, uGradientCount, uColor1Weight, uColor2Weight;
+        uniform float uTime, uSpeed, uIntensity, uGrainIntensity, uGradientSize, uColor1Weight, uColor2Weight;
         uniform vec2 uResolution;
-        uniform vec3 uColor1, uColor2, uColor3, uColor4, uColor5, uColor6, uDarkBase;
+        uniform vec3 uColor1, uColor2, uColor3, uColor4, uDarkBase;
         uniform sampler2D uTouchTexture;
         varying vec2 vUv;
 
@@ -285,46 +283,38 @@ class HeroAnimationApp {
         }
 
         vec3 getGradientColor(vec2 uv, float time) {
-          vec2 c1 = vec2(0.5 + sin(time * uSpeed * 0.4) * 0.4, 0.5 + cos(time * uSpeed * 0.5) * 0.4);
-          vec2 c2 = vec2(0.5 + cos(time * uSpeed * 0.6) * 0.5, 0.5 + sin(time * uSpeed * 0.45) * 0.5);
-          vec2 c3 = vec2(0.5 + sin(time * uSpeed * 0.35) * 0.45, 0.5 + cos(time * uSpeed * 0.55) * 0.45);
-          vec2 c4 = vec2(0.5 + cos(time * uSpeed * 0.5) * 0.4, 0.5 + sin(time * uSpeed * 0.4) * 0.4);
-          vec2 c5 = vec2(0.5 + sin(time * uSpeed * 0.7) * 0.35, 0.5 + cos(time * uSpeed * 0.6) * 0.35);
-          vec2 c6 = vec2(0.5 + cos(time * uSpeed * 0.45) * 0.5, 0.5 + sin(time * uSpeed * 0.65) * 0.5);
+          vec2 c1 = vec2(0.5 + sin(time * uSpeed * 0.32) * 0.34, 0.5 + cos(time * uSpeed * 0.36) * 0.28);
+          vec2 c2 = vec2(0.5 + cos(time * uSpeed * 0.42) * 0.4, 0.5 + sin(time * uSpeed * 0.3) * 0.34);
+          vec2 c3 = vec2(0.5 + sin(time * uSpeed * 0.28) * 0.3, 0.5 + cos(time * uSpeed * 0.4) * 0.38);
+          vec2 c4 = vec2(0.5 + cos(time * uSpeed * 0.34) * 0.3, 0.5 + sin(time * uSpeed * 0.38) * 0.28);
 
           float i1 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c1));
           float i2 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c2));
           float i3 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c3));
           float i4 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c4));
-          float i5 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c5));
-          float i6 = 1.0 - smoothstep(0.0, uGradientSize, length(uv - c6));
 
           vec3 color = vec3(0.0);
-          color += uColor1 * i1 * (0.55 + 0.45 * sin(time * uSpeed)) * uColor1Weight;
-          color += uColor2 * i2 * (0.55 + 0.45 * cos(time * uSpeed * 1.2)) * uColor2Weight;
-          color += uColor3 * i3 * (0.55 + 0.45 * sin(time * uSpeed * 0.8)) * uColor1Weight;
-          color += uColor4 * i4 * (0.55 + 0.45 * cos(time * uSpeed * 1.3)) * uColor2Weight;
-          color += uColor5 * i5 * (0.55 + 0.45 * sin(time * uSpeed * 1.1)) * uColor1Weight;
-          color += uColor6 * i6 * (0.55 + 0.45 * cos(time * uSpeed * 0.9)) * uColor2Weight;
+          color += uColor1 * i1 * (0.62 + 0.28 * sin(time * uSpeed)) * uColor1Weight;
+          color += uColor2 * i2 * (0.58 + 0.24 * cos(time * uSpeed * 1.1)) * uColor2Weight;
+          color += uColor3 * i3 * (0.6 + 0.22 * sin(time * uSpeed * 0.82)) * uColor1Weight;
+          color += uColor4 * i4 * (0.56 + 0.2 * cos(time * uSpeed * 0.95)) * uColor2Weight;
 
           color = clamp(color, vec3(0.0), vec3(1.0)) * uIntensity;
-          float lum = dot(color, vec3(0.299, 0.587, 0.114));
-          color = mix(vec3(lum), color, 1.2);
-          color = pow(color, vec3(0.94));
-          float brightness = length(color);
-          color = mix(uDarkBase, color, max(brightness * 1.15, 0.18));
+          float brightness = dot(color, vec3(0.299, 0.587, 0.114));
+          color = mix(uDarkBase, color, max(brightness * 1.08, 0.16));
           return color;
         }
 
         void main() {
           vec2 uv = vUv;
           vec4 touchTex = texture2D(uTouchTexture, uv);
-          uv.x -= (touchTex.r * 2.0 - 1.0) * 0.8 * touchTex.b;
-          uv.y -= (touchTex.g * 2.0 - 1.0) * 0.8 * touchTex.b;
+          float touchInfluence = touchTex.b * 0.45;
+          uv.x -= (touchTex.r * 2.0 - 1.0) * touchInfluence;
+          uv.y -= (touchTex.g * 2.0 - 1.0) * touchInfluence;
 
           vec2 center = vec2(0.5);
           float dist = length(uv - center);
-          float ripple = sin(dist * 20.0 - uTime * 3.0) * 0.04 * touchTex.b;
+          float ripple = sin(dist * 14.0 - uTime * 2.2) * 0.016 * touchTex.b;
           uv += vec2(ripple);
 
           vec3 color = getGradientColor(uv, uTime);
@@ -456,12 +446,7 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<HeroAnimationApp | null>(null);
-  const sectionVisibleRef = useRef(true);
   const [isReady, setIsReady] = useState(false);
-  const [showCursor, setShowCursor] = useState(false);
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const cursorDotRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -486,7 +471,6 @@ export default function Hero() {
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         const isVisible = entry?.isIntersecting ?? true;
-        sectionVisibleRef.current = isVisible;
         nextApp.setVisible(isVisible);
       },
       { threshold: 0.1 },
@@ -494,6 +478,7 @@ export default function Hero() {
     visibilityObserver.observe(section);
     let pointerFrame = 0;
     const pendingPointer = { x: 0, y: 0, dirty: false };
+    let sectionBounds = section.getBoundingClientRect();
 
     const flushPointer = () => {
       pointerFrame = 0;
@@ -506,15 +491,13 @@ export default function Hero() {
       nextApp.handlePointerMove(pendingPointer.x, pendingPointer.y);
     };
 
-    const queuePointerMove = (x: number, y: number) => {
-      mousePos.current = { x, y };
-
+    const queuePointerMove = (clientX: number, clientY: number) => {
       if (reducedMotion) {
         return;
       }
 
-      pendingPointer.x = x;
-      pendingPointer.y = y;
+      pendingPointer.x = clientX - sectionBounds.left;
+      pendingPointer.y = clientY - sectionBounds.top;
       pendingPointer.dirty = true;
 
       if (!pointerFrame) {
@@ -522,99 +505,35 @@ export default function Hero() {
       }
     };
 
-    const handleMouseMove = (event: MouseEvent) => {
-      const rect = section.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      queuePointerMove(x, y);
+    const updateBounds = () => {
+      sectionBounds = section.getBoundingClientRect();
     };
 
-    const handleTouchMove = (event: TouchEvent) => {
-      const rect = section.getBoundingClientRect();
-      const touch = event.touches[0];
-
-      if (!touch) {
-        return;
-      }
-
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-
-      queuePointerMove(x, y);
+    const handlePointerMove = (event: PointerEvent) => {
+      queuePointerMove(event.clientX, event.clientY);
     };
 
-    const handleMouseEnter = () => {
-      if (!reducedMotion) {
-        setShowCursor(true);
-      }
+    const handlePointerEnter = () => {
+      updateBounds();
     };
 
-    const handleMouseLeave = () => {
-      setShowCursor(false);
-    };
-
-    section.addEventListener("mousemove", handleMouseMove);
-    section.addEventListener("touchmove", handleTouchMove, { passive: true });
-    section.addEventListener("mouseenter", handleMouseEnter);
-    section.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener("resize", updateBounds);
+    window.addEventListener("scroll", updateBounds, { passive: true });
+    section.addEventListener("pointermove", handlePointerMove, { passive: true });
+    section.addEventListener("pointerenter", handlePointerEnter);
 
     return () => {
       window.cancelAnimationFrame(revealFrame);
-      section.removeEventListener("mousemove", handleMouseMove);
-      section.removeEventListener("touchmove", handleTouchMove);
-      section.removeEventListener("mouseenter", handleMouseEnter);
-      section.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("resize", updateBounds);
+      window.removeEventListener("scroll", updateBounds);
+      section.removeEventListener("pointermove", handlePointerMove);
+      section.removeEventListener("pointerenter", handlePointerEnter);
       window.cancelAnimationFrame(pointerFrame);
       visibilityObserver.disconnect();
       nextApp.cleanup();
       if (appRef.current === nextApp) {
         appRef.current = null;
       }
-    };
-  }, []);
-
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    const dot = cursorDotRef.current;
-
-    if (!cursor || !dot) {
-      return;
-    }
-
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    let cursorX = 0;
-    let cursorY = 0;
-    let dotX = 0;
-    let dotY = 0;
-    let frameId = 0;
-
-    const animateCursor = () => {
-      if (!sectionVisibleRef.current) {
-        frameId = requestAnimationFrame(animateCursor);
-        return;
-      }
-
-      cursorX += (mousePos.current.x - cursorX) * 0.12;
-      cursorY += (mousePos.current.y - cursorY) * 0.12;
-      dotX += (mousePos.current.x - dotX) * 0.3;
-      dotY += (mousePos.current.y - dotY) * 0.3;
-
-      cursor.style.transform = `translate(${cursorX - 20}px, ${cursorY - 20}px)`;
-      dot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`;
-
-      frameId = requestAnimationFrame(animateCursor);
-    };
-
-    animateCursor();
-
-    return () => {
-      cancelAnimationFrame(frameId);
     };
   }, []);
 
@@ -625,6 +544,8 @@ export default function Hero() {
         className="forge-hero"
       >
         <div className="hero-fallback-background" aria-hidden="true" />
+        <div className="hero-atmosphere" aria-hidden="true" />
+        <div className="hero-noise-overlay" aria-hidden="true" />
         <div
           className={`hero-animation-layer ${isReady ? "is-visible" : ""}`}
           aria-hidden="true"
@@ -633,27 +554,17 @@ export default function Hero() {
         </div>
 
         <div className={`hero-ui-layer ${isReady ? "is-visible" : ""}`}>
-          <div
-            ref={cursorRef}
-            className="cursor-ring"
-            style={{ opacity: showCursor ? 1 : 0 }}
-          />
-          <div
-            ref={cursorDotRef}
-            className="cursor-dot-element"
-            style={{ opacity: showCursor ? 1 : 0 }}
-          />
-
-          <div className="hero-copy">
-            <h1 className="title-main">FORGE</h1>
-            <p className="subtitle-main">
-              Built for strength. Designed for performance.
-            </p>
+          <div className="hero-copy-shell">
+            <div className="hero-copy">
+              <h1 className="title-main">FORGE</h1>
+              <p className="subtitle-main">
+                Built for strength. Designed for performance.
+              </p>
+              <Link href="/shop" className="cta-btn">
+                Shop Now
+              </Link>
+            </div>
           </div>
-
-          <Link href="/shop" className="cta-btn">
-            Shop Now
-          </Link>
         </div>
       </section>
 
@@ -670,7 +581,9 @@ export default function Hero() {
         }
 
         .hero-fallback-background,
-        .hero-animation-layer {
+        .hero-animation-layer,
+        .hero-atmosphere,
+        .hero-noise-overlay {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -680,10 +593,32 @@ export default function Hero() {
 
         .hero-fallback-background {
           background:
-            radial-gradient(circle at 18% 22%, rgba(255, 58, 58, 0.24), transparent 34%),
-            radial-gradient(circle at 82% 18%, rgba(153, 0, 0, 0.22), transparent 32%),
-            radial-gradient(circle at 52% 78%, rgba(110, 0, 0, 0.18), transparent 40%),
-            linear-gradient(135deg, #020202 0%, #120202 42%, #050505 72%, #000000 100%);
+            radial-gradient(circle at 16% 22%, rgba(165, 18, 18, 0.24), transparent 34%),
+            radial-gradient(circle at 78% 28%, rgba(104, 10, 10, 0.18), transparent 32%),
+            linear-gradient(160deg, #010101 0%, #090202 42%, #020202 74%, #000000 100%);
+        }
+
+        .hero-atmosphere {
+          background:
+            radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035), transparent 30%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.16) 36%, rgba(0, 0, 0, 0.4) 100%);
+          opacity: 0.9;
+          transform: translate3d(0, 0, 0) scale(1.02);
+          animation: heroAtmosphereShift 18s ease-in-out infinite alternate;
+          will-change: transform, opacity;
+          pointer-events: none;
+        }
+
+        .hero-noise-overlay {
+          background-image:
+            linear-gradient(rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.018)),
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 0.6px, transparent 0.8px),
+            radial-gradient(circle at 72% 64%, rgba(255, 255, 255, 0.02) 0.6px, transparent 0.8px);
+          background-size: 100% 100%, 18px 18px, 22px 22px;
+          background-position: center, 0 0, 11px 9px;
+          mix-blend-mode: soft-light;
+          opacity: 0.085;
+          pointer-events: none;
         }
 
         .hero-animation-layer {
@@ -705,7 +640,7 @@ export default function Hero() {
           align-items: center;
           justify-content: center;
           opacity: 0;
-          transition: opacity 420ms ease;
+          transition: opacity 360ms ease;
           will-change: opacity;
         }
 
@@ -725,111 +660,123 @@ export default function Hero() {
           display: block;
         }
 
-        .hero-copy {
+        .hero-copy-shell {
           position: relative;
           z-index: 20;
+          width: min(100%, 72rem);
+          padding: clamp(6rem, 10vw, 8rem) 1.5rem 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .hero-copy {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 1rem;
-          padding: 0 1.5rem;
+          gap: 1.25rem;
+          max-width: 36rem;
+          text-align: center;
+          transform: translate3d(0, 18px, 0);
+          opacity: 0;
+          transition:
+            transform 420ms ease,
+            opacity 420ms ease;
+          will-change: transform, opacity;
+        }
+
+        .hero-ui-layer.is-visible .hero-copy {
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
         }
 
         .title-main {
-          position: relative;
-          z-index: 20;
           margin: 0;
-          text-align: center;
           font-size: clamp(4rem, 12vw, 8.5rem);
-          line-height: 0.88;
+          line-height: 0.9;
           font-weight: 900;
-          letter-spacing: -0.08em;
+          letter-spacing: -0.035em;
           color: rgba(255, 255, 255, 0.98);
           text-wrap: balance;
           pointer-events: none;
-          will-change: transform, opacity;
           text-shadow:
-            0 18px 60px rgba(0, 0, 0, 0.6),
-            0 0 42px rgba(255, 34, 34, 0.28);
+            0 10px 30px rgba(0, 0, 0, 0.34),
+            0 0 24px rgba(142, 18, 18, 0.12);
         }
 
         .subtitle-main {
-          position: relative;
-          z-index: 20;
-          max-width: 40rem;
           margin: 0;
-          text-align: center;
-          font-size: clamp(1rem, 2.2vw, 1.5rem);
-          line-height: 1.35;
-          font-weight: 800;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.9);
-          will-change: transform, opacity;
-          text-shadow:
-            0 10px 30px rgba(0, 0, 0, 0.45),
-            0 0 26px rgba(255, 34, 34, 0.18);
+          max-width: 28rem;
+          font-size: clamp(1rem, 1.6vw, 1.125rem);
+          line-height: 1.5;
+          font-weight: 500;
+          letter-spacing: 0.01em;
+          color: rgba(255, 255, 255, 0.78);
           pointer-events: none;
         }
 
         .cta-btn {
-          position: absolute;
-          left: 50%;
-          bottom: 4.5rem;
-          z-index: 20;
-          transform: translateX(-50%);
-          border: 1px solid rgba(255, 255, 255, 0.14);
+          margin-top: 0.5rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 3.5rem;
+          min-width: 11rem;
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 999px;
-          background: rgba(18, 0, 0, 0.58);
+          background: rgba(255, 255, 255, 0.075);
           color: rgba(255, 255, 255, 0.96);
-          padding: 1rem 1.85rem;
-          font-size: 1rem;
-          font-weight: 800;
-          letter-spacing: 0.04em;
+          padding: 0.95rem 1.5rem;
+          font-size: 0.95rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
           text-decoration: none;
-          backdrop-filter: blur(12px);
+          backdrop-filter: blur(8px);
           will-change: transform, opacity;
-          box-shadow:
-            0 16px 40px rgba(0, 0, 0, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.04);
           transition:
-            transform 0.3s ease,
+            transform 0.2s ease,
+            opacity 0.2s ease,
             background-color 0.3s ease,
-            border-color 0.3s ease;
+            border-color 0.3s ease,
+            box-shadow 0.3s ease;
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.04),
+            0 0 0 1px rgba(150, 18, 18, 0.08);
         }
 
         .cta-btn:hover {
-          transform: translateX(-50%) translateY(-2px);
-          border-color: rgba(255, 80, 80, 0.34);
-          background: rgba(42, 0, 0, 0.76);
+          transform: translate3d(0, -2px, 0);
+          opacity: 0.98;
+          border-color: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.1);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            0 0 0 1px rgba(184, 26, 26, 0.16),
+            0 0 18px rgba(128, 12, 12, 0.12);
         }
 
-        .cursor-ring,
-        .cursor-dot-element {
+        .forge-hero::after {
+          content: "";
           position: absolute;
-          top: 0;
-          left: 0;
+          inset: 0;
+          z-index: 1;
           pointer-events: none;
-          z-index: 30;
-          transition: opacity 0.2s ease;
-          will-change: transform, opacity;
+          background:
+            radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.14) 72%, rgba(0, 0, 0, 0.34) 100%);
         }
 
-        .cursor-ring {
-          width: 40px;
-          height: 40px;
-          border-radius: 999px;
-          border: 1px solid rgba(255, 255, 255, 0.45);
-          backdrop-filter: blur(8px);
-        }
-
-        .cursor-dot-element {
-          width: 8px;
-          height: 8px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.9);
+        @keyframes heroAtmosphereShift {
+          0% {
+            transform: translate3d(-1.5%, -1%, 0) scale(1.02);
+            opacity: 0.82;
+          }
+          100% {
+            transform: translate3d(1.5%, 1%, 0) scale(1.06);
+            opacity: 0.96;
+          }
         }
 
         @media (max-width: 768px) {
@@ -837,9 +784,12 @@ export default function Hero() {
             min-height: calc(100vh - 4rem);
           }
 
+          .hero-copy-shell {
+            padding: 5.5rem 1rem 2.5rem;
+          }
+
           .hero-copy {
-            padding: 0 1rem;
-            gap: 0.75rem;
+            gap: 1rem;
           }
 
           .title-main {
@@ -847,28 +797,23 @@ export default function Hero() {
           }
 
           .subtitle-main {
-            font-size: clamp(0.95rem, 4vw, 1.15rem);
+            font-size: clamp(0.95rem, 4vw, 1.05rem);
           }
 
           .cta-btn {
-            bottom: 3.25rem;
             width: calc(100% - 2rem);
             max-width: 20rem;
-          }
-
-          .cursor-ring,
-          .cursor-dot-element {
-            display: none;
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
+          .hero-atmosphere,
           .hero-animation-layer,
           .hero-ui-layer,
-          .cta-btn,
-          .cursor-ring,
-          .cursor-dot-element {
+          .hero-copy,
+          .cta-btn {
             transition: none;
+            animation: none;
           }
         }
       `}</style>

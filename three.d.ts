@@ -1,4 +1,4 @@
 declare module "three" {
-  const THREE: any;
+  const THREE: unknown;
   export = THREE;
 }

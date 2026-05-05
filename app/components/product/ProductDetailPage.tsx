@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
@@ -11,7 +11,9 @@ import type { ProductDetailConfig } from "./productData";
 
 type TabName = "description" | "specs" | "reviews";
 
-const ProductReviewsPanel = dynamic(() => import("./ProductReviewsPanel"));
+const ProductReviewsPanel = dynamic(() => import("./ProductReviewsPanel"), {
+  loading: () => <div className="min-h-[320px] rounded-[1.75rem] border border-white/8 bg-white/[0.03]" />,
+});
 
 export default function ProductDetailPage({
   product,
@@ -42,6 +44,7 @@ export default function ProductDetailPage({
     product.slug === "zeus" ? "specs" : "description",
   );
   const [notification, setNotification] = useState("");
+  const notificationTimeoutRef = useRef<number | null>(null);
   const currentImage = useMemo(
     () => product.images[currentImageIndex] ?? product.images[0],
     [currentImageIndex, product.images],
@@ -65,7 +68,28 @@ export default function ProductDetailPage({
           ["reviews", "Reviews"],
         ];
 
-  const updateImage = (nextIndex: number) => {
+  const clearNotification = useCallback(() => {
+    if (notificationTimeoutRef.current) {
+      window.clearTimeout(notificationTimeoutRef.current);
+      notificationTimeoutRef.current = null;
+    }
+  }, []);
+
+  const queueNotification = useCallback(
+    (message: string) => {
+      clearNotification();
+      setNotification(message);
+      notificationTimeoutRef.current = window.setTimeout(() => {
+        setNotification("");
+        notificationTimeoutRef.current = null;
+      }, 3000);
+    },
+    [clearNotification],
+  );
+
+  useEffect(() => clearNotification, [clearNotification]);
+
+  const updateImage = useCallback((nextIndex: number) => {
     if (nextIndex < 0) {
       setCurrentImageIndex(product.images.length - 1);
       return;
@@ -77,16 +101,15 @@ export default function ProductDetailPage({
     }
 
     setCurrentImageIndex(nextIndex);
-  };
+  }, [product.images.length]);
 
-  const addSelectedItemToCart = () => {
+  const addSelectedItemToCart = useCallback(() => {
     try {
       const validationError = validateAddToCart?.();
 
       if (validationError) {
         window.alert(validationError);
-        setNotification(validationError);
-        window.setTimeout(() => setNotification(""), 3000);
+        queueNotification(validationError);
         return false;
       }
 
@@ -103,15 +126,24 @@ export default function ProductDetailPage({
         images: cartItem.images ?? product.images,
         href: cartItem.href ?? product.href,
       });
-      setNotification(`${cartItem.name} added to cart!`);
-      window.setTimeout(() => setNotification(""), 3000);
+      queueNotification(`${cartItem.name} added to cart!`);
       return true;
     } catch {
-      setNotification("Error: Cart system not available");
-      window.setTimeout(() => setNotification(""), 3000);
+      queueNotification("Error: Cart system not available");
       return false;
     }
-  };
+  }, [
+    addToCart,
+    product.href,
+    product.images,
+    product.price,
+    product.slug,
+    product.cartName,
+    quantity,
+    queueNotification,
+    resolveCartItem,
+    validateAddToCart,
+  ]);
 
   const handleAddToCart = () => {
     addSelectedItemToCart();
@@ -127,12 +159,9 @@ export default function ProductDetailPage({
 
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1}>
+      <main>
         <section className="bg-black px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-[4.5rem]">
@@ -142,15 +171,13 @@ export default function ProductDetailPage({
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_46%)]" />
                     <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-red-600/20 blur-[30px]" />
                     <Image
-                      key={currentImage}
                       src={currentImage}
                       alt={currentImageLabel}
                       fill
+                      priority={currentImageIndex === 0}
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       quality={70}
-                      loading={currentImageIndex === 0 ? "eager" : "lazy"}
-                      fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
-                      className="product-image gpu-accelerated h-full w-full object-contain p-6 drop-shadow-[0_22px_40px_rgba(0,0,0,0.42)] transition-all duration-500 ease-out sm:p-8"
+                      className="product-image gpu-accelerated h-full w-full object-contain p-6 drop-shadow-[0_22px_40px_rgba(0,0,0,0.42)] transition-transform duration-500 ease-out sm:p-8"
                     />
 
                     <button
@@ -200,6 +227,7 @@ export default function ProductDetailPage({
                         }
                         width={160}
                         height={160}
+                        sizes="(max-width: 640px) 33vw, 160px"
                         quality={70}
                         className="relative h-20 w-full rounded-xl object-contain bg-transparent p-1 transition-transform duration-300"
                       />
@@ -330,17 +358,17 @@ export default function ProductDetailPage({
 
                   <div className="space-y-5">
                     {product.descriptionGalleryImages?.map((image, index) => (
-                      <Image
-                        key={`standalone-${image}`}
-                        src={image}
-                        alt={`${product.name} detail image ${index + 1}`}
-                        width={1600}
-                        height={1600}
-                        sizes="(max-width: 1280px) 100vw, 1200px"
-                        quality={70}
-                        loading="lazy"
-                        className="h-auto w-full object-contain"
-                      />
+                    <Image
+                      key={`standalone-${image}`}
+                      src={image}
+                      alt={`${product.name} detail image ${index + 1}`}
+                      width={1600}
+                      height={1600}
+                      priority={index === 0}
+                      sizes="(max-width: 1280px) 100vw, 1200px"
+                      quality={70}
+                      className="h-auto w-full object-contain"
+                    />
                     ))}
                   </div>
                 </section>
@@ -372,11 +400,11 @@ export default function ProductDetailPage({
                       key={image}
                       src={image}
                       alt={`${product.name} description image ${index + 1}`}
-                      width={0}
-                      height={0}
+                      width={1600}
+                      height={1600}
                       sizes="(max-width: 1280px) 100vw, 1200px"
                       quality={70}
-                      className="w-full h-auto"
+                      className="h-auto w-full"
                     />
                   ))}
                 </div>

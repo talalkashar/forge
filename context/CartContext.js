@@ -126,21 +126,17 @@ export function CartProvider({ children }) {
   }, [cart, isHydrated]);
 
   useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
     const handleStorage = () => {
       setCart(readStoredCart());
     };
 
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setCart((currentCart) => currentCart.filter((item) => item && item.images));
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [isHydrated]);
 
   const addToCart = useCallback((product) => {
     const normalizedProduct = normalizeCartItem(product);

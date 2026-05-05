@@ -10,12 +10,9 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1} className="bg-black px-6 py-14 sm:px-8 sm:py-20">
+      <main className="bg-black px-6 py-14 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
             Legal

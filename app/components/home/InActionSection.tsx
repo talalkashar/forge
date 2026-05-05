@@ -2,10 +2,12 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import Reveal from "@/components/ui/reveal";
 
-const InActionLightbox = dynamic(() => import("./InActionLightbox"));
+const InActionLightbox = dynamic(() => import("./InActionLightbox"), {
+  ssr: false,
+});
 
 const inActionImages = Object.freeze([
   "/images/wrist strap in use images/IMG_2008.webp",
@@ -16,14 +18,9 @@ const inActionImages = Object.freeze([
 
 function InActionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(4);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const shouldReduceMotion = useReducedMotion();
-
-  const visibleImages = useMemo(
-    () => inActionImages.slice(0, visibleCount),
-    [visibleCount],
-  );
+  const visibleImages = inActionImages.slice(0, visibleCount);
 
   const showPreviousImage = useCallback(() => {
     setActiveIndex((current) =>
@@ -91,33 +88,30 @@ function InActionSection() {
 
           <div className="columns-1 gap-4 space-y-4 sm:columns-2 xl:columns-3">
             {visibleImages.map((image, index) => (
-              <motion.button
+              <Reveal
                 key={image}
-                type="button"
-                initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={
-                  shouldReduceMotion
-                    ? { duration: 0 }
-                    : { duration: 0.45, ease: "easeOut", delay: index * 0.06 }
-                }
-                onClick={() => setActiveIndex(index)}
-                className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] text-left shadow-[0_16px_40px_rgba(0,0,0,0.24)] transition-transform duration-300 will-change-transform"
-                style={{ willChange: "transform, opacity" }}
+                className="mb-4 break-inside-avoid"
+                delayMs={index * 60}
               >
-                <div className="overflow-hidden bg-black">
-                  <Image
-                    src={image}
-                    alt={`Wrist straps in use ${index + 1}`}
-                    width={2400}
-                    height={1600}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                    quality={70}
-                    className="h-auto w-full object-contain transition-all duration-500 group-hover:scale-[1.05] group-hover:brightness-110"
-                  />
-                </div>
-              </motion.button>
+                <button
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  className="group block w-full overflow-hidden rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] text-left shadow-[0_14px_36px_rgba(0,0,0,0.22)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-white/14 hover:shadow-[0_18px_44px_rgba(0,0,0,0.28)]"
+                >
+                  <div className="overflow-hidden bg-black">
+                    <Image
+                      src={image}
+                      alt={`Wrist straps in use ${index + 1}`}
+                      width={2400}
+                      height={1600}
+                      priority={index === 0}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      quality={70}
+                      className="h-auto w-full object-contain transition-[transform,filter] duration-500 group-hover:scale-[1.03] group-hover:brightness-105"
+                    />
+                  </div>
+                </button>
+              </Reveal>
             ))}
           </div>
 

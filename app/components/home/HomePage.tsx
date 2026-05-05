@@ -19,12 +19,9 @@ const InActionSection = dynamic(() => import("./InActionSection"), {
 export default function HomePage() {
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1}>
+      <main>
         <div className="min-h-screen">
           <HeroSlot />
         </div>

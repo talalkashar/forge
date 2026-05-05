@@ -17,15 +17,30 @@ export default function Navbar() {
   const { cartCount } = useCart();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.pageYOffset > 100);
+    let frame = 0;
 
-    handleScroll();
+    const syncScrolledState = () => {
+      frame = 0;
+      const nextScrolled = window.scrollY > 24;
+      setIsScrolled((current) => (current === nextScrolled ? current : nextScrolled));
+    };
+
+    const handleScroll = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(syncScrolledState);
+    };
+
+    syncScrolledState();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     document.body.classList.toggle("menu-open", isOpen);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.cancelAnimationFrame(frame);
       document.body.classList.remove("menu-open");
     };
   }, [isOpen]);
@@ -34,8 +49,8 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-b border-red-600/20 transition-all duration-300 ${
-        isScrolled ? "shadow-lg" : ""
+      className={`fixed left-0 right-0 top-0 z-50 border-b border-red-600/16 bg-black/88 backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 ${
+        isScrolled ? "shadow-[0_12px_32px_rgba(0,0,0,0.28)]" : ""
       }`}
       id="navbar"
     >
@@ -87,8 +102,10 @@ export default function Navbar() {
       </div>
 
       <div
-        className={`md:hidden w-full bg-black border-b border-red-600/20 overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-screen" : "max-h-0"
+        className={`absolute inset-x-0 top-full md:hidden border-b border-red-600/20 bg-black/96 transition-[opacity,transform,visibility] duration-300 ${
+          isOpen
+            ? "visible translate-y-0 opacity-100"
+            : "invisible -translate-y-2 opacity-0"
         }`}
         id="mobile-menu"
       >

@@ -1,11 +1,8 @@
-"use client";
-
-import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ProductCatalogItem } from "./productData";
 
-function ProductCard({ product }: { product: ProductCatalogItem }) {
+export default function ProductCard({ product }: { product: ProductCatalogItem }) {
   const mainImage = product.images[0];
 
   return (
@@ -62,7 +59,3 @@ function ProductCard({ product }: { product: ProductCatalogItem }) {
     </article>
   );
 }
-
-ProductCard.displayName = "ProductCard";
-
-export default memo(ProductCard);

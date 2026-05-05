@@ -20,9 +20,9 @@ export default function AnimatedRedBackground() {
     const lowEnd = isLowEndDevice();
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: false,
       alpha: true,
-      powerPreference: "high-performance",
+      powerPreference: lowEnd ? "low-power" : "high-performance",
     });
     renderer.setPixelRatio(getPreferredPixelRatio(lowEnd));
 
@@ -33,10 +33,10 @@ export default function AnimatedRedBackground() {
     const uniforms = {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(1, 1) },
-      uNoiseOctaves: { value: lowEnd ? 3 : 5 },
-      uLayerCount: { value: lowEnd ? 2 : 4 },
-      uAnimationScale: { value: lowEnd ? 0.7 : 1.0 },
-      uAlpha: { value: lowEnd ? 0.72 : 0.96 },
+      uNoiseOctaves: { value: lowEnd ? 2 : 3 },
+      uLayerCount: { value: lowEnd ? 2 : 3 },
+      uAnimationScale: { value: lowEnd ? 0.58 : 0.75 },
+      uAlpha: { value: lowEnd ? 0.56 : 0.72 },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -87,13 +87,13 @@ export default function AnimatedRedBackground() {
           float value = 0.0;
           float amplitude = 0.55;
 
-          for (int i = 0; i < 5; i++) {
+          for (int i = 0; i < 3; i++) {
             if (float(i) >= uNoiseOctaves) {
               break;
             }
             value += amplitude * noise(p);
-            p *= 2.02;
-            amplitude *= 0.5;
+            p *= 1.94;
+            amplitude *= 0.52;
           }
 
           return value;
@@ -106,25 +106,25 @@ export default function AnimatedRedBackground() {
 
           float iTime = uTime * uAnimationScale;
           vec2 flow = vec2(
-            fbm(centered * 2.2 + vec2(iTime * 0.08, -iTime * 0.06)),
-            fbm(centered * 2.0 + vec2(-iTime * 0.05, iTime * 0.09))
+            fbm(centered * 2.0 + vec2(iTime * 0.06, -iTime * 0.04)),
+            fbm(centered * 1.8 + vec2(-iTime * 0.04, iTime * 0.06))
           );
 
-          float field = fbm(centered * 3.4 + flow * 1.2);
+          float field = fbm(centered * 2.8 + flow);
           float glow = 0.0;
 
-          for (int j = 0; j < 4; j++) {
+          for (int j = 0; j < 3; j++) {
             if (float(j) >= uLayerCount) {
               break;
             }
             float i = float(j) + 1.0;
             vec2 offset = vec2(
-              sin(iTime * (0.12 + i * 0.02) + i * 1.7),
-              cos(iTime * (0.1 + i * 0.025) + i * 2.3)
-            ) * (0.16 + i * 0.045);
+              sin(iTime * (0.1 + i * 0.02) + i * 1.7),
+              cos(iTime * (0.08 + i * 0.02) + i * 2.3)
+            ) * (0.14 + i * 0.04);
 
-            vec2 warped = centered + flow * 0.16 - offset;
-            float band = 1.0 - smoothstep(0.08, 0.72, length(warped) + field * 0.18);
+            vec2 warped = centered + flow * 0.12 - offset;
+            float band = 1.0 - smoothstep(0.12, 0.68, length(warped) + field * 0.14);
 
             vec4 auroraColors = vec4(
               0.8 + 0.2 * sin(i * 0.2 + iTime * 0.4),
@@ -133,7 +133,7 @@ export default function AnimatedRedBackground() {
               1.0
             );
 
-            glow += band * (0.22 + auroraColors.r * 0.32);
+            glow += band * (0.18 + auroraColors.r * 0.24);
           }
 
           vec3 base = vec3(0.02, 0.0, 0.0);
@@ -142,8 +142,8 @@ export default function AnimatedRedBackground() {
           vec3 high = vec3(0.86, 0.08, 0.07);
 
           vec3 color = mix(base, deep, smoothstep(0.12, 0.5, field));
-          color = mix(color, mid, smoothstep(0.28, 0.7, field + glow * 0.14));
-          color = mix(color, high, smoothstep(0.5, 1.0, glow));
+          color = mix(color, mid, smoothstep(0.28, 0.66, field + glow * 0.12));
+          color = mix(color, high, smoothstep(0.56, 1.0, glow));
 
           float vignette = smoothstep(1.35, 0.22, length(centered));
           color *= vignette;
@@ -156,6 +156,7 @@ export default function AnimatedRedBackground() {
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
 
+    let resizeFrame = 0;
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
       renderer.setPixelRatio(getPreferredPixelRatio(lowEnd));
@@ -163,8 +164,19 @@ export default function AnimatedRedBackground() {
       uniforms.uResolution.value.set(bounds.width, bounds.height);
     };
 
+    const scheduleResize = () => {
+      if (resizeFrame) {
+        return;
+      }
+
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = 0;
+        resize();
+      });
+    };
+
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", scheduleResize);
 
     const timer = new THREE.Timer();
     timer.connect(document);
@@ -225,7 +237,8 @@ export default function AnimatedRedBackground() {
     return () => {
       stop();
       observer.disconnect();
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", scheduleResize);
+      window.cancelAnimationFrame(resizeFrame);
       timer.dispose();
       material.dispose();
       mesh.geometry.dispose();

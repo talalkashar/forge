@@ -6,12 +6,9 @@ import { products } from "./productData";
 export default function ShopCatalogPage() {
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1} className="bg-black">
+      <main className="bg-black">
         <section className="border-b border-red-600/10 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.18),transparent_38%),linear-gradient(180deg,#090909_0%,#000000_100%)] px-6 py-16 sm:px-8 sm:py-20">
           <div className="mx-auto max-w-7xl">
             <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">

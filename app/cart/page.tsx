@@ -12,12 +12,9 @@ export default function CartPage() {
 
   return (
     <>
-      <a href="#maincontent" className="skip-link">
-        Skip to Main Content
-      </a>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main id="maincontent" tabIndex={-1} className="min-h-screen bg-black px-6 py-14 sm:px-8">
+      <main className="min-h-screen bg-black px-6 py-14 sm:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10">
             <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">

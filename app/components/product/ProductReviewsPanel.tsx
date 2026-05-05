@@ -1,9 +1,6 @@
-"use client";
-
-import { memo } from "react";
 import type { Review } from "./productData";
 
-function ProductReviewsPanel({ reviews }: { reviews: Review[] }) {
+export default function ProductReviewsPanel({ reviews }: { reviews: Review[] }) {
   return (
     <div>
       <div className="mb-8 rounded-[1.75rem] border border-white/8 bg-gradient-to-r from-white/[0.04] to-white/[0.02] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.22)] sm:p-7">
@@ -45,7 +42,3 @@ function ProductReviewsPanel({ reviews }: { reviews: Review[] }) {
     </div>
   );
 }
-
-ProductReviewsPanel.displayName = "ProductReviewsPanel";
-
-export default memo(ProductReviewsPanel);
