@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ProductCatalogItem } from "./productData";
+import type { StorefrontProduct } from "@/lib/products";
 
-export default function ProductCard({ product }: { product: ProductCatalogItem }) {
+export default function ProductCard({ product }: { product: StorefrontProduct }) {
   const mainImage = product.images[0];
 
   return (

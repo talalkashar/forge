@@ -5,9 +5,9 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "re
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import type { StorefrontProduct } from "@/lib/products";
 import Footer from "../home/Footer";
 import Navbar from "../home/Navbar";
-import type { ProductDetailConfig } from "./productData";
 
 type TabName = "description" | "specs" | "reviews";
 
@@ -23,7 +23,7 @@ export default function ProductDetailPage({
   addToCartDisabled = false,
   resolveCartItem,
 }: {
-  product: ProductDetailConfig;
+  product: StorefrontProduct;
   extraPanel?: ReactNode;
   bottomSection?: ReactNode;
   validateAddToCart?: () => string | null;

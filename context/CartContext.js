@@ -194,6 +194,10 @@ export function CartProvider({ children }) {
   }, [removeFromCart]);
 
   const clearCart = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(CART_STORAGE_KEY);
+    }
+
     setCart([]);
   }, []);
 

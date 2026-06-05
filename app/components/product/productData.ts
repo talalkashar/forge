@@ -19,7 +19,7 @@ export type Review = {
 };
 
 export type ProductDetailConfig = {
-  id: number;
+  id: string | number;
   slug: string;
   name: string;
   cartName: string;
@@ -50,6 +50,26 @@ export type ProductCatalogItem = {
   category: string;
   rating: number;
   reviewCount: number;
+};
+
+export type ProductPresentation = {
+  slug: string;
+  href: string;
+  images: string[];
+  description: string;
+  categoryLabel: string;
+  rating: number;
+  reviewCount: number;
+  originalPrice?: string;
+  kicker: string;
+  imageAlts?: string[];
+  featureList: string[];
+  intro: string;
+  descriptionSections: DescriptionSection[];
+  descriptionGalleryImages?: string[];
+  specificationGroups: SpecificationGroup[];
+  reviews: Review[];
+  buyNowUrl: string;
 };
 
 const strapProductImages = [
@@ -110,122 +130,36 @@ const strapDescriptionGalleryImages = [
   "/images/straps/product description/77.webp",
 ];
 
-export const strapProduct: ProductDetailConfig = {
-  id: 1,
-  slug: "straps",
-  name: "FORGE Wrist Straps",
-  cartName: "FORGE Wrist Straps",
-  price: 9.99,
-  originalPrice: "$19.99",
-  kicker: "Premium Lifting Gear",
-  images: strapProductImages,
-  featureList: [
-    "Non-slip grip material for stronger holds",
-    "Comfortable wrist padding for heavy sessions",
-    "Adjustable wrap for secure fit",
-    "Built for deadlifts, rows, and pull-ups",
-  ],
-  intro:
-    "Max out your lifts with comfort and control. Built for heavy pulling days and forged for discipline.",
-  descriptionGalleryImages: strapDescriptionGalleryImages,
-  descriptionSections: [
-    {
-      title: "1. Unbreakable Strength:",
-      images: ["/images/straps/product description/22.webp"],
-      text: "Push beyond limits with wrist straps built to endure your toughest sessions. Crafted from high-grade cotton and reinforced stitching, these straps support your grip so you can lift heavier and train harder without slipping or tearing.",
-    },
-    {
-      title: "2. Superior Grip:",
-      images: ["/images/straps/product description/33.webp"],
-      text: "Stay locked in even when the sweat hits. The non-slip textured surface ensures the bar stays secure in your hands, giving you full confidence in every rep. Designed to adjust smoothly for a secure and comfortable fit.",
-    },
-    {
-      title: "3. Total Comfort:",
-      images: ["/images/straps/product description/44.webp"],
-      text: "Soft padded neoprene hugs your wrist and eliminates friction or discomfort. Built for long lifting sessions so your focus stays on performance, not pain.",
-    },
-    {
-      title: "4. Adjustable Fit:",
-      images: ["/images/straps/product description/55.webp"],
-      text: "Designed to fit any wrist size or lifting style. Easy to wrap, quick to release, and always stable - comfort without compromise. Extended length and optimized width ensure secure grip performance.",
-    },
-    {
-      title: "5. Trusted Support:",
-      images: [
-        "/images/straps/product description/66.webp",
-        "/images/straps/product description/77.webp",
-      ],
-      text: "Forge Gym straps reduce strain and fatigue during heavy lifts, helping you train smarter and recover faster. Non-slip webbing locks your grip securely, giving full control even with maximum weight.",
-    },
-  ],
-  specificationGroups: [
-    {
-      title: "Product Information",
-      rows: [
-        ["Brand:", "FORGE GYM"],
-        ["Manufacturer:", "Capacity Gears"],
-        ["Color:", "Black"],
-        ["Style:", "Modern"],
-        ["Number of Items:", "2 (One Pair)"],
-      ],
-    },
-    {
-      title: "Dimensions & Materials",
-      rows: [
-        ["Length:", "20.8 inches (53 cm)"],
-        ["Width:", "1.6 inches (4 cm)"],
-        ["Material:", "Cotton Blend + Neoprene"],
-        ["Padding:", "Neoprene wrist cushioning"],
-        ["Stitching:", "Reinforced high-grade"],
-      ],
-    },
-    {
-      title: "Features",
-      bullets: [
-        "Non-slip textured webbing",
-        "Reinforced high-grade stitching",
-        "Neoprene wrist cushioning",
-      ],
-    },
-    {
-      title: "Product Codes",
-      rows: [
-        ["UPC:", "199284264465"],
-        ["ASIN:", "B0FN79GGQ9"],
-      ],
-      mono: true,
-    },
-  ],
-  reviews: [
-    {
-      name: "Denis",
-      rating: 5,
-      date: "Reviewed in the United States on October 24, 2025",
-      text: "I mainly use these for deadlifts and heavy rows, and they lock in better than the cheap pair I had before. The wrap is secure without digging into my wrists.",
-    },
-    {
-      name: "Amy Jacobson",
-      rating: 4,
-      date: "Reviewed in the United States on November 6, 2025",
-      text: "Bought these for my husband for gym use on pull days. They were a bit stiff the first couple sessions, but once broken in they felt much better.",
-    },
-    {
-      name: "Darell",
-      rating: 5,
-      date: "Reviewed in the United States on October 29, 2025",
-      text: "Used them on barbell rows and RDLs this week and they held up great. Easy to tighten, easy to release, and they don't feel bulky in the gym bag.",
-    },
-  ],
-  buyNowUrl:
-    "https://www.amazon.com/dp/B0FN79GGQ9?tag=68326-forgexfit-20&linkCode=ogi&th=1&psc=1&ascsubtag=srctok-c64406ef1da9d8bb&btn_ref=srctok-c64406ef1da9d8bb",
-  href: "/product/straps",
-};
+const beltBaseSpecificationGroups: SpecificationGroup[] = [
+  {
+    title: "Product Information",
+    rows: [
+      ["Brand:", "FORGE GYM"],
+      ["Category:", "Lever Belt"],
+      ["Variants:", "Zeus, Berserk, Black"],
+      ["Closure:", "Lever"],
+    ],
+  },
+  {
+    title: "Use Case",
+    bullets: [
+      "Heavy squats and deadlifts",
+      "Powerlifting and strength training",
+      "Fast on-off lever adjustment",
+    ],
+  },
+  {
+    title: "Construction",
+    rows: [
+      ["Material:", "Premium structured belt build"],
+      ["Support:", "Rigid core bracing"],
+      ["Fit:", "Variant-based design selection"],
+    ],
+  },
+];
 
-export const beltBaseProduct = {
-  id: 2,
-  slug: "zeus",
-  cartName: "FORGE Lever Belt",
-  price: 65,
+const beltBasePresentation = {
+  originalPrice: "$85",
   kicker: "Premium Lifting Gear",
   imageAlts: zeusBeltImageAlts,
   featureList: [
@@ -253,62 +187,40 @@ export const beltBaseProduct = {
       text: "Choose between Zeus, Berserk, and Black variants while staying within the same FORGE belt platform and product fit.",
     },
   ],
-  specificationGroups: [
-    {
-      title: "Product Information",
-      rows: [
-        ["Brand:", "FORGE GYM"],
-        ["Category:", "Lever Belt"],
-        ["Variants:", "Zeus, Berserk, Black"],
-        ["Closure:", "Lever"],
-      ],
-    },
-    {
-      title: "Use Case",
-      bullets: [
-        "Heavy squats and deadlifts",
-        "Powerlifting and strength training",
-        "Fast on-off lever adjustment",
-      ],
-    },
-    {
-      title: "Construction",
-      rows: [
-        ["Material:", "Premium structured belt build"],
-        ["Support:", "Rigid core bracing"],
-        ["Fit:", "Variant-based design selection"],
-      ],
-    },
-  ],
+  specificationGroups: beltBaseSpecificationGroups,
   reviews: [
     {
       name: "Marcus T.",
-      rating: 5,
+      rating: 5 as const,
       date: "Reviewed in the United States on January 12, 2026",
       text: "I’ve been using this belt for squat days and the lever feels solid every time. It started a little stiff, but after two weeks it settled in nicely.",
     },
     {
       name: "Jen R.",
-      rating: 4,
+      rating: 4 as const,
       date: "Reviewed in the United States on February 3, 2026",
       text: "Great belt for deadlift and squat sessions, especially if you like a very rigid feel. It took me a few workouts to dial in the fit, but support is excellent once set.",
     },
     {
       name: "Luis",
-      rating: 5,
+      rating: 5 as const,
       date: "Reviewed in the United States on February 18, 2026",
       text: "I train four days a week and use it for most of my heavy gym work. The brace feels consistent and the lever is quick between sets.",
     },
     {
       name: "Aaron P.",
-      rating: 4,
+      rating: 4 as const,
       date: "Reviewed in the United States on March 6, 2026",
       text: "Bought the belt mainly for heavy squat work and it does the job well. A little more rigid than I expected at first, but that’s probably why it feels so supportive.",
     },
   ],
   buyNowUrl: "/cart",
-  href: "/product/belt?variant=zeus",
 };
+
+export const beltVariantOrder = ["zeus", "berserk", "black"] as const;
+export type BeltProductSlug = (typeof beltVariantOrder)[number];
+
+export const featuredProductOrder = ["zeus", "berserk", "straps"] as const;
 
 export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
   zeus: [
@@ -320,63 +232,177 @@ export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
   black: blackBerserkDescriptionImages,
 };
 
-export const products: ProductCatalogItem[] = [
-  {
-    id: "belt-zeus",
+export const productPresentationBySlug: Record<string, ProductPresentation> = {
+  zeus: {
     slug: "zeus",
-    name: "Zeus Lever Belt",
-    price: 65,
-    originalPrice: "$85",
     href: "/product/belt?variant=zeus",
     images: zeusBeltImages,
     description:
       "A rigid FORGE lever belt built for aggressive bracing, fast setup, and heavy lower-body training sessions.",
-    category: "Lifting Belt",
+    categoryLabel: "Lifting Belt",
     rating: 4.9,
     reviewCount: 32,
+    descriptionGalleryImages: beltDescriptionGalleryBySlug.zeus,
+    ...beltBasePresentation,
   },
-  {
-    id: "belt-berserk",
+  berserk: {
     slug: "berserk",
-    name: "Berserk Lever Belt",
-    price: 65,
-    originalPrice: "$85",
     href: "/product/belt?variant=berserk",
     images: berserkBeltImages,
     description:
       "The Berserk variant keeps the same FORGE belt platform with a bold finish and locked-in support for compound lifts.",
-    category: "Lifting Belt",
+    categoryLabel: "Lifting Belt",
     rating: 4.8,
     reviewCount: 28,
+    descriptionGalleryImages: beltDescriptionGalleryBySlug.berserk,
+    ...beltBasePresentation,
   },
-  {
-    id: "belt-black",
+  black: {
     slug: "black",
-    name: "Black Lever Belt",
-    price: 65,
-    originalPrice: "$85",
     href: "/product/belt?variant=black",
     images: blackBeltImages,
     description:
       "A stealth black FORGE lever belt with the same rigid platform, fast lever closure, and heavy-duty support.",
-    category: "Lifting Belt",
+    categoryLabel: "Lifting Belt",
     rating: 4.8,
     reviewCount: 19,
+    descriptionGalleryImages: beltDescriptionGalleryBySlug.black,
+    ...beltBasePresentation,
   },
-  {
-    id: "wrist-straps",
+  straps: {
     slug: "straps",
-    name: "FORGE Wrist Straps",
-    price: 9.99,
-    originalPrice: "$19.99",
     href: "/product/straps",
-    images: strapProduct.images,
+    images: strapProductImages,
     description:
       "Cotton-blend lifting straps with a secure wrap and padded wrist support for heavy pulls and higher-volume back work.",
-    category: "Accessories",
+    categoryLabel: "Accessories",
     rating: 4.9,
     reviewCount: 41,
+    originalPrice: "$19.99",
+    kicker: "Premium Lifting Gear",
+    featureList: [
+      "Non-slip grip material for stronger holds",
+      "Comfortable wrist padding for heavy sessions",
+      "Adjustable wrap for secure fit",
+      "Built for deadlifts, rows, and pull-ups",
+    ],
+    intro:
+      "Max out your lifts with comfort and control. Built for heavy pulling days and forged for discipline.",
+    descriptionGalleryImages: strapDescriptionGalleryImages,
+    descriptionSections: [
+      {
+        title: "1. Unbreakable Strength:",
+        images: ["/images/straps/product description/22.webp"],
+        text: "Push beyond limits with wrist straps built to endure your toughest sessions. Crafted from high-grade cotton and reinforced stitching, these straps support your grip so you can lift heavier and train harder without slipping or tearing.",
+      },
+      {
+        title: "2. Superior Grip:",
+        images: ["/images/straps/product description/33.webp"],
+        text: "Stay locked in even when the sweat hits. The non-slip textured surface ensures the bar stays secure in your hands, giving you full confidence in every rep. Designed to adjust smoothly for a secure and comfortable fit.",
+      },
+      {
+        title: "3. Total Comfort:",
+        images: ["/images/straps/product description/44.webp"],
+        text: "Soft padded neoprene hugs your wrist and eliminates friction or discomfort. Built for long lifting sessions so your focus stays on performance, not pain.",
+      },
+      {
+        title: "4. Adjustable Fit:",
+        images: ["/images/straps/product description/55.webp"],
+        text: "Designed to fit any wrist size or lifting style. Easy to wrap, quick to release, and always stable - comfort without compromise. Extended length and optimized width ensure secure grip performance.",
+      },
+      {
+        title: "5. Trusted Support:",
+        images: [
+          "/images/straps/product description/66.webp",
+          "/images/straps/product description/77.webp",
+        ],
+        text: "Forge Gym straps reduce strain and fatigue during heavy lifts, helping you train smarter and recover faster. Non-slip webbing locks your grip securely, giving full control even with maximum weight.",
+      },
+    ],
+    specificationGroups: [
+      {
+        title: "Product Information",
+        rows: [
+          ["Brand:", "FORGE GYM"],
+          ["Manufacturer:", "Capacity Gears"],
+          ["Color:", "Black"],
+          ["Style:", "Modern"],
+          ["Number of Items:", "2 (One Pair)"],
+        ],
+      },
+      {
+        title: "Dimensions & Materials",
+        rows: [
+          ["Length:", "20.8 inches (53 cm)"],
+          ["Width:", "1.6 inches (4 cm)"],
+          ["Material:", "Cotton Blend + Neoprene"],
+          ["Padding:", "Neoprene wrist cushioning"],
+          ["Stitching:", "Reinforced high-grade"],
+        ],
+      },
+      {
+        title: "Features",
+        bullets: [
+          "Non-slip textured webbing",
+          "Reinforced high-grade stitching",
+          "Neoprene wrist cushioning",
+        ],
+      },
+      {
+        title: "Product Codes",
+        rows: [
+          ["UPC:", "199284264465"],
+          ["ASIN:", "B0FN79GGQ9"],
+        ],
+        mono: true,
+      },
+    ],
+    reviews: [
+      {
+        name: "Denis",
+        rating: 5,
+        date: "Reviewed in the United States on October 24, 2025",
+        text: "I mainly use these for deadlifts and heavy rows, and they lock in better than the cheap pair I had before. The wrap is secure without digging into my wrists.",
+      },
+      {
+        name: "Amy Jacobson",
+        rating: 4,
+        date: "Reviewed in the United States on November 6, 2025",
+        text: "Bought these for my husband for gym use on pull days. They were a bit stiff the first couple sessions, but once broken in they felt much better.",
+      },
+      {
+        name: "Darell",
+        rating: 5,
+        date: "Reviewed in the United States on October 29, 2025",
+        text: "Used them on barbell rows and RDLs this week and they held up great. Easy to tighten, easy to release, and they don't feel bulky in the gym bag.",
+      },
+    ],
+    buyNowUrl:
+      "https://www.amazon.com/dp/B0FN79GGQ9?tag=68326-forgexfit-20&linkCode=ogi&th=1&psc=1&ascsubtag=srctok-c64406ef1da9d8bb&btn_ref=srctok-c64406ef1da9d8bb",
   },
-];
+};
 
-export type BeltProductSlug = "zeus" | "berserk" | "black";
+export const products: ProductCatalogItem[] = Object.values(productPresentationBySlug).map(
+  (presentation) => {
+    const isBelt = beltVariantOrder.includes(
+      presentation.slug as (typeof beltVariantOrder)[number],
+    );
+
+    return {
+      id: isBelt ? `belt-${presentation.slug}` : "wrist-straps",
+      slug: presentation.slug,
+      name:
+        presentation.slug === "straps"
+          ? "FORGE Lifting Straps"
+          : `${presentation.slug.charAt(0).toUpperCase()}${presentation.slug.slice(1)} Lever Belt`,
+      price: isBelt ? 79.97 : 9.99,
+      originalPrice: presentation.originalPrice,
+      href: presentation.href,
+      images: presentation.images,
+      description: presentation.description,
+      category: presentation.categoryLabel,
+      rating: presentation.rating,
+      reviewCount: presentation.reviewCount,
+    };
+  },
+);

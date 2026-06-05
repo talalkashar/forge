@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description: "Browse the current FORGE lineup of lifting belts and wrist straps.",
 };
 
-export default function ShopPage() {
-  return <ShopCatalogPage />;
+type ShopPageProps = {
+  searchParams?: Promise<{
+    category?: string | string[];
+  }>;
+};
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const params = await searchParams;
+  const rawCategory = Array.isArray(params?.category)
+    ? params.category[0]
+    : params?.category;
+
+  return <ShopCatalogPage category={rawCategory} />;
 }

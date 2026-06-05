@@ -9,8 +9,14 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-stale-*/**",
+    ".next-build/**",
+    ".next-build-stale-*/**",
+    ".next 2/**",
     "out/**",
     "build/**",
+    "node_modules 2/**",
+    "forge-ai/node_modules/**",
     "next-env.d.ts",
   ]),
 ]);
