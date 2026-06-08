@@ -1,6 +1,24 @@
 import type { Review } from "./productData";
 
 export default function ProductReviewsPanel({ reviews }: { reviews: Review[] }) {
+  if (reviews.length === 0) {
+    return (
+      <div className="rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(24,24,24,0.96),rgba(5,5,5,1))] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.22)] sm:p-8">
+        <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
+          Reviews
+        </p>
+        <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
+          Reviews coming from verified customers.
+        </h2>
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-gray-400 sm:text-base">
+          FORGE is only showing customer feedback after it can be tied to real
+          orders. Review capture will be added after Stripe order records are
+          connected to the storefront.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-8 rounded-[1.75rem] border border-white/8 bg-gradient-to-r from-white/[0.04] to-white/[0.02] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.22)] sm:p-7">

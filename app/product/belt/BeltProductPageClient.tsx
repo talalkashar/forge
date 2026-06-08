@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ProductDetailPage from "@/app/components/product/ProductDetailPage";
 import ProductDetailState from "@/app/components/product/ProductDetailState";
@@ -55,6 +56,18 @@ function shortStockLabel(variant: ProductVariantRow | null) {
   const quantity = variant?.inventory_quantity ?? 0;
 
   return quantity <= 2 ? `${quantity} left` : "In stock";
+}
+
+function variantStyleNote(slug: string) {
+  if (slug === "zeus") {
+    return "Statement finish with the same FORGE lever belt platform.";
+  }
+
+  if (slug === "berserk") {
+    return "Bold finish with the same FORGE lever belt platform.";
+  }
+
+  return "Minimal black finish with the same FORGE lever belt platform.";
 }
 
 export default function BeltProductPageClient({
@@ -144,6 +157,109 @@ export default function BeltProductPageClient({
       />
     );
   }
+
+  const beltComparisonSection = (
+    <section className="bg-black px-4 pb-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
+            Compare Belts
+          </p>
+          <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
+            Same lever platform. Pick the finish that fits your setup.
+          </h2>
+          <p className="mt-4 text-sm leading-6 text-gray-400 sm:text-base">
+            Every listed FORGE belt keeps the current $79.97 belt price and live
+            size inventory from Supabase. Choose by finish, size availability,
+            and stock.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {products.map((product) => {
+            const activeSizes = product.availableSizes.length > 0
+              ? product.availableSizes.join(", ")
+              : "Check product page";
+            const stockLabel =
+              product.inventoryQuantity > 0
+                ? `${product.inventoryQuantity} total in stock`
+                : "Out of stock";
+
+            return (
+              <article
+                key={product.slug}
+                className={`rounded-[1.5rem] border p-5 shadow-[0_18px_50px_rgba(0,0,0,0.26)] ${
+                  product.slug === activeProduct.slug
+                    ? "border-red-600/45 bg-red-950/20"
+                    : "border-white/8 bg-white/[0.03]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-400">
+                      {product.slug}
+                    </p>
+                    <h3 className="mt-2 text-xl font-black text-white">
+                      {product.name}
+                    </h3>
+                  </div>
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-black text-white">
+                    ${product.price.toFixed(2)}
+                  </span>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-gray-400">
+                  {variantStyleNote(product.slug)}
+                </p>
+                <dl className="mt-5 space-y-3 text-sm">
+                  <div className="flex justify-between gap-4 rounded-xl bg-black/35 px-4 py-3">
+                    <dt className="text-gray-500">Sizes</dt>
+                    <dd className="text-right font-semibold text-white">{activeSizes}</dd>
+                  </div>
+                  <div className="flex justify-between gap-4 rounded-xl bg-black/35 px-4 py-3">
+                    <dt className="text-gray-500">Stock</dt>
+                    <dd className="text-right font-semibold text-white">{stockLabel}</dd>
+                  </div>
+                  <div className="flex justify-between gap-4 rounded-xl bg-black/35 px-4 py-3">
+                    <dt className="text-gray-500">Closure</dt>
+                    <dd className="font-semibold text-white">Lever</dd>
+                  </div>
+                </dl>
+                <Link
+                  href={product.href}
+                  className="mt-5 inline-flex rounded-full border border-red-600/50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/12"
+                >
+                  View this belt
+                </Link>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(24,24,24,0.96),rgba(5,5,5,1))] p-6 sm:p-8">
+          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-red-400">
+                Complete Your Setup
+              </p>
+              <h3 className="text-2xl font-black text-white">
+                Add straps for pull days.
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400">
+                Belts support bracing. Straps support grip on heavy pulls. Add
+                FORGE Lifting Straps only if they fit your training needs.
+              </p>
+            </div>
+            <Link
+              href="/product/straps"
+              className="inline-flex justify-center rounded-full bg-red-600 px-6 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-700"
+            >
+              View Straps - $9.99
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 
   const variantSelector = (
     <div className="space-y-6">
@@ -248,6 +364,7 @@ export default function BeltProductPageClient({
       key={activeProduct.slug}
       product={activeProduct}
       extraPanel={variantSelector}
+      bottomSection={beltComparisonSection}
       addToCartDisabled={!selectedSize || !selectedSizeIsPurchasable}
       validateAddToCart={(quantity) => {
         if (!selectedSize) {

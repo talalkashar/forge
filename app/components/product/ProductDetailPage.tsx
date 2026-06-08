@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import Footer from "../home/Footer";
 import Navbar from "../home/Navbar";
+import ProductReviewsPanel from "./ProductReviewsPanel";
 
-type TabName = "description" | "specs";
+type TabName = "description" | "specs" | "reviews";
 type FaqItem = [string, ReactNode];
 
 export default function ProductDetailPage({
@@ -67,10 +68,12 @@ export default function ProductDetailPage({
     product.slug === "zeus"
       ? [
           ["specs", "Specifications"],
+          ["reviews", "Reviews"],
         ]
       : [
           ["description", "Description"],
           ["specs", "Specifications"],
+          ["reviews", "Reviews"],
         ];
   const isStraps = product.slug === "straps";
   const sizeGuidance = [
@@ -89,7 +92,7 @@ export default function ProductDetailPage({
   ];
   const buyReassurance = isStraps
     ? ["Secure checkout", "Inventory verified before checkout", "Contact support for order help"]
-    : ["Secure checkout", "Inventory shown by selected size", "Contact support for sizing help"];
+    : ["Secure checkout", "Live stock by size", "Contact support for sizing help"];
   const includedItems = isStraps
     ? ["One pair of FORGE lifting straps"]
     : ["One FORGE lever belt", "Lever hardware"];
@@ -485,6 +488,9 @@ export default function ProductDetailPage({
                       Contact support
                     </Link>
                   </div>
+                  <p className="mt-3 text-center text-xs leading-5 text-gray-500">
+                    Payment details are entered only on Stripe Checkout.
+                  </p>
                 </div>
               </div>
             </div>
@@ -509,6 +515,12 @@ export default function ProductDetailPage({
                       <p className="mt-4 text-sm leading-6 text-gray-400 sm:text-base">
                         Exact size ranges are not currently published on the product page. Use the measurement guidance below and contact support if you are unsure before ordering.
                       </p>
+                      <Link
+                        href="/contact"
+                        className="mt-5 inline-flex rounded-full border border-red-600/50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/12"
+                      >
+                        Ask sizing support
+                      </Link>
                     </div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       {sizeGuidance.map(([title, text]) => (
@@ -714,6 +726,10 @@ export default function ProductDetailPage({
                     ))}
                   </div>
                 </div>
+              ) : null}
+
+              {activeTab === "reviews" ? (
+                <ProductReviewsPanel reviews={product.reviews} />
               ) : null}
 
               <section className="mt-12 rounded-[1.5rem] border border-white/8 bg-white/[0.03] p-6 sm:p-8">

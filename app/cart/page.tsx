@@ -9,6 +9,29 @@ import Navbar from "../components/home/Navbar";
 
 export default function CartPage() {
   const { cart, cartSubtotal, removeFromCart, updateQuantity, isHydrated } = useCart();
+  const hasBelt = cart.some((item) =>
+    ["zeus", "berserk", "black"].includes(item.slug),
+  );
+  const hasStraps = cart.some((item) => item.slug === "straps");
+  const setupUpsell = hasBelt && !hasStraps
+    ? {
+        eyebrow: "Complete your setup",
+        title: "Add straps for pull days",
+        description:
+          "Belts support bracing. Straps support grip on heavy pulls. Add them only if they fit your training.",
+        href: "/product/straps",
+        cta: "View Straps - $9.99",
+      }
+    : hasStraps && !hasBelt
+      ? {
+          eyebrow: "Complete your setup",
+          title: "Compare FORGE lever belts",
+          description:
+            "Straps support grip. Lever belts support bracing for heavy compound lifts.",
+          href: "/product/belt",
+          cta: "Compare Belts - $79.97",
+        }
+      : null;
 
   return (
     <>
@@ -137,6 +160,25 @@ export default function CartPage() {
                 <div className="mt-6">
                   <CheckoutButton />
                 </div>
+                {setupUpsell ? (
+                  <div className="mt-6 rounded-2xl border border-red-600/20 bg-red-950/15 p-5">
+                    <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-red-400">
+                      {setupUpsell.eyebrow}
+                    </p>
+                    <h2 className="mt-2 text-xl font-black text-white">
+                      {setupUpsell.title}
+                    </h2>
+                    <p className="mt-3 text-sm leading-6 text-gray-400">
+                      {setupUpsell.description}
+                    </p>
+                    <Link
+                      href={setupUpsell.href}
+                      className="mt-5 inline-flex w-full justify-center rounded-full border border-red-600/50 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-600/12"
+                    >
+                      {setupUpsell.cta}
+                    </Link>
+                  </div>
+                ) : null}
               </aside>
             </div>
           )}
