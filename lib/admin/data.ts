@@ -366,10 +366,19 @@ export async function getMarketplaceSyncReadiness(): Promise<
   }
 
   const products = productsResult.data;
-  const allVariants = products.flatMap((product) => product.product_variants ?? []);
+  const activeVariantsForProduct = (product: ProductWithRelations) =>
+    (product.product_variants ?? []).filter((variant) => variant.is_active === true);
+  const allVariants = products.flatMap(activeVariantsForProduct);
+  const activeVariantIds = new Set(allVariants.map((variant) => variant.id));
   const allListings = products.flatMap((product) => product.marketplace_listings ?? []);
   const channelListings = (channel: string) =>
-    allListings.filter((listing) => listing.channel === channel);
+    allListings.filter((listing) => {
+      if (listing.channel !== channel) {
+        return false;
+      }
+
+      return !listing.variant_id || activeVariantIds.has(listing.variant_id);
+    });
   const marketplaceChannel = (
     channel: "amazon" | "tiktok_shop",
     label: string,
@@ -406,17 +415,21 @@ export async function getMarketplaceSyncReadiness(): Promise<
     );
   }).length;
   const productRows = products.map((product) => {
-    const variants = product.product_variants ?? [];
+    const variants = activeVariantsForProduct(product);
+    const activeProductVariantIds = new Set(variants.map((variant) => variant.id));
     const listings = product.marketplace_listings ?? [];
     const websiteListing = listings.find((listing) => listing.channel === "website");
-    const amazonListings = listings.filter((listing) => listing.channel === "amazon");
-    const tiktokListings = listings.filter((listing) => listing.channel === "tiktok_shop");
+    const activeListings = listings.filter(
+      (listing) => !listing.variant_id || activeProductVariantIds.has(listing.variant_id),
+    );
+    const amazonListings = activeListings.filter((listing) => listing.channel === "amazon");
+    const tiktokListings = activeListings.filter((listing) => listing.channel === "tiktok_shop");
     const missingStripeIds = variants.filter(
       (variant) => !variant.stripe_price_id || !variant.stripe_product_id,
     ).length;
     const missingAmazonIds = amazonListings.filter((listing) => !listingReady(listing)).length;
     const missingTikTokIds = tiktokListings.filter((listing) => !listingReady(listing)).length;
-    const needsReview = listings.filter(listingNeedsReview).length;
+    const needsReview = activeListings.filter(listingNeedsReview).length;
     const imageCount = product.product_images?.length ?? 0;
     const missingImages = imageCount === 0 ? 1 : 0;
     const missingSkus = variants.filter((variant) => !variant.sku).length;
