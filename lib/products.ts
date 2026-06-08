@@ -34,6 +34,8 @@ export type StorefrontProduct = ProductCatalogItem &
     brand: string;
     subtitle: string | null;
     status: string;
+    databaseCategory: string;
+    catalogCategory: "belts" | "straps" | "other";
     basePriceCents: number;
     currency: string;
     isFeatured: boolean;
@@ -155,6 +157,27 @@ function sortStorefrontProducts(products: StorefrontProduct[]) {
   });
 }
 
+function getCatalogCategory(product: ProductWithRelations) {
+  const category = product.category.toLowerCase();
+  const slug = product.slug.toLowerCase();
+  const name = product.name.toLowerCase();
+
+  if (category.includes("belt")) {
+    return "belts";
+  }
+
+  if (
+    category.includes("strap") ||
+    category.includes("accessor") ||
+    slug.includes("strap") ||
+    name.includes("strap")
+  ) {
+    return "straps";
+  }
+
+  return "other";
+}
+
 function firstActiveVariant(product: ProductWithRelations) {
   return sortVariants(product.product_variants ?? []).find((variant) => variant.is_active);
 }
@@ -162,6 +185,7 @@ function firstActiveVariant(product: ProductWithRelations) {
 function createStorefrontProduct(product: ProductWithRelations): StorefrontProduct {
   const presentation = productPresentationBySlug[product.slug];
   const variants = sortVariants(product.product_variants ?? []);
+  const activeVariants = variants.filter((variant) => variant.is_active);
   const representativeVariant = firstActiveVariant(product);
   const sortedImages = sortImages(product.product_images ?? []);
   const imageSources = sortedImages.map((image) => image.src);
@@ -176,16 +200,18 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
     brand: product.brand ?? "FORGE",
     subtitle: product.subtitle,
     status: product.status,
+    databaseCategory: product.category,
+    catalogCategory: getCatalogCategory(product),
     basePriceCents: product.base_price_cents,
     currency: product.currency,
     isFeatured: product.is_featured ?? false,
     sortOrder: product.sort_order ?? 0,
     variants,
-    availableSkus: variants.map((variant) => variant.sku),
-    availableSizes: variants
+    availableSkus: activeVariants.map((variant) => variant.sku),
+    availableSizes: activeVariants
       .map((variant) => variant.size)
       .filter((size): size is string => Boolean(size)),
-    inventoryQuantity: variants.reduce(
+    inventoryQuantity: activeVariants.reduce(
       (total, variant) => total + (variant.inventory_quantity ?? 0),
       0,
     ),

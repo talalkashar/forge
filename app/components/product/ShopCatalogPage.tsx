@@ -1,8 +1,16 @@
 import { getStorefrontProducts } from "@/lib/products";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import Footer from "../home/Footer";
 import Navbar from "../home/Navbar";
 import ProductCollectionState from "./ProductCollectionState";
-import ProductCard from "./ProductCard";
+import ShopCatalogResults from "./ShopCatalogResults";
 
 type CatalogCategory = "belts" | "straps";
 
@@ -42,15 +50,8 @@ function normalizeCatalogCategory(category?: string): CatalogCategory | undefine
 export default async function ShopCatalogPage({ category }: ShopCatalogPageProps) {
   const { data: products, error, missingEnv } = await getStorefrontProducts();
   const activeCategory = normalizeCatalogCategory(category);
-  const leverBelts = products.filter((product) =>
-    product.href.includes("/product/belt") ||
-    product.category.toLowerCase().includes("belt"),
-  );
-  const wristStraps = products.filter((product) =>
-    product.slug.includes("strap") ||
-    product.href.includes("/product/straps") ||
-    product.name.toLowerCase().includes("strap"),
-  );
+  const leverBelts = products.filter((product) => product.catalogCategory === "belts");
+  const wristStraps = products.filter((product) => product.catalogCategory === "straps");
   const allProductSections = [
     {
       ...catalogCategoryDetails.belts,
@@ -72,6 +73,9 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
   const heroDescription = activeCategory
     ? catalogCategoryDetails[activeCategory].description
     : "Browse the current FORGE lineup. Every product card links directly to a dedicated detail page so sizing, specs, and checkout stay clear and consistent.";
+  const breadcrumbPage = activeCategory
+    ? catalogCategoryDetails[activeCategory].title
+    : "All Gear";
 
   return (
     <>
@@ -80,6 +84,20 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
       <main className="bg-black">
         <section className="border-b border-red-600/10 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.18),transparent_38%),linear-gradient(180deg,#090909_0%,#000000_100%)] px-6 py-16 sm:px-8 sm:py-20">
           <div className="mx-auto max-w-7xl">
+            <Breadcrumb className="mb-8">
+              <BreadcrumbList className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
+                <BreadcrumbItem>
+                  <BreadcrumbLink className="hover:text-white" href="/">
+                    Home
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="text-red-500/70" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-white">{breadcrumbPage}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+
             <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
               Shop
             </p>
@@ -96,56 +114,30 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
           {missingEnv ? (
             <div className="mx-auto max-w-7xl">
               <ProductCollectionState
-                eyebrow="Catalog Offline"
-                title="Supabase configuration is missing"
-                message="Add the Supabase environment variables to render live storefront products here."
+                eyebrow="Shop"
+                title="Products are temporarily unavailable"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
               />
             </div>
           ) : error ? (
             <div className="mx-auto max-w-7xl">
               <ProductCollectionState
-                eyebrow="Catalog Error"
-                title="Could not load products"
-                message={error}
+                eyebrow="Shop"
+                title="Products are temporarily unavailable"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
               />
             </div>
           ) : products.length > 0 ? (
-            <div className="mx-auto max-w-7xl space-y-14">
-              {productSections
-                .filter((section) => section.products.length > 0)
-                .map((section) => (
-                  <section key={section.id} id={section.id} className="scroll-mt-28">
-                    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                      <div>
-                        <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                          {section.eyebrow}
-                        </p>
-                        <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
-                          {section.title}
-                        </h2>
-                        <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-                          {section.description}
-                        </p>
-                      </div>
-                      <span className="text-sm font-semibold text-white/55">
-                        {section.products.length}{" "}
-                        {section.products.length === 1 ? "product" : "products"}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                      {section.products.map((product) => (
-                        <ProductCard key={product.slug} product={product} />
-                      ))}
-                    </div>
-                  </section>
-                ))}
-            </div>
+            <ShopCatalogResults
+              sections={productSections.filter((section) => section.products.length > 0)}
+              showSearch={!activeCategory}
+            />
           ) : (
             <div className="mx-auto max-w-7xl">
               <ProductCollectionState
-                eyebrow="Catalog Empty"
-                title="No live products found"
-                message="Supabase is connected, but the products table does not currently expose any storefront items."
+                eyebrow="Shop"
+                title="Gear is coming soon"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
               />
             </div>
           )}

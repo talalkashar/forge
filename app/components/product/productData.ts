@@ -114,11 +114,11 @@ const blackBeltImages = [
 ];
 
 const blackBerserkDescriptionImages = [
-  "/images/belts/product description/Black:Berserk Product description/1.webp",
-  "/images/belts/product description/Black:Berserk Product description/2.webp",
-  "/images/belts/product description/Black:Berserk Product description/3.webp",
-  "/images/belts/product description/Black:Berserk Product description/4.webp",
-  "/images/belts/product description/Black:Berserk Product description/5.webp",
+  "/images/belts/product description/Black&Berserk Product description/1.webp",
+  "/images/belts/product description/Black&Berserk Product description/2.webp",
+  "/images/belts/product description/Black&Berserk Product description/3.webp",
+  "/images/belts/product description/Black&Berserk Product description/4.webp",
+  "/images/belts/product description/Black&Berserk Product description/5.webp",
 ];
 
 const strapDescriptionGalleryImages = [
@@ -138,6 +138,8 @@ const beltBaseSpecificationGroups: SpecificationGroup[] = [
       ["Category:", "Lever Belt"],
       ["Variants:", "Zeus, Berserk, Black"],
       ["Closure:", "Lever"],
+      ["Thickness:", "10mm"],
+      ["Width:", "4 inches"],
     ],
   },
   {
@@ -146,30 +148,40 @@ const beltBaseSpecificationGroups: SpecificationGroup[] = [
       "Heavy squats and deadlifts",
       "Powerlifting and strength training",
       "Fast on-off lever adjustment",
+      "One lever belt included",
     ],
   },
   {
     title: "Construction",
     rows: [
-      ["Material:", "Premium structured belt build"],
+      ["Material:", "Structured belt build"],
       ["Support:", "Rigid core bracing"],
-      ["Fit:", "Variant-based design selection"],
+      ["Stitching:", "Double stitching"],
+      ["Buckle:", "Durable lever buckle"],
+    ],
+  },
+  {
+    title: "Care",
+    bullets: [
+      "Wipe clean after training",
+      "Keep dry between sessions",
+      "Avoid dropping the lever buckle on hard surfaces",
     ],
   },
 ];
 
 const beltBasePresentation = {
   originalPrice: "$85",
-  kicker: "Premium Lifting Gear",
+  kicker: "Lifting Gear",
   imageAlts: zeusBeltImageAlts,
   featureList: [
     "Secure lever closure for fast adjustments",
     "Rigid support for heavy strength work",
-    "Competition-ready structure and feel",
+    "10mm thickness with a 4-inch belt width",
     "Three variant options within one product line",
   ],
   intro:
-    "Built to lock in your core under serious weight. The FORGE Lever Belt delivers support, speed, and a premium finish across every variant.",
+    "Built to lock in your core under heavy weight. The FORGE Lever Belt delivers support, speed, and a clean finish across every variant.",
   descriptionSections: [
     {
       title: "1. Locked-In Support:",
@@ -188,32 +200,7 @@ const beltBasePresentation = {
     },
   ],
   specificationGroups: beltBaseSpecificationGroups,
-  reviews: [
-    {
-      name: "Marcus T.",
-      rating: 5 as const,
-      date: "Reviewed in the United States on January 12, 2026",
-      text: "I’ve been using this belt for squat days and the lever feels solid every time. It started a little stiff, but after two weeks it settled in nicely.",
-    },
-    {
-      name: "Jen R.",
-      rating: 4 as const,
-      date: "Reviewed in the United States on February 3, 2026",
-      text: "Great belt for deadlift and squat sessions, especially if you like a very rigid feel. It took me a few workouts to dial in the fit, but support is excellent once set.",
-    },
-    {
-      name: "Luis",
-      rating: 5 as const,
-      date: "Reviewed in the United States on February 18, 2026",
-      text: "I train four days a week and use it for most of my heavy gym work. The brace feels consistent and the lever is quick between sets.",
-    },
-    {
-      name: "Aaron P.",
-      rating: 4 as const,
-      date: "Reviewed in the United States on March 6, 2026",
-      text: "Bought the belt mainly for heavy squat work and it does the job well. A little more rigid than I expected at first, but that’s probably why it feels so supportive.",
-    },
-  ],
+  reviews: [],
   buyNowUrl: "/cart",
 };
 
@@ -240,8 +227,8 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     description:
       "A rigid FORGE lever belt built for aggressive bracing, fast setup, and heavy lower-body training sessions.",
     categoryLabel: "Lifting Belt",
-    rating: 4.9,
-    reviewCount: 32,
+    rating: 0,
+    reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.zeus,
     ...beltBasePresentation,
   },
@@ -252,8 +239,8 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     description:
       "The Berserk variant keeps the same FORGE belt platform with a bold finish and locked-in support for compound lifts.",
     categoryLabel: "Lifting Belt",
-    rating: 4.8,
-    reviewCount: 28,
+    rating: 0,
+    reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.berserk,
     ...beltBasePresentation,
   },
@@ -264,8 +251,8 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     description:
       "A stealth black FORGE lever belt with the same rigid platform, fast lever closure, and heavy-duty support.",
     categoryLabel: "Lifting Belt",
-    rating: 4.8,
-    reviewCount: 19,
+    rating: 0,
+    reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.black,
     ...beltBasePresentation,
   },
@@ -276,10 +263,10 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     description:
       "Cotton-blend lifting straps with a secure wrap and padded wrist support for heavy pulls and higher-volume back work.",
     categoryLabel: "Accessories",
-    rating: 4.9,
-    reviewCount: 41,
+    rating: 0,
+    reviewCount: 0,
     originalPrice: "$19.99",
-    kicker: "Premium Lifting Gear",
+    kicker: "Lifting Gear",
     featureList: [
       "Non-slip grip material for stronger holds",
       "Comfortable wrist padding for heavy sessions",
@@ -357,26 +344,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
         mono: true,
       },
     ],
-    reviews: [
-      {
-        name: "Denis",
-        rating: 5,
-        date: "Reviewed in the United States on October 24, 2025",
-        text: "I mainly use these for deadlifts and heavy rows, and they lock in better than the cheap pair I had before. The wrap is secure without digging into my wrists.",
-      },
-      {
-        name: "Amy Jacobson",
-        rating: 4,
-        date: "Reviewed in the United States on November 6, 2025",
-        text: "Bought these for my husband for gym use on pull days. They were a bit stiff the first couple sessions, but once broken in they felt much better.",
-      },
-      {
-        name: "Darell",
-        rating: 5,
-        date: "Reviewed in the United States on October 29, 2025",
-        text: "Used them on barbell rows and RDLs this week and they held up great. Easy to tighten, easy to release, and they don't feel bulky in the gym bag.",
-      },
-    ],
+    reviews: [],
     buyNowUrl:
       "https://www.amazon.com/dp/B0FN79GGQ9?tag=68326-forgexfit-20&linkCode=ogi&th=1&psc=1&ascsubtag=srctok-c64406ef1da9d8bb&btn_ref=srctok-c64406ef1da9d8bb",
   },

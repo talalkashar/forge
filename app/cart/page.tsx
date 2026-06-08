@@ -51,14 +51,20 @@ export default function CartPage() {
                       className="flex flex-col gap-5 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] p-5 shadow-[0_18px_56px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
                     >
                       <div className="relative h-28 w-full overflow-hidden rounded-2xl border border-white/8 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_42%),linear-gradient(180deg,rgba(18,18,18,0.95),rgba(8,8,8,1))] sm:w-28">
-                        <Image
-                          src={item.images?.[0] || "/fallback.png"}
-                          alt={item.name}
-                          fill
-                          sizes="112px"
-                          quality={70}
-                          className="object-contain p-3"
-                        />
+                        {item.images?.[0] ? (
+                          <Image
+                            src={item.images[0]}
+                            alt={item.name}
+                            fill
+                            sizes="112px"
+                            quality={70}
+                            className="object-contain p-3"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center px-3 text-center text-xs font-black uppercase tracking-[0.18em] text-red-500/80">
+                            FORGE
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex-1">
@@ -68,6 +74,11 @@ export default function CartPage() {
                         <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
                           {item.name}
                         </h2>
+                        {item.size ? (
+                          <p className="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-gray-400">
+                            Size: {item.size}
+                          </p>
+                        ) : null}
                         <p className="mt-2 text-base font-semibold text-red-500">
                           ${Number(item.price).toFixed(2)}
                         </p>

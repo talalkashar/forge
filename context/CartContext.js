@@ -20,6 +20,8 @@ const CART_STORAGE_KEY = "forge_cart";
  *   quantity: number;
  *   cartKey?: string;
  *   href?: string;
+ *   variantId?: string;
+ *   size?: string;
  * }} CartItem
  *
  * @typedef {{
@@ -30,6 +32,8 @@ const CART_STORAGE_KEY = "forge_cart";
  *   quantity?: number;
  *   cartKey?: string;
  *   href?: string;
+ *   variantId?: string;
+ *   size?: string;
  * }} CartProductInput
  *
  * @typedef {{
@@ -74,6 +78,14 @@ function normalizeCartItem(product) {
     href:
       typeof product.href === "string" && product.href.length > 0
         ? product.href
+        : undefined,
+    variantId:
+      typeof product.variantId === "string" && product.variantId.length > 0
+        ? product.variantId
+        : undefined,
+    size:
+      typeof product.size === "string" && product.size.length > 0
+        ? product.size
         : undefined,
   };
 }
@@ -156,7 +168,7 @@ export function CartProvider({ children }) {
           (item.cartKey ?? item.slug) === itemKey
             ? {
                 ...item,
-                quantity: item.quantity + 1,
+                quantity: item.quantity + normalizedProduct.quantity,
               }
             : item,
         );
@@ -166,7 +178,7 @@ export function CartProvider({ children }) {
         ...currentCart,
         {
           ...normalizedProduct,
-          quantity: 1,
+          quantity: normalizedProduct.quantity,
         },
       ];
     });

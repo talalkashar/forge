@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import ProductDetailState from "@/app/components/product/ProductDetailState";
 import { getStorefrontProductBySlug } from "@/lib/products";
-import ProductDetailPage from "../../components/product/ProductDetailPage";
+import StrapsProductPageClient from "./StrapsProductPageClient";
 
-const InActionSection = dynamic(() => import("../../components/home/InActionSection"));
+const InActionSection = nextDynamic(() => import("../../components/home/InActionSection"));
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Wrist Straps | FORGE",
@@ -17,9 +19,9 @@ export default async function StrapsProductPage() {
   if (missingEnv) {
     return (
       <ProductDetailState
-        eyebrow="Catalog Offline"
-        title="Supabase config is missing"
-        message="Add the Supabase environment variables to load the live straps product."
+        eyebrow="Wrist Straps"
+        title="Wrist straps are temporarily unavailable"
+        message="Please check back soon for the latest FORGE wrist straps."
       />
     );
   }
@@ -27,9 +29,9 @@ export default async function StrapsProductPage() {
   if (error) {
     return (
       <ProductDetailState
-        eyebrow="Catalog Error"
-        title="Could not load wrist straps"
-        message={error}
+        eyebrow="Wrist Straps"
+        title="Wrist straps are temporarily unavailable"
+        message="Please check back soon for the latest FORGE wrist straps."
       />
     );
   }
@@ -39,10 +41,15 @@ export default async function StrapsProductPage() {
       <ProductDetailState
         eyebrow="Product Unavailable"
         title="Wrist straps are not live right now"
-        message="This route is now backed by the Supabase products table, and no straps product is currently available there."
+        message="Please check back soon for the latest FORGE wrist straps."
       />
     );
   }
 
-  return <ProductDetailPage product={product} bottomSection={<InActionSection />} />;
+  return (
+    <StrapsProductPageClient
+      product={product}
+      bottomSection={<InActionSection />}
+    />
+  );
 }
