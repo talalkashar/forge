@@ -480,14 +480,14 @@ export async function getMarketplaceSyncReadiness(): Promise<
       blockers:
         stripeReady === allVariants.length
           ? []
-          : ["Add Stripe Product IDs and Price IDs for every variant."],
+          : ["Use /admin/stripe to create or reuse Stripe Product IDs and Price IDs for every variant."],
     },
     marketplaceChannel("amazon", "Amazon"),
     marketplaceChannel("tiktok_shop", "TikTok Shop"),
   ];
   const nextActions = [
     channels.find((channel) => channel.channel === "stripe" && channel.missing > 0)
-      ? "Create/fill Stripe Product IDs and Price IDs for all variants."
+      ? "Open /admin/stripe and run the Stripe Products/Prices setup after reviewing the dry-run plan."
       : null,
     channels.find((channel) => channel.channel === "amazon" && channel.missing > 0)
       ? "Fill real Amazon listing IDs and SKUs; do not use guessed identifiers."

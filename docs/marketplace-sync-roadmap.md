@@ -11,10 +11,14 @@ This roadmap keeps Supabase as the source of truth while FORGE moves from manual
 - Read-only `/admin/sync` dashboard showing missing IDs, review states, SKU coverage, image coverage, and inventory warnings.
 - Inventory export/restore scripts for protecting live inventory before any reset or reseed.
 
-## Phase 2: Stripe Hardening
+## Phase 2: Stripe Product/Price Automation
 
-- Create Stripe Products and Prices for each live variant.
+- Use `/admin/stripe` as the dry-run-first Stripe setup command center.
+- Show every active Supabase variant, SKU, price, current Stripe IDs, and the exact Stripe Product/Price that would be created or reused.
+- Create or reuse Stripe Products and Prices for each live variant only after admin confirmation.
 - Store Stripe Product IDs and Price IDs on `product_variants`.
+- Update only Stripe `marketplace_listings` rows with connected Product/Price IDs, SKU, sync status, and sync timestamp.
+- Do not create checkout sessions, charge customers, touch inventory, or mutate Amazon/TikTok Shop rows from the Stripe setup page.
 - Keep dynamic Stripe checkout only if it remains intentional for launch speed.
 - Move checkout toward Supabase-backed variant validation before creating a Stripe session.
 - Prevent checkout for inactive variants or variants with insufficient inventory.

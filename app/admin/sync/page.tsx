@@ -125,6 +125,12 @@ export default async function AdminSyncPage() {
               review states, SKU coverage, image coverage, and inventory warnings before
               any future connector writes are enabled.
             </p>
+            <Link
+              href="/admin/stripe"
+              className="mt-4 inline-flex rounded-full border border-red-600/50 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white hover:bg-red-600/10"
+            >
+              Open Stripe Setup
+            </Link>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">
@@ -226,6 +232,12 @@ export default async function AdminSyncPage() {
             ))}
           </ol>
           <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/admin/stripe"
+              className="rounded-full border border-red-600/50 px-4 py-2 text-sm font-bold text-white hover:bg-red-600/10"
+            >
+              Stripe Setup
+            </Link>
             <Link
               href="/admin/marketplace?missing=1"
               className="rounded-full border border-red-600/50 px-4 py-2 text-sm font-bold text-white hover:bg-red-600/10"
