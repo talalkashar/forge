@@ -12,6 +12,7 @@ import { previewAmazonListingsImport } from "@/lib/marketplaces/amazon/listings"
 import { previewAmazonOrdersImport } from "@/lib/marketplaces/amazon/orders";
 import { getTikTokCredentialStatus } from "@/lib/marketplaces/tiktok/env";
 import { previewTikTokOrdersImport } from "@/lib/marketplaces/tiktok/orders";
+import { getTikTokOAuthScaffoldStatus } from "@/lib/marketplaces/tiktok/oauth";
 import { previewTikTokProductsImport } from "@/lib/marketplaces/tiktok/products";
 import {
   AdminCard,
@@ -139,6 +140,7 @@ export default async function AdminSyncPage() {
   );
   const amazonCredentials = getAmazonCredentialStatus();
   const tiktokCredentials = getTikTokCredentialStatus();
+  const tiktokOAuth = getTikTokOAuthScaffoldStatus();
   const amazonChannel = readiness.channels.find(
     (channel) => channel.channel === "amazon",
   );
@@ -283,6 +285,8 @@ export default async function AdminSyncPage() {
               <div>Shop ID: {yesNo(tiktokCredentials.shopIdPresent)}</div>
               <div>Access token: {yesNo(tiktokCredentials.accessTokenPresent)}</div>
               <div>Refresh token: {yesNo(tiktokCredentials.refreshTokenPresent)}</div>
+              <div>Callback route: {yesNo(tiktokOAuth.callbackRouteReady)}</div>
+              <div>Token exchange: {tiktokOAuth.tokenExchangeEnabled ? "Enabled" : "Disabled"}</div>
               <div>Missing mappings: {tiktokChannel?.missing ?? 0}</div>
               <div>Product import: {connectorStatusLabel(tiktokProductsPreview.status)}</div>
               <div>Orders import: {connectorStatusLabel(tiktokOrdersPreview.status)}</div>
@@ -290,7 +294,7 @@ export default async function AdminSyncPage() {
             <p className="mt-4 text-sm leading-6 text-gray-400">
               {tiktokCredentials.configured
                 ? "Next safe action: implement read-only product import preview and compare results against Supabase SKUs."
-                : "Next safe action: add TikTok Shop API credentials, then test read-only product import preview."}
+                : "Next safe action: finish TikTok review/seller authorization, then add token and shop env vars before read-only import preview."}
             </p>
           </div>
         </div>

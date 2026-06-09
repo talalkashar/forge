@@ -19,11 +19,14 @@ export type MarketplaceCredentialField = {
 
 export type TikTokCredentialStatus = {
   configured: boolean;
+  appShellConfigured: boolean;
   missingKeys: TikTokEnvKey[];
   appKeyPresent: boolean;
+  appSecretPresent: boolean;
   shopIdPresent: boolean;
   accessTokenPresent: boolean;
   refreshTokenPresent: boolean;
+  regionPresent: boolean;
   fields: MarketplaceCredentialField[];
 };
 
@@ -36,11 +39,17 @@ export function getTikTokCredentialStatus(): TikTokCredentialStatus {
 
   return {
     configured: missingKeys.length === 0,
+    appShellConfigured:
+      hasValue("TIKTOK_SHOP_APP_KEY") &&
+      hasValue("TIKTOK_SHOP_APP_SECRET") &&
+      hasValue("TIKTOK_SHOP_REGION"),
     missingKeys,
     appKeyPresent: hasValue("TIKTOK_SHOP_APP_KEY"),
+    appSecretPresent: hasValue("TIKTOK_SHOP_APP_SECRET"),
     shopIdPresent: hasValue("TIKTOK_SHOP_ID"),
     accessTokenPresent: hasValue("TIKTOK_SHOP_ACCESS_TOKEN"),
     refreshTokenPresent: hasValue("TIKTOK_SHOP_REFRESH_TOKEN"),
+    regionPresent: hasValue("TIKTOK_SHOP_REGION"),
     fields: [
       {
         key: "TIKTOK_SHOP_APP_KEY",

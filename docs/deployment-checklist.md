@@ -98,6 +98,20 @@ npm run inventory:restore -- backups/inventory-snapshot-YYYY-MM-DD-HH-mm.json
 - Check `/admin/marketplace?missing=1` for missing Stripe, Amazon, and TikTok Shop IDs.
 - Check `/admin/sync` for marketplace readiness, inventory warnings, and the latest local inventory backup filename.
 - Check `/admin/sync/amazon` and `/admin/sync/tiktok` for read-only connector readiness.
+- Check `/api/marketplaces/tiktok/callback` to confirm the safe TikTok OAuth callback scaffold responds.
+
+## TikTok Approval Checklist
+
+- TikTok OAuth callback scaffolding lives at `/api/marketplaces/tiktok/callback`.
+- The callback route is safe to receive redirects, but token exchange and token storage are disabled until explicitly approved.
+- TikTok access token, refresh token, and shop ID remain unavailable until the app is reviewed/published and the seller authorization flow is completed.
+- Complete company details review.
+- Complete partner registration review.
+- Complete US data security review.
+- Complete data security and privacy review.
+- Submit app review.
+- After approval, authorize the FORGE TikTok Shop seller account.
+- Add `TIKTOK_SHOP_ACCESS_TOKEN`, `TIKTOK_SHOP_REFRESH_TOKEN`, and `TIKTOK_SHOP_ID` through Vercel Environment Variables and local `.env.local`.
 
 ## Marketplace Sync Roadmap
 

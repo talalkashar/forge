@@ -74,6 +74,9 @@ Amazon credentials/checklist:
 - Display Supabase vs TikTok Shop differences in `/admin/sync` and `/admin/sync/tiktok`.
 - Require manual approval before writing any proposed mapping back to Supabase.
 - Do not write product, listing, price, or inventory changes back to TikTok Shop yet.
+- The TikTok OAuth callback route is scaffolded at `/api/marketplaces/tiktok/callback`.
+- The callback route can receive TikTok `code`, `state`, and `error` redirects, but token exchange and token storage are intentionally disabled until explicitly approved.
+- The callback route must not log authorization codes, exchange tokens, mutate Supabase, or call TikTok write APIs.
 
 TikTok Shop credentials/checklist:
 
@@ -84,6 +87,23 @@ TikTok Shop credentials/checklist:
 - Shop/cipher ID if required by the API flow.
 - Warehouse, shipping, and category requirements.
 - SKU mappings stored in Supabase marketplace listings.
+
+TikTok approval and authorization flow:
+
+1. Create the TikTok Shop Partner Center app/service.
+2. Add the FORGE callback URL: `https://capacitygears.com/api/marketplaces/tiktok/callback`.
+3. Enable only the minimum read-only scopes needed for product, order, inventory, and shop identity previews.
+4. Complete company details review.
+5. Complete partner registration review.
+6. Complete US data security review.
+7. Complete data security and privacy review.
+8. Submit app review and wait for approval.
+9. After approval, authorize the FORGE TikTok Shop seller account.
+10. Exchange the authorization code for access/refresh tokens only after the token exchange implementation is reviewed and explicitly enabled.
+11. Store resulting values as Vercel/local env vars, never in source control:
+    - `TIKTOK_SHOP_ACCESS_TOKEN`
+    - `TIKTOK_SHOP_REFRESH_TOKEN`
+    - `TIKTOK_SHOP_ID`
 
 ## Phase 5: Dry-Run Write Sync
 
@@ -120,11 +140,13 @@ The planning file `supabase/future-sync-schema.sql` sketches these tables for la
 ## Exact Next Implementation Path
 
 1. Add real Amazon and TikTok Shop credentials to local/Vercel env vars.
-2. Implement Amazon read-only listing import preview.
-3. Implement TikTok Shop read-only product import preview.
-4. Match imported rows to Supabase variants by SKU and existing marketplace IDs.
-5. Show dry-run diffs in `/admin/sync`, `/admin/sync/amazon`, and `/admin/sync/tiktok`.
-6. Let the admin approve marketplace mapping updates manually.
-7. Import orders read-only and display order-to-variant matches.
-8. Create `inventory_movements` from imported orders only after review.
-9. Enable controlled write sync later, after dry-runs are trusted.
+2. Finish TikTok app review and seller authorization.
+3. Enable TikTok token exchange only after approval and code review.
+4. Implement Amazon read-only listing import preview.
+5. Implement TikTok Shop read-only product import preview.
+6. Match imported rows to Supabase variants by SKU and existing marketplace IDs.
+7. Show dry-run diffs in `/admin/sync`, `/admin/sync/amazon`, and `/admin/sync/tiktok`.
+8. Let the admin approve marketplace mapping updates manually.
+9. Import orders read-only and display order-to-variant matches.
+10. Create `inventory_movements` from imported orders only after review.
+11. Enable controlled write sync later, after dry-runs are trusted.
