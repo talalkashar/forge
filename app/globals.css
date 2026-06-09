@@ -39,6 +39,7 @@ body.menu-open {
 .forge-logo-text {
   font-weight: 700 !important;
   color: #ffffff !important;
+  white-space: nowrap;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
   transition:
     transform 0.25s ease,
@@ -66,6 +67,217 @@ body.menu-open {
 .cart-btn:hover {
   transform: translate3d(0, -1px, 0);
   filter: drop-shadow(0 2px 10px rgba(255, 255, 255, 0.12));
+}
+
+.forge-hero {
+  position: relative;
+  min-height: calc(100vh - 3rem);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  background: #000000;
+}
+
+.hero-fallback-background,
+.hero-animation-layer,
+.hero-atmosphere,
+.hero-noise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-fallback-background {
+  background:
+    radial-gradient(circle at 16% 22%, rgba(165, 18, 18, 0.24), transparent 34%),
+    radial-gradient(circle at 78% 28%, rgba(104, 10, 10, 0.18), transparent 32%),
+    linear-gradient(160deg, #010101 0%, #090202 42%, #020202 74%, #000000 100%);
+}
+
+.hero-atmosphere {
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.16) 36%, rgba(0, 0, 0, 0.4) 100%);
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0) scale(1.02);
+  animation: heroAtmosphereShift 18s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.hero-noise-overlay {
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.018)),
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 0.6px, transparent 0.8px),
+    radial-gradient(circle at 72% 64%, rgba(255, 255, 255, 0.02) 0.6px, transparent 0.8px);
+  background-size: 100% 100%, 18px 18px, 22px 22px;
+  background-position: center, 0 0, 11px 9px;
+  mix-blend-mode: soft-light;
+  opacity: 0.085;
+}
+
+.hero-animation-layer {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 420ms ease;
+  will-change: opacity;
+}
+
+.hero-animation-layer.is-visible {
+  opacity: 1;
+}
+
+.hero-ui-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 360ms ease;
+  will-change: opacity;
+}
+
+.hero-ui-layer.is-visible {
+  opacity: 1;
+}
+
+.liquid-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.liquid-canvas-wrapper canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero-copy-shell {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  width: min(100%, 72rem);
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4.75rem, 7vw, 6.25rem) 1.5rem 3rem;
+}
+
+.hero-copy {
+  position: relative;
+  display: flex;
+  max-width: 36rem;
+  transform: translate3d(0, 18px, 0);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  text-align: center;
+  opacity: 0;
+  transition:
+    transform 420ms ease,
+    opacity 420ms ease;
+  will-change: transform, opacity;
+}
+
+.hero-ui-layer.is-visible .hero-copy {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.title-main {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.98);
+  font-size: clamp(4rem, 12vw, 8.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.34),
+    0 0 24px rgba(142, 18, 18, 0.12);
+  text-wrap: balance;
+}
+
+.subtitle-main {
+  margin: 0;
+  max-width: 28rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+.cta-btn {
+  display: inline-flex;
+  min-width: 11rem;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.075);
+  color: rgba(255, 255, 255, 0.96);
+  padding: 0.95rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 0 0 1px rgba(150, 18, 18, 0.08);
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.cta-btn:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.98;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(184, 26, 26, 0.16),
+    0 0 18px rgba(128, 12, 12, 0.12);
+}
+
+.forge-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.14) 72%, rgba(0, 0, 0, 0.34) 100%);
+}
+
+@keyframes heroAtmosphereShift {
+  0% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02);
+    opacity: 0.82;
+  }
+
+  100% {
+    transform: translate3d(1.5%, 1%, 0) scale(1.06);
+    opacity: 0.96;
+  }
 }
 
 @keyframes fadeIn {
@@ -141,5 +353,43 @@ body.menu-open {
   a {
     min-height: 44px;
     min-width: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .forge-hero {
+    min-height: calc(100vh - 4rem);
+  }
+
+  .hero-copy-shell {
+    padding: 4.75rem 1rem 2.5rem;
+  }
+
+  .hero-copy {
+    gap: 1rem;
+  }
+
+  .title-main {
+    font-size: clamp(3.25rem, 15vw, 5rem);
+  }
+
+  .subtitle-main {
+    font-size: clamp(0.95rem, 4vw, 1.05rem);
+  }
+
+  .cta-btn {
+    width: calc(100% - 2rem);
+    max-width: 20rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-atmosphere,
+  .hero-animation-layer,
+  .hero-ui-layer,
+  .hero-copy,
+  .cta-btn {
+    animation: none;
+    transition: none;
   }
 }

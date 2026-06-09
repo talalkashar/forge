@@ -1,8 +1,11 @@
 import Link from "next/link";
+import ForgeLogo from "./ForgeLogo";
 
 const quickLinks = [
   { href: "/", label: "Home" },
-  { href: "/shop", label: "Shop" },
+  { href: "/shop/belts", label: "Lever Belts" },
+  { href: "/shop/wrist-straps", label: "Wrist Straps" },
+  { href: "/shop", label: "All Gear" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -19,9 +22,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           <div className="col-span-1 sm:col-span-2 md:col-span-2">
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4 tracking-wider">
-              FORGE
-            </h3>
+            <ForgeLogo className="mb-3 sm:mb-4" markClassName="text-xl sm:text-2xl" />
             <p className="text-gray-400 mb-4 max-w-md text-sm sm:text-base">
               Premium gym gear built for performance. Where strength meets
               discipline.

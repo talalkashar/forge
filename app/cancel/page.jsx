@@ -1,9 +1,11 @@
 import Link from "next/link";
+import ForgeLogo from "../components/home/ForgeLogo";
 
 export default function CancelPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 py-16 text-white">
       <div className="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] p-10 text-center shadow-[0_18px_56px_rgba(0,0,0,0.3)]">
+        <ForgeLogo className="mb-8 justify-center" markClassName="text-2xl" />
         <p className="mb-4 text-xs font-semibold uppercase tracking-[0.34em] text-red-500/90">
           Checkout Cancelled
         </p>

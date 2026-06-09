@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Premium gym gear built for performance. Where strength meets discipline.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{

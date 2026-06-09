@@ -1,11 +1,8 @@
 import AnimatedRedBackground from "@/components/ui/animated-red-background";
 import { ProductRevealCard } from "@/components/ui/product-reveal-card";
 import Reveal from "@/components/ui/reveal";
-import { products } from "../product/productData";
-
-const featuredProducts = products.filter((product) =>
-  ["zeus", "berserk", "straps"].includes(product.slug),
-);
+import { getFeaturedStorefrontProducts } from "@/lib/products";
+import ProductCollectionState from "../product/ProductCollectionState";
 
 function SectionHeader({
   eyebrow,
@@ -31,7 +28,10 @@ function SectionHeader({
   );
 }
 
-export default function LifestyleSection() {
+export default async function LifestyleSection() {
+  const { data: featuredProducts, error, missingEnv } =
+    await getFeaturedStorefrontProducts();
+
   return (
     <div className="bg-gradient-to-b from-black via-[#050505] to-neutral-950">
       <section className="relative overflow-hidden py-20 sm:py-24">
@@ -47,27 +47,47 @@ export default function LifestyleSection() {
               description="Everything you need. Nothing you don’t."
             />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {featuredProducts.map((product, index) => (
-                <Reveal
-                  key={product.name}
-                  className="h-full"
-                  delayMs={index * 90}
-                >
-                  <ProductRevealCard
-                    name={product.name}
-                    image={product.images[0]}
-                    price={`$${product.price}`}
-                    originalPrice={product.originalPrice}
-                    description={product.description}
-                    rating={product.rating}
-                    reviewCount={product.reviewCount}
-                    detailHref={product.href}
+            {missingEnv ? (
+              <ProductCollectionState
+                eyebrow="Featured Gear"
+                title="Featured products are temporarily unavailable"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
+              />
+            ) : error ? (
+              <ProductCollectionState
+                eyebrow="Featured Gear"
+                title="Featured products are temporarily unavailable"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
+              />
+            ) : featuredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                {featuredProducts.map((product, index) => (
+                  <Reveal
+                    key={product.slug}
                     className="h-full"
-                  />
-                </Reveal>
-              ))}
-            </div>
+                    delayMs={index * 90}
+                  >
+                    <ProductRevealCard
+                      name={product.name}
+                      image={product.images[0]}
+                      price={`$${product.price}`}
+                      originalPrice={product.originalPrice}
+                      description={product.description}
+                      rating={product.rating}
+                      reviewCount={product.reviewCount}
+                      detailHref={product.href}
+                      className="h-full"
+                    />
+                  </Reveal>
+                ))}
+              </div>
+            ) : (
+              <ProductCollectionState
+                eyebrow="Featured Gear"
+                title="Featured products are coming soon"
+                message="Please check back soon for the latest FORGE belts and wrist straps."
+              />
+            )}
           </div>
         </div>
       </section>

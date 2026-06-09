@@ -10,19 +10,19 @@ export const metadata: Metadata = {
 const storyCards = [
   {
     title: "Premium Materials",
-    text: "We source only the highest quality materials, tested for durability and performance under extreme conditions.",
+    text: "Our product pages list the materials and specs currently available for each FORGE item.",
   },
   {
-    title: "Athlete-Tested",
-    text: "Every product is tested by real athletes in real training environments before it reaches you.",
+    title: "Training-Focused",
+    text: "FORGE gear is positioned around the lifts it is meant to support: bracing, pulling, and repeated heavy sessions.",
   },
   {
     title: "No Compromises",
-    text: "We refuse to cut corners. Quality, performance, and durability are non-negotiable.",
+    text: "The store keeps sizing, pricing, inventory, and checkout details visible before purchase.",
   },
   {
-    title: "Built to Last",
-    text: "FORGE gear is designed to withstand years of heavy use, not just a few training cycles.",
+    title: "Clear Support",
+    text: "Shipping, returns, privacy, FAQ, and contact pages are available from the storefront footer.",
   },
 ];
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
               Our <span className="text-red-600">Story</span>
             </h1>
             <p className="text-xl text-gray-400 fade-in-up-delay-1">
-              Built for the relentless. Engineered for excellence.
+              Strength gear with clear sizing, real product details, and secure checkout.
             </p>
           </div>
         </section>
@@ -49,28 +49,24 @@ export default function AboutPage() {
               <div className="animate-on-scroll animated">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">The Beginning</h2>
                 <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                  FORGE was born from frustration. As serious athletes, we were tired of gear that promised performance
-                  but delivered disappointment. We needed equipment that could keep up with our intensity, our dedication,
-                  and our refusal to accept limitations.
+                  FORGE focuses on lifting gear for disciplined training: lever belts for bracing and wrist straps for
+                  heavy pulls. The store is built around clear product paths, straightforward specs, and live catalog data.
                 </p>
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  So we decided to build it ourselves. Every product in the FORGE lineup is designed by athletes, for athletes.
-                  We test every material, every stitch, every design decision against one simple question: &quot;Would I trust this
-                  when I&apos;m pushing my absolute limit?&quot;
+                  The current lineup is intentionally narrow so each product can have its own sizing, images, availability,
+                  and checkout path without hiding important purchase details.
                 </p>
               </div>
 
               <div className="animate-on-scroll animated">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">Our Mission</h2>
                 <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                  At FORGE, we believe your gear should never be the weak link. Whether you&apos;re pulling 500 pounds from
-                  the floor, pressing overhead, or grinding through your final rep, your equipment should be as committed
-                  to performance as you are.
+                  At FORGE, the goal is to keep the buying experience as focused as the training itself. Product pages
+                  should make it easy to understand what is included, what size is available, and what happens at checkout.
                 </p>
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  We&apos;re not here to make gear that only looks good online. We&apos;re here to build equipment that performs
-                  when it matters most: when you&apos;re one rep from failure, when your grip is slipping, and when you need
-                  one more edge to break through a plateau.
+                  As the catalog grows, FORGE can add more proof points only when they are real: verified reviews,
+                  tested policies, and confirmed marketplace or federation details.
                 </p>
               </div>
 
@@ -89,13 +85,12 @@ export default function AboutPage() {
               <div className="animate-on-scroll animated">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">Join the FORGE</h2>
                 <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                  FORGE isn&apos;t just a brand. It&apos;s a community of athletes who refuse to settle. We&apos;re powerlifters,
-                  bodybuilders, strongmen, and disciplined lifters who understand that greatness isn&apos;t given. It&apos;s
-                  forged through consistency, intent, and hard work.
+                  FORGE is for lifters who want a direct path to the gear they need without inflated claims or confusing
+                  product options.
                 </p>
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  When you choose FORGE, you&apos;re choosing gear built to match serious training. It&apos;s a commitment to
-                  strength that lasts and standards that hold up under pressure.
+                  When you choose FORGE, you should be able to see the product, select the right option, and check out
+                  with confidence in the details shown on the page.
                 </p>
               </div>
             </div>

@@ -110,7 +110,7 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
           </div>
         </section>
 
-        <section className="px-6 py-14 sm:px-8 sm:py-18">
+        <section className={`px-6 sm:px-8 ${activeCategory === "straps" ? "py-10 sm:py-12" : "py-14 sm:py-18"}`}>
           {missingEnv ? (
             <div className="mx-auto max-w-7xl">
               <ProductCollectionState
@@ -131,6 +131,7 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
             <ShopCatalogResults
               sections={productSections.filter((section) => section.products.length > 0)}
               showSearch={!activeCategory}
+              category={activeCategory}
             />
           ) : (
             <div className="mx-auto max-w-7xl">

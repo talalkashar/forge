@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -35,8 +35,6 @@ export function ProductRevealCard({
   originalPrice = "$299",
   image = "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&h=600&fit=crop",
   description = "Experience studio-quality sound with advanced noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.",
-  rating = 4.8,
-  reviewCount = 124,
   detailHref = "/shop",
   className,
 }: ProductRevealCardProps) {
@@ -93,25 +91,6 @@ export function ProductRevealCard({
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <div className="flex">
-            {[...Array(5)].map((_, index) => (
-              <Star
-                key={`${name}-star-${index}`}
-                className={cn(
-                  "h-4 w-4",
-                  index < Math.round(rating)
-                    ? "fill-current text-yellow-400"
-                    : "text-white/25",
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-sm text-white/60">
-            {rating} ({reviewCount} reviews)
-          </span>
-        </div>
-
         <div className="min-h-[5.5rem] space-y-2">
           <h3 className="text-2xl font-black leading-tight tracking-[-0.04em] text-white">
             {name}

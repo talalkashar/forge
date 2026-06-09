@@ -19,6 +19,7 @@ type ProductSection = {
 type ShopCatalogResultsProps = {
   sections: ProductSection[];
   showSearch?: boolean;
+  category?: "belts" | "straps";
 };
 
 const sizeOrder = new Map([
@@ -36,6 +37,8 @@ const storefrontSizeOptions = [
 ] as const;
 
 type StorefrontSize = (typeof storefrontSizeOptions)[number][0];
+
+const emptySizeFilters: StorefrontSize[] = [];
 
 function normalizeSize(size: string | null | undefined) {
   return size?.trim().toUpperCase() ?? "";
@@ -112,6 +115,7 @@ function parseSizeParam(value: string | null) {
 export default function ShopCatalogResults({
   sections,
   showSearch = false,
+  category,
 }: ShopCatalogResultsProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -182,6 +186,8 @@ export default function ShopCatalogResults({
     () => sections.flatMap((section) => section.products),
     [sections],
   );
+  const isSingleStrapsCollection =
+    category === "straps" && allProducts.length <= 1;
   const sizeOptions = useMemo(() => {
     const availableSizes = new Set(
       allProducts.flatMap((product) =>
@@ -199,23 +205,38 @@ export default function ShopCatalogResults({
           (sizeOrder.get(right) ?? Number.MAX_SAFE_INTEGER),
       );
   }, [allProducts]);
+  const showFilterBar = !isSingleStrapsCollection;
+  const enableSearch = showSearch && showFilterBar;
+  const enableSizeFilters =
+    showFilterBar && category !== "straps" && sizeOptions.length > 0;
+  const enableStockFilter = showFilterBar;
+  const enablePriceFilter = showFilterBar;
+  const enableSort = showFilterBar;
+  const effectiveQuery = enableSearch || (!showSearch && showFilterBar) ? query : "";
+  const effectiveSelectedSizes = enableSizeFilters
+    ? selectedSizes
+    : emptySizeFilters;
+  const effectiveInStockOnly = enableStockFilter ? inStockOnly : false;
+  const effectivePriceMode = enablePriceFilter ? priceMode : "all";
+  const effectiveSortMode = enableSort ? sortMode : "featured";
   const hasFilters =
-    query.trim().length > 0 ||
-    selectedSizes.length > 0 ||
-    inStockOnly ||
-    priceMode !== "all" ||
-    sortMode !== "featured";
+    showFilterBar &&
+    (query.trim().length > 0 ||
+      selectedSizes.length > 0 ||
+      inStockOnly ||
+      priceMode !== "all" ||
+      sortMode !== "featured");
   const matchingSlugs = useMemo(() => {
-    if (!query.trim()) {
+    if (!effectiveQuery.trim()) {
       return null;
     }
 
     return new Set(
-      searchProducts(allProducts.map(toProductSearchItem), query).map(
+      searchProducts(allProducts.map(toProductSearchItem), effectiveQuery).map(
         (product) => product.slug,
       ),
     );
-  }, [allProducts, query]);
+  }, [allProducts, effectiveQuery]);
   const visibleSections = useMemo(
     () =>
       sections
@@ -226,18 +247,23 @@ export default function ShopCatalogResults({
               matchingSlugs ? matchingSlugs.has(product.slug) : true,
             )
             .filter((product) =>
-              productMatchesFilters(product, selectedSizes, inStockOnly, priceMode),
+              productMatchesFilters(
+                product,
+                effectiveSelectedSizes,
+                effectiveInStockOnly,
+                effectivePriceMode,
+              ),
             )
             .sort((left, right) => {
-              if (sortMode === "price-low") {
+              if (effectiveSortMode === "price-low") {
                 return left.price - right.price;
               }
 
-              if (sortMode === "price-high") {
+              if (effectiveSortMode === "price-high") {
                 return right.price - left.price;
               }
 
-              if (sortMode === "name") {
+              if (effectiveSortMode === "name") {
                 return left.name.localeCompare(right.name);
               }
 
@@ -245,7 +271,14 @@ export default function ShopCatalogResults({
             }),
         }))
         .filter((section) => section.products.length > 0),
-    [inStockOnly, matchingSlugs, priceMode, sections, selectedSizes, sortMode],
+    [
+      effectiveInStockOnly,
+      effectivePriceMode,
+      effectiveSelectedSizes,
+      effectiveSortMode,
+      matchingSlugs,
+      sections,
+    ],
   );
   const clearFilters = useCallback(() => {
     updateUrl({
@@ -288,110 +321,120 @@ export default function ShopCatalogResults({
   );
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10">
-      <div className="grid gap-4 rounded-[1.25rem] border border-white/8 bg-white/[0.03] p-4 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] lg:items-end">
-        {showSearch ? (
-          <div className="min-w-0">
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-              Search
-            </label>
-            <ForgeSearchBar
-              value={query}
-              onChange={updateQuery}
-              placeholder="Filter by belt, zeus, berserk, straps..."
-            />
-          </div>
-        ) : (
-          <div className="hidden md:block" />
-        )}
-
-        {sizeOptions.length > 0 ? (
-          <div>
-            <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-              Size
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {sizeOptions.map(([size, label]) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => toggleSize(size)}
-                  aria-pressed={selectedSizes.includes(size)}
-                  className={`h-12 min-w-12 rounded-xl border px-4 text-sm font-bold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
-                    selectedSizes.includes(size)
-                      ? "border-red-500 bg-red-600/25"
-                      : "border-white/10 bg-black hover:border-red-600/60"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+    <div
+      className={`mx-auto max-w-7xl ${showFilterBar ? "space-y-10" : "space-y-0"}`}
+    >
+      {showFilterBar ? (
+        <div className="grid gap-4 rounded-[1.25rem] border border-white/8 bg-white/[0.03] p-4 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] lg:items-end">
+          {enableSearch ? (
+            <div className="min-w-0">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+                Search
+              </label>
+              <ForgeSearchBar
+                value={query}
+                onChange={updateQuery}
+                placeholder="Filter by belt, zeus, berserk, straps..."
+              />
             </div>
-          </div>
-        ) : null}
+          ) : (
+            <div className="hidden md:block" />
+          )}
 
-        <div>
-          <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-            Stock
-          </span>
-          <button
-            type="button"
-            onClick={updateInStock}
-            aria-pressed={inStockOnly}
-            className={`h-12 rounded-xl border px-4 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
-              inStockOnly
-                ? "border-red-500 bg-red-600/25"
-                : "border-white/10 bg-black hover:border-red-600/60"
-            }`}
-          >
-            In Stock Only
-          </button>
+          {enableSizeFilters ? (
+            <div>
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+                Size
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {sizeOptions.map(([size, label]) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => toggleSize(size)}
+                    aria-pressed={selectedSizes.includes(size)}
+                    className={`h-12 min-w-12 rounded-xl border px-4 text-sm font-bold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                      selectedSizes.includes(size)
+                        ? "border-red-500 bg-red-600/25"
+                        : "border-white/10 bg-black hover:border-red-600/60"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {enableStockFilter ? (
+            <div>
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+                Stock
+              </span>
+              <button
+                type="button"
+                onClick={updateInStock}
+                aria-pressed={inStockOnly}
+                className={`h-12 rounded-xl border px-4 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                  inStockOnly
+                    ? "border-red-500 bg-red-600/25"
+                    : "border-white/10 bg-black hover:border-red-600/60"
+                }`}
+              >
+                In Stock Only
+              </button>
+            </div>
+          ) : null}
+
+          {enablePriceFilter ? (
+            <label className="block">
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+                Price
+              </span>
+              <select
+                value={priceMode}
+                onChange={(event) => updatePrice(event.target.value)}
+                className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
+              >
+                <option value="all">All prices</option>
+                <option value="under-25">Under $25</option>
+                <option value="25-100">$25 to $100</option>
+                <option value="over-100">Over $100</option>
+              </select>
+            </label>
+          ) : null}
+
+          {enableSort ? (
+            <label className="block">
+              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+                Sort
+              </span>
+              <select
+                value={sortMode}
+                onChange={(event) => updateSort(event.target.value)}
+                className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
+              >
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: low to high</option>
+                <option value="price-high">Price: high to low</option>
+                <option value="name">Name</option>
+              </select>
+            </label>
+          ) : null}
+
+          {hasFilters ? (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="h-12 rounded-xl border border-white/10 bg-white/[0.03] px-4 text-sm font-bold uppercase tracking-[0.12em] text-white/70 transition-colors hover:border-white/20 hover:text-white lg:col-start-4"
+            >
+              Clear
+            </button>
+          ) : null}
         </div>
+      ) : null}
 
-        <label className="block">
-          <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-            Price
-          </span>
-          <select
-            value={priceMode}
-            onChange={(event) => updatePrice(event.target.value)}
-            className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
-          >
-            <option value="all">All prices</option>
-            <option value="under-25">Under $25</option>
-            <option value="25-100">$25 to $100</option>
-            <option value="over-100">Over $100</option>
-          </select>
-        </label>
-
-        <label className="block">
-          <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-            Sort
-          </span>
-          <select
-            value={sortMode}
-            onChange={(event) => updateSort(event.target.value)}
-            className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
-          >
-            <option value="featured">Featured</option>
-            <option value="price-low">Price: low to high</option>
-            <option value="price-high">Price: high to low</option>
-            <option value="name">Name</option>
-          </select>
-        </label>
-
-        {hasFilters ? (
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="h-12 rounded-xl border border-white/10 bg-white/[0.03] px-4 text-sm font-bold uppercase tracking-[0.12em] text-white/70 transition-colors hover:border-white/20 hover:text-white lg:col-start-4"
-          >
-            Clear
-          </button>
-        ) : null}
-      </div>
-
-      {!showSearch && query ? (
+      {!showSearch && showFilterBar && query ? (
         <div className="max-w-2xl">
           <ForgeSearchBar value={query} onChange={updateQuery} />
         </div>
@@ -426,7 +469,7 @@ export default function ShopCatalogResults({
             </section>
           ))}
         </div>
-      ) : (
+      ) : showFilterBar ? (
         <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-8 text-center">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500/90">
             No Results
@@ -444,6 +487,18 @@ export default function ShopCatalogResults({
           >
             Clear Filters
           </button>
+        </div>
+      ) : (
+        <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-8 text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500/90">
+            No Products
+          </p>
+          <h2 className="mt-3 text-3xl font-black text-white">
+            This collection is coming soon.
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-400">
+            Please check back soon for the latest FORGE gear.
+          </p>
         </div>
       )}
     </div>
