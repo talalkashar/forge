@@ -57,6 +57,23 @@ FORGE uses Supabase as the central catalog database for the website, Stripe chec
 9. Log in with the admin password.
 10. Edit products, inventory, and marketplace IDs.
 
+Optional read-only marketplace connector env vars can be added later. They are not required for the public storefront, checkout, or admin dashboard build:
+
+- `AMAZON_SELLER_ID`
+- `AMAZON_MARKETPLACE_ID`
+- `AMAZON_LWA_CLIENT_ID`
+- `AMAZON_LWA_CLIENT_SECRET`
+- `AMAZON_REFRESH_TOKEN`
+- `AMAZON_REGION`
+- `TIKTOK_SHOP_APP_KEY`
+- `TIKTOK_SHOP_APP_SECRET`
+- `TIKTOK_SHOP_ACCESS_TOKEN`
+- `TIKTOK_SHOP_REFRESH_TOKEN`
+- `TIKTOK_SHOP_ID`
+- `TIKTOK_SHOP_REGION`
+
+The sync dashboard only checks whether these values exist. It must never display their values.
+
 The public anon key is only allowed to read active products, active variants, and product images through row level security. Public users cannot insert, update, or delete catalog, marketplace, inventory, order, or order item records.
 
 Do not put `SUPABASE_SERVICE_ROLE_KEY` in client components. It is only for server-side admin operations and marketplace management. Do not commit `.env.local`.

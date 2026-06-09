@@ -2,6 +2,14 @@
 
 This roadmap keeps Supabase as the source of truth while FORGE moves from manual marketplace management to controlled automation. Do not enable Amazon or TikTok Shop writes until credentials, dry-run diffs, and inventory safety checks are in place.
 
+Current channel state:
+
+- Website is ready.
+- Stripe is ready after `/admin/stripe` created or reused Product/Price IDs.
+- Amazon is blocked until real Seller Central/SP-API credentials and listing IDs are added.
+- TikTok Shop is blocked until real TikTok Shop credentials and product/listing IDs are added.
+- No Amazon/TikTok write automation exists yet.
+
 ## Phase 1: Current System
 
 - Supabase catalog tables for products, variants, images, marketplace listings, inventory movements, orders, and order items.
@@ -26,10 +34,18 @@ This roadmap keeps Supabase as the source of truth while FORGE moves from manual
 
 ## Phase 3: Amazon Read-Only Connector
 
-- Configure Amazon Selling Partner API access.
+- Configure Amazon Selling Partner API access with optional env vars only:
+  - `AMAZON_SELLER_ID`
+  - `AMAZON_MARKETPLACE_ID`
+  - `AMAZON_LWA_CLIENT_ID`
+  - `AMAZON_LWA_CLIENT_SECRET`
+  - `AMAZON_REFRESH_TOKEN`
+  - `AMAZON_REGION`
+- `/admin/sync` checks credential presence without exposing values.
 - Pull listings, orders, and inventory into a read-only comparison job.
-- Match Amazon listings by SKU and ASIN.
-- Display Supabase vs Amazon differences in `/admin/sync`.
+- Match Amazon listings by existing marketplace external SKU, Supabase variant SKU, then ASIN if an ASIN is already stored.
+- Display Supabase vs Amazon differences in `/admin/sync` and `/admin/sync/amazon`.
+- Require manual approval before writing any proposed mapping back to Supabase.
 - Do not write product, listing, price, or inventory changes back to Amazon yet.
 
 Amazon credentials/checklist:
@@ -45,10 +61,18 @@ Amazon credentials/checklist:
 
 ## Phase 4: TikTok Shop Read-Only Connector
 
-- Configure TikTok Shop API access.
+- Configure TikTok Shop API access with optional env vars only:
+  - `TIKTOK_SHOP_APP_KEY`
+  - `TIKTOK_SHOP_APP_SECRET`
+  - `TIKTOK_SHOP_ACCESS_TOKEN`
+  - `TIKTOK_SHOP_REFRESH_TOKEN`
+  - `TIKTOK_SHOP_ID`
+  - `TIKTOK_SHOP_REGION`
+- `/admin/sync` checks credential presence without exposing values.
 - Pull products, orders, and inventory into a read-only comparison job.
-- Match TikTok Shop listings by SKU.
-- Display Supabase vs TikTok Shop differences in `/admin/sync`.
+- Match TikTok Shop listings by existing marketplace external SKU, Supabase variant SKU, then product/listing ID if one is already stored.
+- Display Supabase vs TikTok Shop differences in `/admin/sync` and `/admin/sync/tiktok`.
+- Require manual approval before writing any proposed mapping back to Supabase.
 - Do not write product, listing, price, or inventory changes back to TikTok Shop yet.
 
 TikTok Shop credentials/checklist:
@@ -90,3 +114,17 @@ Add these later as non-destructive migrations when connector work starts:
 - `marketplace_credentials_status`
 
 These tables are intentionally not part of the current schema reset because live manual inventory is already in Supabase and should not be disturbed.
+
+The planning file `supabase/future-sync-schema.sql` sketches these tables for later review. Do not run it without explicit approval.
+
+## Exact Next Implementation Path
+
+1. Add real Amazon and TikTok Shop credentials to local/Vercel env vars.
+2. Implement Amazon read-only listing import preview.
+3. Implement TikTok Shop read-only product import preview.
+4. Match imported rows to Supabase variants by SKU and existing marketplace IDs.
+5. Show dry-run diffs in `/admin/sync`, `/admin/sync/amazon`, and `/admin/sync/tiktok`.
+6. Let the admin approve marketplace mapping updates manually.
+7. Import orders read-only and display order-to-variant matches.
+8. Create `inventory_movements` from imported orders only after review.
+9. Enable controlled write sync later, after dry-runs are trusted.

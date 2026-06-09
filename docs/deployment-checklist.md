@@ -22,6 +22,23 @@ Do not commit `.env.local`.
 
 For production, set `NEXT_PUBLIC_BASE_URL` to `https://capacitygears.com`.
 
+Optional read-only marketplace connector variables can be added later. They are not required for storefront build or checkout:
+
+- `AMAZON_SELLER_ID`
+- `AMAZON_MARKETPLACE_ID`
+- `AMAZON_LWA_CLIENT_ID`
+- `AMAZON_LWA_CLIENT_SECRET`
+- `AMAZON_REFRESH_TOKEN`
+- `AMAZON_REGION`
+- `TIKTOK_SHOP_APP_KEY`
+- `TIKTOK_SHOP_APP_SECRET`
+- `TIKTOK_SHOP_ACCESS_TOKEN`
+- `TIKTOK_SHOP_REFRESH_TOKEN`
+- `TIKTOK_SHOP_ID`
+- `TIKTOK_SHOP_REGION`
+
+The admin sync dashboard only checks whether these values are present. It must never display the values.
+
 ## Admin Subdomain Deployment
 
 - Main storefront domain: `capacitygears.com`.
@@ -80,6 +97,7 @@ npm run inventory:restore -- backups/inventory-snapshot-YYYY-MM-DD-HH-mm.json
 - Visit `/admin`, log in, and verify Products, Marketplace, Inventory, and Sync pages load.
 - Check `/admin/marketplace?missing=1` for missing Stripe, Amazon, and TikTok Shop IDs.
 - Check `/admin/sync` for marketplace readiness, inventory warnings, and the latest local inventory backup filename.
+- Check `/admin/sync/amazon` and `/admin/sync/tiktok` for read-only connector readiness.
 
 ## Marketplace Sync Roadmap
 
