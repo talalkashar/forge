@@ -7,6 +7,12 @@ import {
   getMarketplaceSyncReadiness,
   type SyncReadinessChannel,
 } from "@/lib/admin/data";
+import { getAmazonCredentialStatus } from "@/lib/marketplaces/amazon/env";
+import { previewAmazonListingsImport } from "@/lib/marketplaces/amazon/listings";
+import { previewAmazonOrdersImport } from "@/lib/marketplaces/amazon/orders";
+import { getTikTokCredentialStatus } from "@/lib/marketplaces/tiktok/env";
+import { previewTikTokOrdersImport } from "@/lib/marketplaces/tiktok/orders";
+import { previewTikTokProductsImport } from "@/lib/marketplaces/tiktok/products";
 import {
   AdminCard,
   AdminShell,
@@ -45,6 +51,22 @@ function readinessColor(channel: SyncReadinessChannel) {
   return "text-red-300";
 }
 
+function connectorStatusLabel(status: string) {
+  if (status === "not_configured") {
+    return "Not configured";
+  }
+
+  if (status === "not_implemented") {
+    return "Not implemented";
+  }
+
+  return "Ready to test";
+}
+
+function yesNo(value: boolean) {
+  return value ? "Yes" : "No";
+}
+
 async function getLatestInventoryBackupFilename() {
   try {
     const files = await readdir("backups");
@@ -71,9 +93,20 @@ export default async function AdminSyncPage() {
     redirect("/admin");
   }
 
-  const [{ data: readiness, error }, latestBackup] = await Promise.all([
+  const [
+    { data: readiness, error },
+    latestBackup,
+    amazonListingsPreview,
+    amazonOrdersPreview,
+    tiktokProductsPreview,
+    tiktokOrdersPreview,
+  ] = await Promise.all([
     getMarketplaceSyncReadiness(),
     getLatestInventoryBackupFilename(),
+    previewAmazonListingsImport(),
+    previewAmazonOrdersImport(),
+    previewTikTokProductsImport(),
+    previewTikTokOrdersImport(),
   ]);
 
   if (error) {
@@ -103,6 +136,14 @@ export default async function AdminSyncPage() {
   const inventoryWarnings = readiness.products.reduce(
     (total, product) => total + product.inventoryWarnings,
     0,
+  );
+  const amazonCredentials = getAmazonCredentialStatus();
+  const tiktokCredentials = getTikTokCredentialStatus();
+  const amazonChannel = readiness.channels.find(
+    (channel) => channel.channel === "amazon",
+  );
+  const tiktokChannel = readiness.channels.find(
+    (channel) => channel.channel === "tiktok_shop",
   );
 
   return (
@@ -171,6 +212,87 @@ export default async function AdminSyncPage() {
               ) : null}
             </div>
           ))}
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Marketplace Connector Readiness" className="mt-6">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-500">
+                  Amazon
+                </p>
+                <p
+                  className={`mt-3 text-2xl font-black ${
+                    amazonCredentials.configured ? "text-emerald-300" : "text-red-300"
+                  }`}
+                >
+                  {amazonCredentials.configured
+                    ? "Credentials configured"
+                    : "Credentials missing"}
+                </p>
+              </div>
+              <Link
+                href="/admin/sync/amazon"
+                className="rounded-full border border-red-600/50 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white hover:bg-red-600/10"
+              >
+                Preview
+              </Link>
+            </div>
+            <dl className="mt-5 grid gap-2 text-sm text-gray-300 sm:grid-cols-2">
+              <div>Seller ID: {yesNo(amazonCredentials.sellerIdPresent)}</div>
+              <div>Marketplace ID: {yesNo(amazonCredentials.marketplaceIdPresent)}</div>
+              <div>Refresh token: {yesNo(amazonCredentials.refreshTokenPresent)}</div>
+              <div>Missing mappings: {amazonChannel?.missing ?? 0}</div>
+              <div>Listings import: {connectorStatusLabel(amazonListingsPreview.status)}</div>
+              <div>Orders import: {connectorStatusLabel(amazonOrdersPreview.status)}</div>
+            </dl>
+            <p className="mt-4 text-sm leading-6 text-gray-400">
+              {amazonCredentials.configured
+                ? "Next safe action: implement read-only listing import preview and compare results against Supabase SKUs."
+                : "Next safe action: add Amazon SP-API credentials, then test read-only listing import preview."}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-gray-500">
+                  TikTok Shop
+                </p>
+                <p
+                  className={`mt-3 text-2xl font-black ${
+                    tiktokCredentials.configured ? "text-emerald-300" : "text-red-300"
+                  }`}
+                >
+                  {tiktokCredentials.configured
+                    ? "Credentials configured"
+                    : "Credentials missing"}
+                </p>
+              </div>
+              <Link
+                href="/admin/sync/tiktok"
+                className="rounded-full border border-red-600/50 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white hover:bg-red-600/10"
+              >
+                Preview
+              </Link>
+            </div>
+            <dl className="mt-5 grid gap-2 text-sm text-gray-300 sm:grid-cols-2">
+              <div>App key: {yesNo(tiktokCredentials.appKeyPresent)}</div>
+              <div>Shop ID: {yesNo(tiktokCredentials.shopIdPresent)}</div>
+              <div>Access token: {yesNo(tiktokCredentials.accessTokenPresent)}</div>
+              <div>Refresh token: {yesNo(tiktokCredentials.refreshTokenPresent)}</div>
+              <div>Missing mappings: {tiktokChannel?.missing ?? 0}</div>
+              <div>Product import: {connectorStatusLabel(tiktokProductsPreview.status)}</div>
+              <div>Orders import: {connectorStatusLabel(tiktokOrdersPreview.status)}</div>
+            </dl>
+            <p className="mt-4 text-sm leading-6 text-gray-400">
+              {tiktokCredentials.configured
+                ? "Next safe action: implement read-only product import preview and compare results against Supabase SKUs."
+                : "Next safe action: add TikTok Shop API credentials, then test read-only product import preview."}
+            </p>
+          </div>
         </div>
       </AdminCard>
 
