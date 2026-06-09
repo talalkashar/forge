@@ -27,6 +27,7 @@ export default function ProductDetailPage({
   bottomSection,
   validateAddToCart,
   addToCartDisabled = false,
+  disabledCtaLabel,
   resolveCartItem,
 }: {
   product: StorefrontProduct;
@@ -34,6 +35,7 @@ export default function ProductDetailPage({
   bottomSection?: ReactNode;
   validateAddToCart?: (quantity: number) => string | null;
   addToCartDisabled?: boolean;
+  disabledCtaLabel?: string;
   resolveCartItem?: () => {
     slug: string;
     name: string;
@@ -76,6 +78,8 @@ export default function ProductDetailPage({
           ["reviews", "Reviews"],
         ];
   const isStraps = product.slug === "straps";
+  const disabledPurchaseLabel =
+    disabledCtaLabel ?? (isStraps ? "Out of Stock" : "Select Size");
   const sizeGuidance = [
     [
       "Measure where it sits",
@@ -299,6 +303,7 @@ export default function ProductDetailPage({
 
                     <button
                       type="button"
+                      aria-label={`Show previous ${product.name} image`}
                       className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/10 bg-black/60 p-3 text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-black/85 group-hover:opacity-100"
                       onClick={() => updateImage(currentImageIndex - 1)}
                     >
@@ -308,6 +313,7 @@ export default function ProductDetailPage({
                     </button>
                     <button
                       type="button"
+                      aria-label={`Show next ${product.name} image`}
                       className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/10 bg-black/60 p-3 text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-black/85 group-hover:opacity-100"
                       onClick={() => updateImage(currentImageIndex + 1)}
                     >
@@ -446,11 +452,11 @@ export default function ProductDetailPage({
                       disabled={addToCartDisabled}
                       className={`glow-red w-full rounded-full px-8 py-4 text-base font-bold transition-[transform,background-color,border-color,box-shadow] duration-300 sm:text-lg ${
                         addToCartDisabled
-                          ? "cursor-not-allowed bg-red-950/70 text-white/55"
+                          ? "cursor-not-allowed border border-white/8 bg-white/[0.04] text-white/45 shadow-none"
                           : "bg-red-600 text-white hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_16px_38px_rgba(220,38,38,0.24)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
                       }`}
                     >
-                      Add to Cart
+                      {addToCartDisabled ? disabledPurchaseLabel : "Add to Cart"}
                     </button>
 
                     <button
@@ -459,7 +465,7 @@ export default function ProductDetailPage({
                       disabled={addToCartDisabled}
                       className={`w-full rounded-full border-2 px-8 py-4 text-base font-bold transition-[transform,background-color,border-color,box-shadow] duration-300 sm:text-lg ${
                         addToCartDisabled
-                          ? "cursor-not-allowed border-red-950/70 bg-transparent text-red-950/80"
+                          ? "cursor-not-allowed border-white/8 bg-transparent text-white/30"
                           : "border-red-600 bg-transparent text-red-500 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-600/12 hover:text-white hover:shadow-[0_16px_38px_rgba(220,38,38,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
                       }`}
                     >
@@ -785,11 +791,11 @@ export default function ProductDetailPage({
               disabled={addToCartDisabled}
               className={`shrink-0 rounded-full px-5 py-3 text-sm font-black transition-colors ${
                 addToCartDisabled
-                  ? "bg-red-950/70 text-white/55"
+                  ? "border border-white/8 bg-white/[0.04] text-white/45"
                   : "bg-red-600 text-white hover:bg-red-700"
               }`}
             >
-              {addToCartDisabled ? (isStraps ? "Out of Stock" : "Select Size") : "Add to Cart"}
+              {addToCartDisabled ? disabledPurchaseLabel : "Add to Cart"}
             </button>
           </div>
         </div>

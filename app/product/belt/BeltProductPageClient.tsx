@@ -50,7 +50,7 @@ function stockMessageForVariant(variant: ProductVariantRow | null) {
 
 function shortStockLabel(variant: ProductVariantRow | null) {
   if (!variantIsPurchasable(variant)) {
-    return "Out";
+    return "Out of stock";
   }
 
   const quantity = variant?.inventory_quantity ?? 0;
@@ -117,6 +117,7 @@ export default function BeltProductPageClient({
   const selectedStockMessage = selectedSize
     ? stockMessageForVariant(selectedVariant)
     : "Select a size to see live stock";
+  const disabledCtaLabel = selectedSize ? "Select in-stock size" : "Select size";
 
   if (missingEnv) {
     return (
@@ -299,46 +300,68 @@ export default function BeltProductPageClient({
         </div>
       </div>
       <div>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
-            Size
-          </p>
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
+              Size
+            </p>
+            <p className="mt-1 text-xs leading-5 text-gray-500">
+              Unavailable sizes are locked until restock.
+            </p>
+          </div>
           <p className="text-right text-xs font-semibold text-gray-500">
-            Inventory updates by selected size.
+            Inventory updates by size.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {sizeOptions.map((size) => (
-            (() => {
+          {sizeOptions.map((size) => {
               const sizeVariant = variantForSize(activeProduct, size);
               const sizeIsPurchasable = variantIsPurchasable(sizeVariant);
+              const sizeIsSelected = selectedSize === size;
+              const stockLabel = shortStockLabel(sizeVariant);
+              const sizeButtonClass = sizeIsPurchasable
+                ? sizeIsSelected
+                  ? "border-red-600 bg-red-600 text-white shadow-[0_16px_34px_rgba(220,38,38,0.2)]"
+                  : "border-white/10 bg-neutral-900 text-gray-300 hover:border-red-600/70 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+                : "cursor-not-allowed border-white/8 bg-[linear-gradient(180deg,rgba(20,20,20,0.78),rgba(8,8,8,0.92))] text-white/28 opacity-75";
 
               return (
-            <button
-              key={size}
-              type="button"
-              title={stockMessageForVariant(sizeVariant)}
-              className={`min-h-[4.25rem] rounded-2xl border px-4 py-3 text-left transition-all ${
-                selectedSize === size
-                  ? sizeIsPurchasable
-                    ? "border-red-600 bg-red-600 text-white"
-                    : "border-red-950 bg-red-950/45 text-white/65"
-                  : sizeIsPurchasable
-                    ? "border-white/10 bg-neutral-900 text-gray-300 hover:border-red-600/70 hover:text-white"
-                    : "border-white/8 bg-neutral-950 text-white/30 line-through"
-              }`}
-              onClick={() => setSelectedSize(size)}
-            >
-              <span className="block text-lg font-black uppercase tracking-[0.14em]">
-                {size}
-              </span>
-              <span className="mt-1 block text-xs font-bold uppercase tracking-[0.08em] opacity-75">
-                {shortStockLabel(sizeVariant)}
-              </span>
-            </button>
+                <button
+                  key={size}
+                  type="button"
+                  title={stockMessageForVariant(sizeVariant)}
+                  aria-disabled={!sizeIsPurchasable}
+                  disabled={!sizeIsPurchasable}
+                  className={`relative min-h-[4.75rem] overflow-hidden rounded-2xl border px-4 py-3 text-left transition-all ${sizeButtonClass}`}
+                  onClick={() => {
+                    if (!sizeIsPurchasable) {
+                      return;
+                    }
+
+                    setSelectedSize(size);
+                  }}
+                >
+                  {!sizeIsPurchasable ? (
+                    <span
+                      className="pointer-events-none absolute inset-x-3 top-1/2 h-px -rotate-12 bg-white/18"
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                  <span className="block text-lg font-black uppercase tracking-[0.14em]">
+                    {size}
+                  </span>
+                  <span
+                    className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[0.66rem] font-black uppercase tracking-[0.08em] ${
+                      sizeIsPurchasable
+                        ? "border-white/10 bg-black/20 text-white/75"
+                        : "border-red-950/60 bg-red-950/35 text-red-200/55"
+                    }`}
+                  >
+                    {stockLabel}
+                  </span>
+                </button>
               );
-            })()
-          ))}
+            })}
         </div>
         <div
           className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-semibold ${
@@ -366,6 +389,7 @@ export default function BeltProductPageClient({
       extraPanel={variantSelector}
       bottomSection={beltComparisonSection}
       addToCartDisabled={!selectedSize || !selectedSizeIsPurchasable}
+      disabledCtaLabel={disabledCtaLabel}
       validateAddToCart={(quantity) => {
         if (!selectedSize) {
           return "Please select a size";
