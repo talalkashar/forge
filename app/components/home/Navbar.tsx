@@ -136,7 +136,10 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center flex-1 justify-center">
-            <ForgeLogo markClassName="text-xl sm:text-2xl md:text-3xl" />
+            <ForgeLogo
+              variant="mark"
+              markClassName="h-8 sm:h-10 md:h-11"
+            />
           </div>
 
           <div className="flex items-center flex-1 justify-end gap-1 h-full">

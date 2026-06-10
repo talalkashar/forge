@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ProductDetailPage from "@/app/components/product/ProductDetailPage";
 import ProductDetailState from "@/app/components/product/ProductDetailState";
 import { beltVariantOrder, type BeltProductSlug } from "@/app/components/product/productData";
@@ -80,14 +80,12 @@ export default function BeltProductPageClient({
   missingEnv: boolean;
 }) {
   const router = useRouter();
-  const [selectedSize, setSelectedSize] = useState<string>("");
-  const [activeVariant, setActiveVariant] = useState<BeltProductSlug>(() => {
-    if (typeof window === "undefined") {
-      return "zeus";
-    }
-
-    return resolveVariant(new URLSearchParams(window.location.search).get("variant"));
-  });
+  const searchParams = useSearchParams();
+  const activeVariant = resolveVariant(searchParams.get("variant"));
+  const [selectedSizeByVariant, setSelectedSizeByVariant] = useState<
+    Partial<Record<BeltProductSlug, string>>
+  >({});
+  const selectedSize = selectedSizeByVariant[activeVariant] ?? "";
 
   const activeProduct = useMemo(
     () => products.find((product) => product.slug === activeVariant) ?? null,
@@ -289,8 +287,6 @@ export default function BeltProductPageClient({
                   : "border-white/10 bg-neutral-900 text-gray-300 hover:border-red-600/70 hover:text-white"
               }`}
               onClick={() => {
-                setActiveVariant(variant);
-                setSelectedSize("");
                 router.replace(`/product/belt?variant=${variant}`);
               }}
             >
@@ -338,7 +334,10 @@ export default function BeltProductPageClient({
                       return;
                     }
 
-                    setSelectedSize(size);
+                    setSelectedSizeByVariant((current) => ({
+                      ...current,
+                      [activeVariant]: size,
+                    }));
                   }}
                 >
                   {!sizeIsPurchasable ? (

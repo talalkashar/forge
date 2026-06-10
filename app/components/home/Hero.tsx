@@ -556,7 +556,12 @@ export default function Hero() {
         <div className={`hero-ui-layer ${isReady ? "is-visible" : ""}`}>
           <div className="hero-copy-shell">
             <div className="hero-copy">
-              <h1 className="title-main">FORGE</h1>
+              <h1 className="title-main">
+                <span className="title-wordmark">
+                  FORGE GYM
+                  <sup className="title-trademark">™</sup>
+                </span>
+              </h1>
               <p className="subtitle-main">
                 Built for strength. Designed for performance.
               </p>
@@ -677,7 +682,7 @@ export default function Hero() {
           align-items: center;
           justify-content: center;
           gap: 1.25rem;
-          max-width: 36rem;
+          max-width: min(92vw, 58rem);
           text-align: center;
           transform: translate3d(0, 18px, 0);
           opacity: 0;
@@ -694,16 +699,34 @@ export default function Hero() {
 
         .title-main {
           margin: 0;
-          font-size: clamp(4rem, 12vw, 8.5rem);
+          font-size: clamp(3.75rem, 8.6vw, 7.75rem);
           line-height: 0.9;
           font-weight: 900;
-          letter-spacing: -0.035em;
+          letter-spacing: 0;
           color: rgba(255, 255, 255, 0.98);
           text-wrap: balance;
           pointer-events: none;
           text-shadow:
             0 10px 30px rgba(0, 0, 0, 0.34),
             0 0 24px rgba(142, 18, 18, 0.12);
+        }
+
+        .title-wordmark {
+          position: relative;
+          display: inline-block;
+          padding-right: 0.18em;
+          white-space: nowrap;
+        }
+
+        .title-trademark {
+          position: absolute;
+          top: 0.04em;
+          right: 0;
+          transform: translate(82%, -12%);
+          font-size: clamp(0.78rem, 1.25vw, 1.08rem);
+          line-height: 1;
+          font-weight: 900;
+          letter-spacing: 0;
         }
 
         .subtitle-main {
@@ -793,7 +816,7 @@ export default function Hero() {
           }
 
           .title-main {
-            font-size: clamp(3.25rem, 15vw, 5rem);
+            font-size: clamp(2.55rem, 12.5vw, 4.45rem);
           }
 
           .subtitle-main {

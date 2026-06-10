@@ -79,6 +79,19 @@ const strapProductImages = [
   "/images/straps/listing/4.webp",
   "/images/straps/listing/5.webp",
   "/images/straps/listing/6.webp",
+  "/images/straps/lifestyle/forge-straps-gym-mat.jpg",
+  "/images/straps/lifestyle/forge-straps-bar-hold.jpg",
+];
+
+const strapProductImageAlts = [
+  "FORGE lifting straps product cutout on a dark storefront background.",
+  "FORGE lifting straps product view 2.",
+  "FORGE lifting straps product view 3.",
+  "FORGE lifting straps product view 4.",
+  "FORGE lifting straps product view 5.",
+  "FORGE lifting straps product view 6.",
+  "FORGE wrist straps laid out on a gym mat beside a loaded barbell.",
+  "FORGE wrist straps worn while holding a loaded barbell.",
 ];
 
 const zeusBeltImages = [
@@ -88,15 +101,29 @@ const zeusBeltImages = [
   "/images/belts/listing/zeus/4.webp",
   "/images/belts/listing/zeus/5.webp",
   "/images/belts/listing/zeus/6.webp",
+  "/images/belts/lifestyle/zeus-belt-worn-front.jpeg",
+  "/images/belts/lifestyle/zeus-belt-lift-angle.jpeg",
 ];
 
-const zeusBeltImageAlts = Array.from(
-  { length: zeusBeltImages.length },
-  (_, index) =>
-    `FORGE Zeus lever belt with 10mm thickness, 4-inch width, double stitching, durable buckle, and core support. View ${index + 1}`,
-);
+const zeusBeltImageAlts = [
+  "FORGE Zeus lever belt product view with black and red finish.",
+  "FORGE Zeus lever belt detail view 2.",
+  "FORGE Zeus lever belt detail view 3.",
+  "FORGE Zeus lever belt detail view 4.",
+  "FORGE Zeus lever belt detail view 5.",
+  "FORGE Zeus lever belt detail view 6.",
+  "FORGE Zeus lever belt worn at the waist with the lever buckle visible.",
+  "FORGE Zeus lever belt worn during a lift setup with the lever buckle visible.",
+];
+
+const berserkLifestyleImages = [
+  "/images/belts/lifestyle/berserk-belt-deadlift.jpeg",
+  "/images/belts/lifestyle/berserk-belt-front-detail.jpeg",
+  "/images/belts/lifestyle/berserk-belt-bench-detail.jpeg",
+];
 
 const berserkBeltImages = [
+  "/images/belts/lifestyle/berserk-belt-bench-detail.jpeg",
   "/images/belts/listing/berserk/1.webp",
   "/images/belts/listing/berserk/2.webp",
   "/images/belts/listing/berserk/3.webp",
@@ -104,6 +131,22 @@ const berserkBeltImages = [
   "/images/belts/listing/berserk/5.webp",
   "/images/belts/listing/berserk/6.webp",
   "/images/belts/listing/berserk/7.webp",
+  ...berserkLifestyleImages.filter(
+    (image) => !image.includes("bench-detail"),
+  ),
+];
+
+const berserkBeltImageAlts = [
+  "FORGE Berserk lever belt resting on a bench with dark gym lighting.",
+  "FORGE Berserk lever belt product view 1.",
+  "FORGE Berserk lever belt product view 2.",
+  "FORGE Berserk lever belt product view 3.",
+  "FORGE Berserk lever belt product view 4.",
+  "FORGE Berserk lever belt product view 5.",
+  "FORGE Berserk lever belt product view 6.",
+  "FORGE Berserk lever belt product view 7.",
+  "FORGE Berserk lever belt worn during a deadlift setup in the gym.",
+  "FORGE Berserk lever belt front detail with artwork and red interior.",
 ];
 
 const blackBeltImages = [
@@ -111,6 +154,13 @@ const blackBeltImages = [
   "/images/belts/listing/Black Lever Belt/2.webp",
   "/images/belts/listing/Black Lever Belt/3.webp",
   "/images/belts/listing/Black Lever Belt/4.webp",
+];
+
+const blackBeltImageAlts = [
+  "FORGE black lever belt product view 1.",
+  "FORGE black lever belt product view 2.",
+  "FORGE black lever belt product view 3.",
+  "FORGE black lever belt product view 4.",
 ];
 
 const blackBerserkDescriptionImages = [
@@ -173,7 +223,6 @@ const beltBaseSpecificationGroups: SpecificationGroup[] = [
 const beltBasePresentation = {
   originalPrice: "$85",
   kicker: "Lifting Gear",
-  imageAlts: zeusBeltImageAlts,
   featureList: [
     "Secure lever closure for fast adjustments",
     "Rigid support for heavy strength work",
@@ -231,6 +280,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.zeus,
     ...beltBasePresentation,
+    imageAlts: zeusBeltImageAlts,
   },
   berserk: {
     slug: "berserk",
@@ -243,6 +293,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.berserk,
     ...beltBasePresentation,
+    imageAlts: berserkBeltImageAlts,
   },
   black: {
     slug: "black",
@@ -255,6 +306,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     reviewCount: 0,
     descriptionGalleryImages: beltDescriptionGalleryBySlug.black,
     ...beltBasePresentation,
+    imageAlts: blackBeltImageAlts,
   },
   straps: {
     slug: "straps",
@@ -267,6 +319,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     reviewCount: 0,
     originalPrice: "$19.99",
     kicker: "Lifting Gear",
+    imageAlts: strapProductImageAlts,
     featureList: [
       "Non-slip grip material for stronger holds",
       "Comfortable wrist padding for heavy sessions",

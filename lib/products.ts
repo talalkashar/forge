@@ -189,7 +189,40 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
   const representativeVariant = firstActiveVariant(product);
   const sortedImages = sortImages(product.product_images ?? []);
   const imageSources = sortedImages.map((image) => image.src);
-  const images = imageSources.length > 0 ? imageSources : presentation?.images ?? [];
+  const appendedPresentationImages =
+    imageSources.length > 0
+      ? (presentation?.images ?? []).filter(
+          (src) => src.includes("/lifestyle/") && !imageSources.includes(src),
+        )
+      : [];
+  const featuredBerserkImage = appendedPresentationImages.find((src) =>
+    src.includes("bench-detail"),
+  );
+  const remainingAppendedPresentationImages = appendedPresentationImages.filter(
+    (src) => src !== featuredBerserkImage,
+  );
+  const images =
+    imageSources.length > 0
+      ? product.slug === "berserk" && featuredBerserkImage
+        ? [
+            featuredBerserkImage,
+            ...imageSources,
+            ...remainingAppendedPresentationImages,
+          ]
+        : [...imageSources, ...appendedPresentationImages]
+      : presentation?.images ?? [];
+  const getPresentationImageAlt = (src: string) => {
+    const presentationIndex = presentation?.images.indexOf(src) ?? -1;
+
+    return (
+      presentation?.imageAlts?.[presentationIndex] ??
+      presentation?.description ??
+      `${product.name} lifestyle image`
+    );
+  };
+  const appendedPresentationImageAlts = appendedPresentationImages.map(
+    getPresentationImageAlt,
+  );
   const priceCents = representativeVariant?.price_cents ?? product.base_price_cents;
   const categoryLabel = presentation?.categoryLabel ?? titleCase(product.category);
   const descriptionText = product.description?.trim() ?? "";
@@ -226,7 +259,16 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
     images,
     imageAlts:
       sortedImages.length > 0
-        ? sortedImages.map((image) => image.alt)
+        ? product.slug === "berserk" && featuredBerserkImage
+          ? [
+              getPresentationImageAlt(featuredBerserkImage),
+              ...sortedImages.map((image) => image.alt),
+              ...remainingAppendedPresentationImages.map(getPresentationImageAlt),
+            ]
+          : [
+              ...sortedImages.map((image) => image.alt),
+              ...appendedPresentationImageAlts,
+            ]
         : presentation?.imageAlts,
     featureList: presentation?.featureList ?? [],
     intro:

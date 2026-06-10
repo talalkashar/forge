@@ -21,6 +21,34 @@ import ProductReviewsPanel from "./ProductReviewsPanel";
 type TabName = "description" | "specs" | "reviews";
 type FaqItem = [string, ReactNode];
 
+function isEditorialGalleryImage(image: string) {
+  return image.includes("/lifestyle/");
+}
+
+function galleryImagePosition(image: string) {
+  if (image.includes("zeus-belt-worn-front")) {
+    return "center 62%";
+  }
+
+  if (image.includes("zeus-belt-lift-angle")) {
+    return "center 58%";
+  }
+
+  if (image.includes("deadlift")) {
+    return "center 46%";
+  }
+
+  if (image.includes("front-detail")) {
+    return "center 44%";
+  }
+
+  if (image.includes("bench-detail")) {
+    return "center 50%";
+  }
+
+  return "center";
+}
+
 export default function ProductDetailPage({
   product,
   extraPanel,
@@ -62,6 +90,7 @@ export default function ProductDetailPage({
   const currentImageLabel =
     product.imageAlts?.[currentImageIndex] ??
     `${product.name} image ${currentImageIndex + 1}`;
+  const currentImageIsEditorial = isEditorialGalleryImage(currentImage);
   const showStandaloneDescriptionGallery =
     product.slug === "straps" &&
     Array.isArray(product.descriptionGalleryImages) &&
@@ -287,7 +316,7 @@ export default function ProductDetailPage({
 
             <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-[4.5rem]">
               <div className="animate-on-scroll animated">
-                <div className="group relative mb-5 overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-900 p-4 shadow-[0_18px_56px_rgba(0,0,0,0.38)] sm:p-5">
+                <div className="group relative mb-5 overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-900 p-3 shadow-[0_18px_56px_rgba(0,0,0,0.38)] sm:p-5">
                   <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/6 bg-[radial-gradient(circle_at_20%_0%,rgba(220,38,38,0.16),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(255,255,255,0.05),transparent_22%),linear-gradient(180deg,rgba(22,22,24,0.96),rgba(5,5,5,1))]">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_46%)]" />
                     <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-red-600/20 blur-[30px]" />
@@ -297,9 +326,24 @@ export default function ProductDetailPage({
                       fill
                       priority={currentImageIndex === 0}
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      quality={70}
-                      className="product-image gpu-accelerated h-full w-full object-contain p-6 drop-shadow-[0_22px_40px_rgba(0,0,0,0.42)] transition-transform duration-500 ease-out sm:p-8"
+                      quality={currentImageIsEditorial ? 86 : 74}
+                      style={{
+                        objectPosition: currentImageIsEditorial
+                          ? galleryImagePosition(currentImage)
+                          : undefined,
+                      }}
+                      className={`product-image gpu-accelerated h-full w-full transition-transform duration-500 ease-out ${
+                        currentImageIsEditorial
+                          ? "object-cover brightness-[0.86] contrast-[1.12] saturate-[0.96]"
+                          : "object-contain p-6 drop-shadow-[0_22px_40px_rgba(0,0,0,0.42)] sm:p-8"
+                      }`}
                     />
+                    {currentImageIsEditorial ? (
+                      <div
+                        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),transparent_42%,rgba(0,0,0,0.24)),radial-gradient(circle_at_50%_16%,rgba(220,38,38,0.12),transparent_34%)]"
+                        aria-hidden="true"
+                      />
+                    ) : null}
 
                     <button
                       type="button"
@@ -328,34 +372,55 @@ export default function ProductDetailPage({
                   </div>
                 </div>
 
-                <div className={`grid gap-3 ${product.images.length > 4 ? "grid-cols-3 sm:grid-cols-6" : "grid-cols-3 sm:grid-cols-4"}`}>
-                  {product.images.map((image, index) => (
-                    <button
-                      key={image}
-                      type="button"
-                      aria-label={`Show ${product.name} image ${index + 1}`}
-                      className={`product-thumbnail relative overflow-hidden rounded-2xl border bg-[linear-gradient(180deg,rgba(22,22,22,0.95),rgba(7,7,7,1))] p-2 shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-all duration-300 ${
-                        index === currentImageIndex
-                          ? "border-red-600 ring-1 ring-red-600/60 shadow-[0_14px_36px_rgba(220,38,38,0.18)]"
-                          : "border-white/8 hover:border-red-600/70"
-                      }`}
-                      onClick={() => updateImage(index)}
-                    >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.12),transparent_42%)]" />
-                      <Image
-                        src={image}
-                        alt={
-                          product.imageAlts?.[index] ??
-                          `${product.name} image ${index + 1}`
-                        }
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 640px) 33vw, 160px"
-                        quality={70}
-                        className="relative h-20 w-full rounded-xl object-contain bg-transparent p-1 transition-transform duration-300"
-                      />
-                    </button>
-                  ))}
+                <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5 sm:gap-3 lg:grid-cols-6">
+                  {product.images.map((image, index) => {
+                    const isEditorial = isEditorialGalleryImage(image);
+
+                    return (
+                      <button
+                        key={image}
+                        type="button"
+                        aria-label={`Show ${product.name} image ${index + 1}`}
+                        className={`product-thumbnail group/thumb relative aspect-square overflow-hidden rounded-xl border bg-[linear-gradient(180deg,rgba(22,22,22,0.95),rgba(7,7,7,1))] shadow-[0_10px_30px_rgba(0,0,0,0.24)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 sm:rounded-2xl ${
+                          index === currentImageIndex
+                            ? "border-red-600 ring-1 ring-red-600/60 shadow-[0_14px_36px_rgba(220,38,38,0.18)]"
+                            : "border-white/8 hover:border-red-600/70"
+                        }`}
+                        onClick={() => updateImage(index)}
+                      >
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.12),transparent_42%)]" />
+                        <Image
+                          src={image}
+                          alt={
+                            product.imageAlts?.[index] ??
+                            `${product.name} image ${index + 1}`
+                          }
+                          fill
+                          sizes="(max-width: 640px) 25vw, 120px"
+                          quality={isEditorial ? 82 : 70}
+                          style={{
+                            objectPosition: isEditorial
+                              ? galleryImagePosition(image)
+                              : undefined,
+                          }}
+                          className={`relative transition-transform duration-300 group-hover/thumb:scale-[1.03] ${
+                            isEditorial
+                              ? "object-cover brightness-[0.86] contrast-[1.12] saturate-[0.96]"
+                              : "object-contain p-2"
+                          }`}
+                        />
+                        {isEditorial ? (
+                          <div
+                            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02),transparent_46%,rgba(0,0,0,0.16))]"
+                            aria-hidden="true"
+                          />
+                        ) : null}
+                        <span className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/65 px-1.5 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.08em] text-white/70 sm:bottom-2 sm:right-2 sm:px-2 sm:text-[0.62rem]">
+                          {index + 1}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getProductBySlug } from "@/lib/products/marketplace";
+import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,10 @@ type CheckoutItem = {
 };
 
 const beltSlugs = new Set(["zeus", "berserk", "black"]);
+const checkoutRateLimit = {
+  limit: 20,
+  windowMs: 60 * 1000,
+};
 
 async function normalizeCheckoutItem(item: CheckoutItem) {
   const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
@@ -108,8 +113,52 @@ async function normalizeCheckoutItem(item: CheckoutItem) {
   };
 }
 
+function allowedCheckoutOrigin(req: Request) {
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const fallbackOrigin = configuredBaseUrl || "http://localhost:3000";
+  const requestOrigin = req.headers.get("origin");
+
+  const allowedOrigins = new Set(
+    [configuredBaseUrl, "https://capacitygears.com", "http://localhost:3000"]
+      .filter(Boolean)
+      .map((value) => new URL(value as string).origin),
+  );
+
+  if (requestOrigin) {
+    try {
+      const originUrl = new URL(requestOrigin);
+      const isLocalhost =
+        ["localhost", "127.0.0.1"].includes(originUrl.hostname) &&
+        ["http:", "https:"].includes(originUrl.protocol);
+
+      if (allowedOrigins.has(originUrl.origin) || isLocalhost) {
+        return originUrl.origin;
+      }
+    } catch {
+      // Fall through to the configured safe origin.
+    }
+  }
+
+  return new URL(fallbackOrigin).origin;
+}
+
 export async function POST(req: Request) {
   try {
+    const rateLimit = checkRateLimit(
+      `checkout:${clientIp(req.headers)}`,
+      checkoutRateLimit,
+    );
+
+    if (rateLimit.limited) {
+      return NextResponse.json(
+        { error: "Too many checkout attempts. Please try again shortly." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfter) },
+        },
+      );
+    }
+
     const body: { items?: CheckoutItem[] } = await req.json();
     const items: CheckoutItem[] = Array.isArray(body?.items) ? body.items : [];
     const normalizedItems = (
@@ -120,10 +169,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
     }
 
-    const origin =
-      req.headers.get("origin") ||
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      "http://localhost:3000";
+    const origin = allowedCheckoutOrigin(req);
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
     const session = await stripe.checkout.sessions.create({

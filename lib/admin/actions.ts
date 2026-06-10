@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import {
   clearAdminSession,
+  isAdminAuthenticated,
   setAdminSession,
   verifyAdminPassword,
 } from "./auth";
@@ -45,7 +48,23 @@ function adminClient() {
   return createSupabaseServiceRoleClient();
 }
 
+async function requireAdminSession() {
+  if (!(await isAdminAuthenticated())) {
+    redirect("/admin");
+  }
+}
+
 export async function loginAdminAction(formData: FormData) {
+  const headerStore = await headers();
+  const rateLimit = checkRateLimit(`admin-login:${clientIp(headerStore)}`, {
+    limit: 8,
+    windowMs: 15 * 60 * 1000,
+  });
+
+  if (rateLimit.limited) {
+    redirect("/admin?error=too_many_attempts");
+  }
+
   const password = requiredText(formData, "password");
 
   if (!verifyAdminPassword(password)) {
@@ -62,6 +81,8 @@ export async function logoutAdminAction() {
 }
 
 export async function createProductAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const slug = requiredText(formData, "slug");
   const name = requiredText(formData, "name");
@@ -108,6 +129,8 @@ export async function createProductAction(formData: FormData) {
 }
 
 export async function updateProductAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const productId = requiredText(formData, "product_id");
   const { error } = await supabase
@@ -137,6 +160,8 @@ export async function updateProductAction(formData: FormData) {
 }
 
 export async function createVariantAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const productId = requiredText(formData, "product_id");
   const sku = requiredText(formData, "sku");
@@ -181,6 +206,8 @@ export async function createVariantAction(formData: FormData) {
 }
 
 export async function updateVariantAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const productId = requiredText(formData, "product_id");
   const variantId = requiredText(formData, "variant_id");
@@ -210,6 +237,8 @@ export async function updateVariantAction(formData: FormData) {
 }
 
 export async function updateMarketplaceListingAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const listingId = requiredText(formData, "listing_id");
   const { error } = await supabase
@@ -234,6 +263,8 @@ export async function updateMarketplaceListingAction(formData: FormData) {
 }
 
 export async function adjustInventoryAction(formData: FormData) {
+  await requireAdminSession();
+
   const supabase = adminClient();
   const variantId = requiredText(formData, "variant_id");
   const nextQuantity = intValue(formData, "inventory_quantity");

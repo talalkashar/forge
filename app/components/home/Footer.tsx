@@ -1,106 +1,166 @@
+"use client";
+
 import Link from "next/link";
+import {
+  ArrowUp,
+  Dumbbell,
+  Heart,
+  Mail,
+  Music2,
+} from "lucide-react";
 import ForgeLogo from "./ForgeLogo";
 
-const quickLinks = [
-  { href: "/", label: "Home" },
-  { href: "/shop/belts", label: "Lever Belts" },
-  { href: "/shop/wrist-straps", label: "Wrist Straps" },
-  { href: "/shop", label: "All Gear" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect width="17" height="17" x="3.5" y="3.5" rx="5" />
+      <circle cx="12" cy="12" r="3.5" />
+      <path d="M17.5 6.8h.01" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const navigation = [
+  {
+    title: "Shop",
+    links: [
+      { href: "/shop", label: "All Gear" },
+      { href: "/shop/belts", label: "Lever Belts" },
+      { href: "/shop/wrist-straps", label: "Wrist Straps" },
+      { href: "/cart", label: "Cart" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { href: "/faq", label: "FAQ" },
+      { href: "/shipping", label: "Shipping" },
+      { href: "/returns", label: "Returns" },
+      { href: "/privacy", label: "Privacy" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+    ],
+  },
 ];
 
-const supportLinks = [
-  { href: "/shipping", label: "Shipping" },
-  { href: "/returns", label: "Returns" },
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/faq", label: "FAQ" },
+const socialLinks = [
+  {
+    href: "mailto:capacitygears@gmail.com",
+    label: "Email FORGE support",
+    icon: Mail,
+  },
+  {
+    href: "https://www.instagram.com/forgexfit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+    label: "FORGE Instagram",
+    icon: InstagramIcon,
+  },
+  {
+    href: "https://www.tiktok.com/@forgexfit?is_from_webapp=1&sender_device=pc",
+    label: "FORGE TikTok",
+    icon: Music2,
+  },
 ];
+
+function handleScrollTop() {
+  window.scroll({
+    top: 0,
+    behavior: "smooth",
+  });
+}
+
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-black border-t border-red-600/20 mt-12 sm:mt-16 md:mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-          <div className="col-span-1 sm:col-span-2 md:col-span-2">
-            <ForgeLogo className="mb-3 sm:mb-4" markClassName="text-xl sm:text-2xl" />
-            <p className="text-gray-400 mb-4 max-w-md text-sm sm:text-base">
-              Premium gym gear built for performance. Where strength meets
-              discipline.
-            </p>
-            <div className="flex space-x-4">
-              <a
-                href="mailto:capacitygears@gmail.com"
-                className="w-10 h-10 bg-red-600/20 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110"
-                aria-label="Email support"
-              >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3 6.75A1.75 1.75 0 0 1 4.75 5h14.5A1.75 1.75 0 0 1 21 6.75v10.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25V6.75Zm1.9.18v.15l6.68 5.01a.75.75 0 0 0 .84 0l6.68-5.01v-.15a.25.25 0 0 0-.25-.25H5.15a.25.25 0 0 0-.25.25Zm14.2 2.03-5.78 4.33a2.25 2.25 0 0 1-2.64 0L4.9 8.96v8.29c0 .14.11.25.25.25h13.7a.25.25 0 0 0 .25-.25V8.96Z" />
-                </svg>
-              </a>
-              <a
-                href="https://www.tiktok.com/@forgexfit?is_from_webapp=1&sender_device=pc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-red-600/20 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110"
-                aria-label="TikTok"
-              >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-                </svg>
-              </a>
-              <a
-                href="https://www.instagram.com/forgexfit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-red-600/20 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110"
-                aria-label="Instagram"
-              >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.18.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.44 1.44-1.44.793-.001 1.44.646 1.44 1.44z" />
-                </svg>
-              </a>
+    <footer className="mx-auto mt-12 w-full border-y border-dotted border-red-600/25 bg-black px-2 text-white sm:mt-16 md:mt-20">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)] md:px-8">
+        <ForgeLogo
+          className="mx-auto flex items-center justify-center rounded-full border border-dotted border-white/15 bg-white/[0.03] p-4 transition-colors hover:border-red-600/45 hover:bg-red-600/10 md:mx-0"
+          markClassName="h-10 w-10"
+        />
+        <p className="max-w-4xl text-center text-sm leading-6 text-white/55 md:text-left">
+          FORGE builds focused lifting gear for heavy training days: lever belts,
+          wrist straps, and essentials made to feel locked-in, aggressive, and
+          ready under load.
+        </p>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+        <div className="border-b border-dotted border-white/15" />
+        <div className="grid grid-cols-2 gap-8 py-10 sm:grid-cols-3 md:flex md:justify-between">
+          {navigation.map((section) => (
+            <div key={section.title}>
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-red-500">
+                {section.title}
+              </h3>
+              <ul className="flex flex-col space-y-2" role="list">
+                {section.links.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-white/55 transition-colors hover:text-white md:text-xs"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-3 sm:mb-4 text-base sm:text-lg">
-              Quick Links
-            </h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-red-600 transition-colors duration-300 text-sm sm:text-base"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-3 sm:mb-4 text-base sm:text-lg">
-              Support
-            </h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              {supportLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-red-600 transition-colors duration-300 text-sm sm:text-base"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          ))}
         </div>
-        <div className="border-t border-red-600/20 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
-          <p className="text-gray-400 text-xs sm:text-sm px-4">
-            © 2025 Capacity Gears LLC. All rights reserved. | FORGE - Strength
-            Built Different
-          </p>
+        <div className="border-b border-dotted border-white/15" />
+      </div>
+
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-6 px-4 py-8 sm:px-6 md:px-8">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {socialLinks.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={label}
+              aria-label={label}
+              href={href}
+              rel={href.startsWith("http") ? "noreferrer" : undefined}
+              target={href.startsWith("http") ? "_blank" : undefined}
+              className="rounded-xl border border-dotted border-white/18 bg-white/[0.03] p-3 text-white/75 transition-[border-color,color,transform,background-color] hover:-translate-y-1 hover:border-red-600/60 hover:bg-red-600/10 hover:text-white"
+            >
+              <Icon className="h-5 w-5" strokeWidth={1.5} />
+            </Link>
+          ))}
+
+          <button
+            type="button"
+            onClick={handleScrollTop}
+            className="flex items-center rounded-full border border-dotted border-white/18 bg-white/[0.03] px-4 py-3 text-white/75 transition-[border-color,color,transform,background-color] hover:-translate-y-1 hover:border-red-600/60 hover:bg-red-600/10 hover:text-white"
+          >
+            <ArrowUp className="h-4 w-4" strokeWidth={1.8} />
+            <span className="sr-only">Back to top</span>
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-2 text-center text-xs text-white/45 sm:flex-row">
+          <span>© {year} Capacity Gears LLC</span>
+          <span className="hidden text-white/20 sm:inline">-</span>
+          <span className="flex items-center gap-1">
+            Built with
+            <Heart className="h-4 w-4 animate-pulse text-red-600" />
+            for heavy training
+          </span>
+          <span className="hidden text-white/20 sm:inline">-</span>
+          <span className="flex items-center gap-1 font-semibold text-white/70">
+            <Dumbbell className="h-4 w-4 text-red-600" />
+            Strength Built Different
+          </span>
         </div>
       </div>
     </footer>

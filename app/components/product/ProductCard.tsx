@@ -11,7 +11,10 @@ function formatSize(size: string | null) {
 }
 
 export default function ProductCard({ product }: { product: StorefrontProduct }) {
-  const mainImage = product.images[0];
+  const mainImage =
+    product.slug === "berserk"
+      ? "/images/belts/listing/berserk/1.webp"
+      : product.images[0];
   const activeVariants = getActiveVariants(product);
   const sizedVariants = activeVariants.filter((variant) => formatSize(variant.size));
   const inStockVariants = activeVariants.filter(

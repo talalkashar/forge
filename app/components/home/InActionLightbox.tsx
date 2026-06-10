@@ -11,7 +11,7 @@ function InActionLightbox({
   onPrevious,
   onNext,
 }: {
-  images: string[];
+  images: ReadonlyArray<{ src: string; alt: string; media?: "video" }>;
   activeIndex: number;
   onClose: () => void;
   onPrevious: () => void;
@@ -81,15 +81,30 @@ function InActionLightbox({
         >
           <X className="h-5 w-5" />
         </button>
-        <Image
-          src={activeImage}
-          alt="Wrist straps in use fullscreen preview"
-          width={2400}
-          height={1600}
-          quality={80}
-          priority
-          className="h-auto max-h-[92vh] w-full object-contain"
-        />
+        {activeImage.media === "video" ? (
+          <video
+            className="max-h-[92vh] w-full bg-black object-contain"
+            autoPlay
+            controls
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={activeImage.alt}
+          >
+            <source src={activeImage.src} type="video/mp4" />
+          </video>
+        ) : (
+          <Image
+            src={activeImage.src}
+            alt={activeImage.alt}
+            width={2400}
+            height={1600}
+            quality={80}
+            priority
+            className="h-auto max-h-[92vh] w-full object-contain"
+          />
+        )}
       </div>
     </div>
   );
