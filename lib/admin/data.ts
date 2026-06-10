@@ -79,8 +79,12 @@ export type MarketplaceDashboardStats = {
   variants: number;
   listings: number;
   missingIds: number;
+  activeStripeVariants: number;
+  connectedStripeVariants: number;
   missingStripeIds: number;
+  connectedAmazonIds: number;
   missingAmazonIds: number;
+  connectedTikTokIds: number;
   missingTikTokIds: number;
   needsReview: number;
   totalInventory: number;
@@ -256,8 +260,12 @@ export async function getMarketplaceDashboardStats(): Promise<
     variants: 0,
     listings: 0,
     missingIds: 0,
+    activeStripeVariants: 0,
+    connectedStripeVariants: 0,
     missingStripeIds: 0,
+    connectedAmazonIds: 0,
     missingAmazonIds: 0,
+    connectedTikTokIds: 0,
     missingTikTokIds: 0,
     needsReview: 0,
     totalInventory: 0,
@@ -273,9 +281,16 @@ export async function getMarketplaceDashboardStats(): Promise<
   const variants = productsResult.data.flatMap(
     (product) => product.product_variants ?? [],
   );
+  const activeVariants = variants.filter((variant) => variant.is_active === true);
   const listings = productsResult.data.flatMap(
     (product) => product.marketplace_listings ?? [],
   );
+  const connectedMarketplaceIds = (channel: string) =>
+    listings.filter(
+      (listing) =>
+        listing.channel === channel &&
+        Boolean(listing.external_product_id && listing.external_listing_id),
+    ).length;
   const missingMarketplaceIds = (channel: string) =>
     listings.filter(
       (listing) =>
@@ -293,10 +308,16 @@ export async function getMarketplaceDashboardStats(): Promise<
           listing.channel !== "website" &&
           (!listing.external_product_id || !listing.external_listing_id),
       ).length,
-      missingStripeIds: variants.filter(
+      activeStripeVariants: activeVariants.length,
+      connectedStripeVariants: activeVariants.filter(
+        (variant) => variant.stripe_price_id && variant.stripe_product_id,
+      ).length,
+      missingStripeIds: activeVariants.filter(
         (variant) => !variant.stripe_price_id || !variant.stripe_product_id,
       ).length,
+      connectedAmazonIds: connectedMarketplaceIds("amazon"),
       missingAmazonIds: missingMarketplaceIds("amazon"),
+      connectedTikTokIds: connectedMarketplaceIds("tiktok_shop"),
       missingTikTokIds: missingMarketplaceIds("tiktok_shop"),
       needsReview: listings.filter(
         (listing) => listing.sync_status === "needs_review",

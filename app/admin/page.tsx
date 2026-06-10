@@ -87,6 +87,53 @@ export default async function AdminPage() {
         <StatCard label="Total Missing IDs" value={stats.missingIds} />
       </div>
 
+      <AdminCard title="Marketplace Diagnostics" className="mt-6">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-black/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Stripe Active Variants
+            </p>
+            <p className="mt-3 text-2xl font-black text-white">
+              {stats.connectedStripeVariants} / {stats.activeStripeVariants}
+            </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {stats.missingStripeIds} active variants missing Stripe IDs
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-black/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Amazon Listings
+            </p>
+            <p className="mt-3 text-2xl font-black text-white">
+              {stats.connectedAmazonIds} connected
+            </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {stats.missingAmazonIds} listings missing external IDs
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-black/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              TikTok Listings
+            </p>
+            <p className="mt-3 text-2xl font-black text-white">
+              {stats.connectedTikTokIds} connected
+            </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {stats.missingTikTokIds} listings missing external IDs
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-black/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Needs Review
+            </p>
+            <p className="mt-3 text-2xl font-black text-white">{stats.needsReview}</p>
+            <p className="mt-1 text-sm text-gray-400">
+              Listings flagged before sync work continues
+            </p>
+          </div>
+        </div>
+      </AdminCard>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <AdminCard title="Quick Actions">
           <div className="flex flex-wrap gap-3">
