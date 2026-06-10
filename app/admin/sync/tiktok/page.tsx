@@ -18,6 +18,10 @@ function statusLabel(status: string) {
     return "Not configured";
   }
 
+  if (status === "error") {
+    return "Error";
+  }
+
   if (status === "not_implemented") {
     return "Not implemented";
   }
@@ -27,6 +31,22 @@ function statusLabel(status: string) {
 
 function yesNo(value: boolean) {
   return value ? "Yes" : "No";
+}
+
+function previewSummary(
+  preview: Awaited<ReturnType<typeof previewTikTokProductsImport>>,
+) {
+  const rows = preview.data ?? [];
+  const matched = rows.filter((row) => row.matchedVariantId).length;
+  const manualReview = rows.filter((row) => row.matchReason === "manual_review").length;
+
+  return {
+    attempted: preview.status !== "not_configured",
+    imported: rows.length,
+    matched,
+    unmatched: rows.length - matched,
+    manualReview,
+  };
 }
 
 export default async function AdminTikTokSyncPage() {
@@ -46,6 +66,7 @@ export default async function AdminTikTokSyncPage() {
   ]);
   const credentials = getTikTokCredentialStatus();
   const oauth = getTikTokOAuthScaffoldStatus();
+  const productsSummary = previewSummary(productsPreview);
   const missingTokenKeys = credentials.missingKeys.filter((key) =>
     [
       "TIKTOK_SHOP_ACCESS_TOKEN",
@@ -186,6 +207,13 @@ export default async function AdminTikTokSyncPage() {
             <p className="mt-3 text-sm leading-6 text-gray-300">
               {productsPreview.message}
             </p>
+            <dl className="mt-5 grid gap-2 text-sm text-gray-300 sm:grid-cols-2">
+              <div>Fetch attempted: {productsSummary.attempted ? "Yes" : "No"}</div>
+              <div>Imported SKU rows: {productsSummary.imported}</div>
+              <div>Matched: {productsSummary.matched}</div>
+              <div>Unmatched: {productsSummary.unmatched}</div>
+              <div>Manual review: {productsSummary.manualReview}</div>
+            </dl>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
             <p className="font-bold text-white">Orders</p>
@@ -195,6 +223,48 @@ export default async function AdminTikTokSyncPage() {
           </div>
         </div>
       </AdminCard>
+
+      {productsPreview.data && productsPreview.data.length > 0 ? (
+        <AdminCard title="Proposed Product Mappings" className="mt-6">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[980px] text-left text-sm">
+              <thead className="text-xs uppercase tracking-[0.16em] text-gray-500">
+                <tr>
+                  <th className="px-3 py-2">TikTok SKU</th>
+                  <th className="px-3 py-2">Product ID</th>
+                  <th className="px-3 py-2">SKU/List ID</th>
+                  <th className="px-3 py-2">Title</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Inventory</th>
+                  <th className="px-3 py-2">Matched FORGE SKU</th>
+                  <th className="px-3 py-2">Match</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10 text-gray-300">
+                {productsPreview.data.map((row) => (
+                  <tr key={`${row.productId ?? "product"}-${row.listingId ?? row.sellerSku}`}>
+                    <td className="px-3 py-3 font-mono text-xs text-white">{row.sellerSku}</td>
+                    <td className="px-3 py-3 font-mono text-xs">{row.productId ?? "Missing"}</td>
+                    <td className="px-3 py-3 font-mono text-xs">{row.listingId ?? "Missing"}</td>
+                    <td className="px-3 py-3">{row.title ?? "Untitled"}</td>
+                    <td className="px-3 py-3">{row.status ?? "Unknown"}</td>
+                    <td className="px-3 py-3">{row.inventoryQuantity ?? "Unknown"}</td>
+                    <td className="px-3 py-3">
+                      {row.matchedSku
+                        ? `${row.matchedProductName ?? "FORGE"} / ${row.matchedSku}`
+                        : "Manual review"}
+                    </td>
+                    <td className="px-3 py-3">{row.matchReason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-4 text-xs text-gray-500">
+            Preview only. No TikTok product, inventory, order, or Supabase writes run from this page.
+          </p>
+        </AdminCard>
+      ) : null}
 
       <AdminCard title="Future Matching Model" className="mt-6">
         <ol className="space-y-3 text-sm leading-6 text-gray-300">

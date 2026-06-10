@@ -1,7 +1,8 @@
 export type TikTokConnectorStatus =
   | "not_configured"
   | "ready_to_test"
-  | "not_implemented";
+  | "not_implemented"
+  | "error";
 
 export type TikTokConnectorResult<T> =
   | {
@@ -15,6 +16,11 @@ export type TikTokConnectorResult<T> =
       data: null;
     }
   | {
+      status: "error";
+      message: string;
+      data: null;
+    }
+  | {
       status: "ready_to_test";
       message: string;
       data: T;
@@ -23,6 +29,8 @@ export type TikTokConnectorResult<T> =
 export type TikTokReadOnlyClient = {
   configured: true;
   mode: "read_only";
+  shopId: string;
+  request<T>(path: string, init?: RequestInit): Promise<T>;
 };
 
 export type TikTokProductPreview = {
@@ -30,9 +38,18 @@ export type TikTokProductPreview = {
   listingId: string | null;
   sellerSku: string;
   title: string | null;
+  status: string | null;
   inventoryQuantity: number | null;
   matchedVariantId: string | null;
-  matchReason: "external_sku" | "variant_sku" | "product_id" | "manual_review";
+  matchedSku: string | null;
+  matchedProductName: string | null;
+  matchReason:
+    | "external_sku"
+    | "variant_sku"
+    | "external_product_id"
+    | "external_listing_id"
+    | "product_id"
+    | "manual_review";
 };
 
 export type TikTokOrderPreview = {

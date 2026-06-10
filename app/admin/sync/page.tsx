@@ -57,6 +57,10 @@ function connectorStatusLabel(status: string) {
     return "Not configured";
   }
 
+  if (status === "error") {
+    return "Error";
+  }
+
   if (status === "not_implemented") {
     return "Not implemented";
   }

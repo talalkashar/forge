@@ -1,7 +1,8 @@
 export type AmazonConnectorStatus =
   | "not_configured"
   | "ready_to_test"
-  | "not_implemented";
+  | "not_implemented"
+  | "error";
 
 export type AmazonConnectorResult<T> =
   | {
@@ -15,6 +16,11 @@ export type AmazonConnectorResult<T> =
       data: null;
     }
   | {
+      status: "error";
+      message: string;
+      data: null;
+    }
+  | {
       status: "ready_to_test";
       message: string;
       data: T;
@@ -23,6 +29,9 @@ export type AmazonConnectorResult<T> =
 export type AmazonReadOnlyClient = {
   configured: true;
   mode: "read_only";
+  marketplaceId: string;
+  sellerId: string;
+  request<T>(path: string, init?: RequestInit): Promise<T>;
 };
 
 export type AmazonListingPreview = {
@@ -30,9 +39,19 @@ export type AmazonListingPreview = {
   asin: string | null;
   externalListingId: string | null;
   title: string | null;
+  status: string | null;
+  rawMarketplaceId: string | null;
   inventoryQuantity: number | null;
   matchedVariantId: string | null;
-  matchReason: "external_sku" | "variant_sku" | "asin" | "manual_review";
+  matchedSku: string | null;
+  matchedProductName: string | null;
+  matchReason:
+    | "external_sku"
+    | "variant_sku"
+    | "external_product_id"
+    | "external_listing_id"
+    | "asin"
+    | "manual_review";
 };
 
 export type AmazonOrderPreview = {
