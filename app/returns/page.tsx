@@ -31,8 +31,8 @@ export default function ReturnsPage() {
             </p>
             <p>
               Start a return request by emailing{" "}
-              <a className="text-red-500 hover:text-red-400" href="mailto:capacitygears@gmail.com">
-                capacitygears@gmail.com
+              <a className="text-red-500 hover:text-red-400" href="mailto:contact@forgegym.us">
+                contact@forgegym.us
               </a>.
             </p>
           </div>

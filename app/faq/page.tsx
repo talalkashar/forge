@@ -20,7 +20,7 @@ const faqs = [
   {
     question: "How do I contact support?",
     answer:
-      "Email capacitygears@gmail.com and include your order details so we can respond faster.",
+      "Email contact@forgegym.us and include your order details so we can respond faster.",
   },
 ];
 

@@ -40,8 +40,8 @@ export default function PrivacyPage() {
               <h2 className="mb-3 text-2xl font-bold text-white">Questions</h2>
               <p>
                 If you have privacy questions, contact{" "}
-                <a className="text-red-500 hover:text-red-400" href="mailto:capacitygears@gmail.com">
-                  capacitygears@gmail.com
+                <a className="text-red-500 hover:text-red-400" href="mailto:contact@forgegym.us">
+                  contact@forgegym.us
                 </a>.
               </p>
             </section>

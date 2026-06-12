@@ -57,7 +57,7 @@ const navigation = [
 
 const socialLinks = [
   {
-    href: "mailto:capacitygears@gmail.com",
+    href: "mailto:contact@forgegym.us",
     label: "Email FORGE support",
     icon: Mail,
   },

@@ -51,7 +51,7 @@ export default function ContactPage() {
 
     setMessageState("success");
     window.setTimeout(() => {
-      window.location.href = `mailto:capacitygears@gmail.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:contact@forgegym.us?subject=${subject}&body=${body}`;
       setFields(initialFields);
       setInvalidFields([]);
     }, 150);
@@ -162,10 +162,10 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-white font-bold mb-2">Email</h3>
                 <a
-                  href="mailto:capacitygears@gmail.com"
+                  href="mailto:contact@forgegym.us"
                   className="text-gray-400 hover:text-red-600 transition-colors duration-300 text-sm break-all"
                 >
-                  capacitygears@gmail.com
+                  contact@forgegym.us
                 </a>
               </div>
               <div className="bg-gray-900 p-6 rounded-lg text-center">
