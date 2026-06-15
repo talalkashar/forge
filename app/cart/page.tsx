@@ -7,6 +7,12 @@ import { useCart } from "@/context/CartContext";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
+const cartReassurance = [
+  "Secure Stripe checkout",
+  "Live inventory checked before payment",
+  "Order help: contact@forgegym.us",
+];
+
 export default function CartPage() {
   const { cart, cartSubtotal, removeFromCart, updateQuantity, isHydrated } = useCart();
   const hasBelt = cart.some((item) =>
@@ -160,6 +166,16 @@ export default function CartPage() {
                 <p className="mt-5 text-sm leading-6 text-gray-400">
                   Secure checkout is handled by Stripe. Taxes and shipping are calculated during checkout.
                 </p>
+                <div className="mt-5 grid gap-2">
+                  {cartReassurance.map((message) => (
+                    <div
+                      key={message}
+                      className="rounded-xl border border-white/8 bg-black/35 px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white/75"
+                    >
+                      {message}
+                    </div>
+                  ))}
+                </div>
                 <div className="mt-6">
                   <CheckoutButton />
                 </div>

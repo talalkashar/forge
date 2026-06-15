@@ -62,12 +62,12 @@ const socialLinks = [
     icon: Mail,
   },
   {
-    href: "https://www.instagram.com/forgexfit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+    href: "https://www.instagram.com/forgegym.us/",
     label: "FORGE Instagram",
     icon: InstagramIcon,
   },
   {
-    href: "https://www.tiktok.com/@forgexfit?is_from_webapp=1&sender_device=pc",
+    href: "https://www.tiktok.com/@forgegym.us",
     label: "FORGE TikTok",
     icon: Music2,
   },

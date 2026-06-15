@@ -2,6 +2,12 @@ import type { Review } from "./productData";
 
 export default function ProductReviewsPanel({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) {
+    const reviewStandards = [
+      ["Verified only", "Ratings will appear only when tied to completed customer orders."],
+      ["Post-purchase capture", "Review requests are planned after Stripe order records are fully wired."],
+      ["No placeholder stars", "FORGE will not show fake ratings or unverified testimonials."],
+    ];
+
     return (
       <div className="rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(24,24,24,0.96),rgba(5,5,5,1))] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.22)] sm:p-8">
         <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
@@ -15,6 +21,21 @@ export default function ProductReviewsPanel({ reviews }: { reviews: Review[] }) 
           orders. Review capture will be added after Stripe order records are
           connected to the storefront.
         </p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {reviewStandards.map(([title, description]) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-white/8 bg-black/35 p-4"
+            >
+              <h3 className="text-sm font-black text-white">
+                {title}
+              </h3>
+              <p className="mt-2 text-xs leading-5 text-gray-400">
+                {description}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -61,8 +61,29 @@ const featuredGear = [
 
 const trustMessages = [
   "Secure checkout",
-  "Easy returns",
+  "Live stock shown",
   "Built for heavy training",
+];
+
+const heroShoppingCues = [
+  {
+    label: "Belts",
+    value: "$79.97",
+    detail: "Zeus, Berserk, and Black variants with live size stock.",
+    href: "/shop/belts",
+  },
+  {
+    label: "Straps",
+    value: "$9.99",
+    detail: "Wrist straps for pulls, rows, and longer back sessions.",
+    href: "/shop/wrist-straps",
+  },
+  {
+    label: "Checkout",
+    value: "Stripe",
+    detail: "Inventory is checked before payment starts.",
+    href: "/cart",
+  },
 ];
 
 export default function HomePage() {
@@ -71,6 +92,45 @@ export default function HomePage() {
       <Navbar />
       <main>
         <HeroSlot />
+
+        <section className="border-y border-red-600/15 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_38%),linear-gradient(180deg,#070707,#000)] px-6 py-8 sm:px-8 sm:py-10">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-4 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+              <div>
+                <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-red-500/90">
+                  Ready to Train
+                </p>
+                <h2 className="text-2xl font-black leading-tight tracking-normal text-white sm:text-3xl">
+                  Shop the gear behind the reel.
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
+                  Start with the core FORGE lineup: lever belts for bracing,
+                  straps for grip, and checkout that confirms inventory before payment.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {heroShoppingCues.map((cue) => (
+                  <Link
+                    key={cue.label}
+                    href={cue.href}
+                    className="group rounded-[1rem] border border-white/10 bg-black/55 p-4 transition-[transform,border-color,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-red-600/50 hover:bg-red-950/18 hover:shadow-[0_18px_42px_rgba(0,0,0,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+                  >
+                    <p className="text-[0.64rem] font-black uppercase tracking-[0.2em] text-red-400">
+                      {cue.label}
+                    </p>
+                    <p className="mt-2 text-xl font-black text-white">
+                      {cue.value}
+                    </p>
+                    <p className="mt-2 text-xs leading-5 text-gray-400">
+                      {cue.detail}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="bg-[linear-gradient(180deg,#050505,#000)] px-6 py-16 sm:px-8 sm:py-20">
           <div className="mx-auto max-w-7xl">

@@ -126,6 +126,9 @@ export default function ProductDetailPage({
   const buyReassurance = isStraps
     ? ["Secure checkout", "Inventory verified before checkout", "Contact support for order help"]
     : ["Secure checkout", "Live stock by size", "Contact support for sizing help"];
+  const purchaseConfidence = isStraps
+    ? "Inventory is checked before Stripe Checkout opens. Contact support if you need order help."
+    : "Measure at the navel-level belt position, not pants size. Inventory is checked before Stripe Checkout opens.";
   const includedItems = isStraps
     ? ["One pair of FORGE lifting straps"]
     : ["One FORGE lever belt", "Lever hardware"];
@@ -286,9 +289,9 @@ export default function ProductDetailPage({
       <Navbar />
       <div className="h-16 sm:h-20" />
       <main>
-        <section className="bg-black px-4 pb-28 pt-8 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
+        <section className="bg-black px-4 pb-28 pt-7 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <Breadcrumb className="mb-8">
+            <Breadcrumb className="mb-6 sm:mb-8">
               <BreadcrumbList className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
                 <BreadcrumbItem>
                   <BreadcrumbLink className="hover:text-white" href="/">
@@ -314,10 +317,10 @@ export default function ProductDetailPage({
               </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-[4.5rem]">
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-[4.5rem]">
               <div className="animate-on-scroll animated">
-                <div className="group relative mb-5 overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-900 p-3 shadow-[0_18px_56px_rgba(0,0,0,0.38)] sm:p-5">
-                  <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/6 bg-[radial-gradient(circle_at_20%_0%,rgba(220,38,38,0.16),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(255,255,255,0.05),transparent_22%),linear-gradient(180deg,rgba(22,22,24,0.96),rgba(5,5,5,1))]">
+                <div className="group relative mb-4 overflow-hidden rounded-[1.4rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-900 p-2.5 shadow-[0_18px_56px_rgba(0,0,0,0.38)] sm:mb-5 sm:rounded-[1.75rem] sm:p-5">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem] border border-white/6 bg-[radial-gradient(circle_at_20%_0%,rgba(220,38,38,0.16),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(255,255,255,0.05),transparent_22%),linear-gradient(180deg,rgba(22,22,24,0.96),rgba(5,5,5,1))] sm:aspect-square sm:rounded-2xl">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_46%)]" />
                     <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-red-600/20 blur-[30px]" />
                     <Image
@@ -372,7 +375,7 @@ export default function ProductDetailPage({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5 sm:gap-3 lg:grid-cols-6">
+                <div className="grid grid-cols-5 gap-2 sm:grid-cols-5 sm:gap-3 lg:grid-cols-6">
                   {product.images.map((image, index) => {
                     const isEditorial = isEditorialGalleryImage(image);
 
@@ -396,7 +399,7 @@ export default function ProductDetailPage({
                             `${product.name} image ${index + 1}`
                           }
                           fill
-                          sizes="(max-width: 640px) 25vw, 120px"
+                          sizes="(max-width: 640px) 20vw, 120px"
                           quality={isEditorial ? 82 : 70}
                           style={{
                             objectPosition: isEditorial
@@ -406,7 +409,7 @@ export default function ProductDetailPage({
                           className={`relative transition-transform duration-300 group-hover/thumb:scale-[1.03] ${
                             isEditorial
                               ? "object-cover brightness-[0.86] contrast-[1.12] saturate-[0.96]"
-                              : "object-contain p-2"
+                              : "object-contain p-1.5 sm:p-2"
                           }`}
                         />
                         {isEditorial ? (
@@ -418,10 +421,17 @@ export default function ProductDetailPage({
                         <span className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/65 px-1.5 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.08em] text-white/70 sm:bottom-2 sm:right-2 sm:px-2 sm:text-[0.62rem]">
                           {index + 1}
                         </span>
-                      </button>
-                    );
-                  })}
+                    </button>
+                  );
+                })}
+              </div>
+              {!isStraps ? (
+                <div className="mt-4 rounded-2xl border border-red-600/20 bg-red-950/12 p-4 text-sm leading-6 text-gray-300 lg:hidden">
+                  <span className="font-black text-white">Sizing tip:</span>{" "}
+                  measure around your waist where the belt will sit, usually
+                  around the navel. Do not use pants size.
                 </div>
+              ) : null}
               </div>
 
               <div className="animate-on-scroll animated">
@@ -479,6 +489,11 @@ export default function ProductDetailPage({
                       {extraPanel}
                     </div>
                   ) : null}
+
+                  <div className="mb-6 rounded-2xl border border-red-600/20 bg-red-950/12 p-4 text-sm leading-6 text-gray-300 sm:mb-8">
+                    <span className="font-black text-white">Before checkout:</span>{" "}
+                    {purchaseConfidence}
+                  </div>
 
                   <div className="mb-8 rounded-2xl border border-white/8 bg-black/40 p-5">
                     <label htmlFor="quantity" className="mb-3 block text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
@@ -584,7 +599,7 @@ export default function ProductDetailPage({
                         How to choose your size.
                       </h2>
                       <p className="mt-4 text-sm leading-6 text-gray-400 sm:text-base">
-                        Exact size ranges are not currently published on the product page. Use the measurement guidance below and contact support if you are unsure before ordering.
+                        Exact size ranges are not currently published on the product page. Measure around your waist where the belt will sit, usually around the navel. Do not use your pants size. Contact support before ordering if you are between sizes.
                       </p>
                       <Link
                         href="/contact"
@@ -622,7 +637,7 @@ export default function ProductDetailPage({
                             {size}
                           </div>
                           <div className="px-4 py-3">
-                            Available in the live catalog. Measure where the belt sits before choosing.
+                            Available in the live catalog. Exact range pending; choose from your belt-position measurement, not pants size.
                           </div>
                         </div>
                       ))}
