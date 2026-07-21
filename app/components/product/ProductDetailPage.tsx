@@ -479,10 +479,10 @@ export default function ProductDetailPage({
                       Returns
                     </Link>
                   </p>
-                  <div className="mt-2 flex justify-center">
+                  <div className="mt-2 flex flex-col items-center gap-1">
                     <TikTokShopLink slug={product.slug} />
-                    <p className="mt-2 text-[0.62rem] leading-5 text-white/30">
-                      Stock follows TikTok Shop inventory for this SKU family.
+                    <p className="text-center text-[0.62rem] leading-5 text-white/30">
+                      Stock follows TikTok Shop for this product family.
                     </p>
                   </div>
                 </div>
