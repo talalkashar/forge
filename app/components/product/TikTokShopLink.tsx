@@ -18,7 +18,7 @@ export default function TikTokShopLink({
         "inline-flex text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white/35 transition-colors hover:text-white/70"
       }
     >
-      Also on TikTok Shop →
+      Inventory / buy on TikTok Shop →
     </a>
   );
 }

@@ -285,9 +285,10 @@ export async function adjustInventoryAction(formData: FormData) {
       .from("inventory_movements")
       .insert({
         variant_id: variantId,
+        // Website mirror of TikTok Shop inventory (source of truth).
         channel: "manual",
         quantity_change: quantityChange,
-        reason: "admin_adjustment",
+        reason: "admin_adjustment_tiktok_aligned",
       });
 
     if (movementError) {

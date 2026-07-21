@@ -8,6 +8,16 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Next.js App Router storefront for FORGE (lever belts, lifting straps). Stripe checkout + Supabase catalog/admin. Live site commonly referenced as `forgegym.us` (also `capacitygears.com` in deployment docs — confirm primary domain before SEO/redirect work).
 
+## Inventory source of truth: TikTok Shop
+
+- **Always reference TikTok Shop** for inventory decisions, stock counts, and SKU alignment.
+- TikTok Shop store: `https://shop.tiktok.com/us/store/forgesports/7496252332747098142` (CAPACITY GEARS LLC / FORGE GYM).
+- Product PDP map: `lib/tiktok-shop.ts` and `docs/tiktok-shop-products.md`.
+- Supabase `product_variants.inventory_quantity` powers **website** checkout — keep it aligned with TikTok stock; do not invent website-only quantities that diverge from TikTok.
+- Admin inventory UI (`/admin/inventory`) must show TikTok listing links per SKU.
+- Marketplace listings channel `tiktok_shop` holds external product IDs / listing URLs.
+- Full TikTok API inventory pull needs `TIKTOK_SHOP_ACCESS_TOKEN` + shop ID (partial credentials may already exist).
+
 ## Website skills (project-scoped)
 
 Skills live under `.grok/skills/`. In Grok, invoke with slash commands. In Claude/Codex, **read the matching `SKILL.md` before domain work**.

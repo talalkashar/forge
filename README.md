@@ -68,7 +68,16 @@ See:
 
 ---
 
-## Inventory protection
+## Inventory (TikTok Shop is source of truth)
+
+- **Always reference TikTok Shop** for stock decisions.
+- Store: https://shop.tiktok.com/us/store/forgesports/7496252332747098142
+- Supabase `product_variants.inventory_quantity` is the **website** mirror used for Stripe checkout — keep it aligned with TikTok.
+- Product map: `lib/tiktok-shop.ts`
+- Admin: `/admin/inventory` (shows TikTok links per SKU)
+- Status: `npm run inventory:status`
+
+### Inventory protection
 
 Manual inventory in Supabase is live business data. Before any reset or reseed:
 
