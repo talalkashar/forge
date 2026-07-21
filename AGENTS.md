@@ -3,3 +3,58 @@
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+# FORGE site — agent guide
+
+Next.js App Router storefront for FORGE (lever belts, lifting straps). Stripe checkout + Supabase catalog/admin. Live site commonly referenced as `forgegym.us` (also `capacitygears.com` in deployment docs — confirm primary domain before SEO/redirect work).
+
+## Website skills (project-scoped)
+
+Skills live under `.grok/skills/`. In Grok, invoke with slash commands. In Claude/Codex, **read the matching `SKILL.md` before domain work**.
+
+| Skill | Path | Use for |
+|-------|------|---------|
+| **website-orchestrator** | `.grok/skills/website-orchestrator/SKILL.md` | Full site assessment / multi-domain program |
+| brand-ui-director | `.grok/skills/brand-ui-director/SKILL.md` | Brand & visual identity |
+| frontend-engineer | `.grok/skills/frontend-engineer/SKILL.md` | Next.js UI implementation |
+| conversion-strategist | `.grok/skills/conversion-strategist/SKILL.md` | Funnel, cart, checkout CRO |
+| motion-3d-director | `.grok/skills/motion-3d-director/SKILL.md` | Motion/3D decisions (bias: no new Three.js) |
+| seo-strategist | `.grok/skills/seo-strategist/SKILL.md` | Metadata, sitemap, canonicals |
+| accessibility-performance | `.grok/skills/accessibility-performance/SKILL.md` | A11y + performance |
+| browser-qa | `.grok/skills/browser-qa/SKILL.md` | Live smoke / interaction QA |
+| integrations-security | `.grok/skills/integrations-security/SKILL.md` | Stripe, Supabase, secrets |
+| production-launch | `.grok/skills/production-launch/SKILL.md` | Go/no-go launch readiness |
+
+Shared context: `.grok/skills/website-orchestrator/references/forge-context.md`
+
+### Default workflow
+
+1. Assessment-only first unless the user explicitly asks for code changes.
+2. Full audits → start with **website-orchestrator**.
+3. Single-domain work → open only that skill.
+4. Security and inventory safety outrank visual novelty.
+
+## How to verify a change
+
+```bash
+npm run lint
+npm run build
+```
+
+Browser smoke: homepage → shop → product → cart → checkout initiation (prefer Stripe test mode).
+
+## Boundaries
+
+- Do not commit `.env.local` or secrets.
+- Never put `SUPABASE_SERVICE_ROLE_KEY` or Stripe secret keys in client components.
+- Do not display marketplace secret values in admin UI.
+- Do not rerun `supabase/schema.sql` or casually reseed after manual inventory edits.
+- Before any inventory-risking reset: `npm run inventory:export`
+- Ask first before deploy, force-push, dependency major upgrades, or expanding Three.js.
+
+## Useful docs
+
+- `README.md` — setup, Supabase, marketplace notes
+- `docs/deployment-checklist.md`
+- `docs/marketplace-sync-roadmap.md`
+- `docs/marketplace-credentials-setup.md`

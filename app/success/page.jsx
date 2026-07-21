@@ -13,22 +13,48 @@ export default function SuccessPage() {
   }, [clearCart]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 py-16 text-white">
-      <div className="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] p-10 text-center shadow-[0_18px_56px_rgba(0,0,0,0.3)]">
-        <ForgeLogo className="mb-8 justify-center" markClassName="text-2xl" />
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.34em] text-red-500/90">
-          Payment Complete
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6 py-16 text-white">
+      <div
+        className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-red-700/20 blur-[120px]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-red-950/40 blur-[110px]"
+        aria-hidden="true"
+      />
+
+      <div className="relative w-full max-w-xl border border-white/[0.1] bg-black/80 p-8 text-center sm:p-12">
+        <div className="mb-8 flex justify-center">
+          <ForgeLogo variant="mark" markClassName="h-12 sm:h-14" />
+        </div>
+        <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
+          FORGE GYM™
         </p>
-        <h1 className="text-4xl font-black tracking-[-0.05em]">Payment Successful</h1>
-        <p className="mt-5 text-base leading-7 text-gray-400">
-          Your Stripe checkout completed successfully. The cart has been cleared.
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-emerald-500/40 bg-emerald-500/10 text-2xl text-emerald-300">
+          ✓
+        </div>
+        <h1 className="text-3xl font-black tracking-[-0.03em] sm:text-4xl">
+          Order locked in
+        </h1>
+        <p className="mt-4 text-sm leading-6 text-white/50 sm:text-base">
+          Payment cleared through Stripe. Your cart is empty — gear is on the
+          way. Check your email for confirmation when it lands.
         </p>
-        <div className="mt-8 flex justify-center">
+        <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/30">
+          Train hard. Recover. Repeat.
+        </p>
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/shop"
-            className="rounded-full border border-red-600/60 px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/10"
+            className="rounded-full bg-red-600 px-7 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-500"
           >
-            Back to Shop
+            Keep shopping
+          </Link>
+          <Link
+            href="/"
+            className="rounded-full border border-white/15 px-7 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/35"
+          >
+            Home
           </Link>
         </div>
       </div>

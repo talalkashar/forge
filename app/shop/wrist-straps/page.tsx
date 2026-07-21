@@ -4,7 +4,7 @@ import ShopCatalogPage from "../../components/product/ShopCatalogPage";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Wrist Straps | FORGE",
+  title: "Wrist Straps",
   description: "Shop FORGE wrist straps built for deadlifts, rows, pull-ups, and heavy pull days.",
 };
 

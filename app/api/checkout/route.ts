@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import type { InventoryLine } from "@/lib/inventory/stock";
 import { getProductBySlug } from "@/lib/products/marketplace";
 import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
 
@@ -12,114 +13,178 @@ type CheckoutItem = {
   name?: string;
   price?: number;
   quantity: number;
+  size?: string;
+};
+
+type NormalizedCheckoutItem = {
+  name: string;
+  price: number;
+  quantity: number;
+  inventoryLine: InventoryLine | null;
 };
 
 const beltSlugs = new Set(["zeus", "berserk", "black"]);
+
+/** Known catalog SKUs that must verify live Supabase inventory before checkout. */
+const LIVE_CATALOG_SLUGS = new Set(["zeus", "berserk", "black", "straps"]);
+
 const checkoutRateLimit = {
   limit: 20,
   windowMs: 60 * 1000,
 };
 
-async function normalizeCheckoutItem(item: CheckoutItem) {
+function normalizeSize(size: string | null | undefined) {
+  return size?.trim().toUpperCase() ?? "";
+}
+
+function sizeFromItem(item: CheckoutItem) {
+  if (typeof item.size === "string" && item.size.trim()) {
+    return normalizeSize(item.size);
+  }
+
+  if (typeof item.name === "string") {
+    const match = item.name.match(/\b(XXL|XL|XS|S|M|L)\b/i);
+    if (match) {
+      return normalizeSize(match[1]);
+    }
+  }
+
+  if (typeof item.variantId === "string") {
+    const match = item.variantId.match(/(?:^|-)(xxl|xl|xs|s|m|l)$/i);
+    if (match) {
+      return normalizeSize(match[1]);
+    }
+  }
+
+  return "";
+}
+
+async function normalizeCheckoutItem(
+  item: CheckoutItem,
+): Promise<NormalizedCheckoutItem> {
   const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
-  const slug = typeof item.slug === "string" ? item.slug : "";
+  const slug = typeof item.slug === "string" ? item.slug.trim().toLowerCase() : "";
   const variantId = typeof item.variantId === "string" ? item.variantId : "";
 
   if (!slug) {
     throw new Error("Please re-add this item before checkout.");
   }
 
-  if (beltSlugs.has(slug) && !variantId) {
+  if (beltSlugs.has(slug) && !variantId && !sizeFromItem(item)) {
     throw new Error("Please re-add your belt size before checkout.");
   }
 
   const productResult = await getProductBySlug(slug);
 
-  if (productResult.error) {
-    throw new Error("Could not verify live inventory. Please try again.");
-  }
-
-  if (!productResult.missingEnv && productResult.data) {
-    if (variantId) {
-      const variant = (productResult.data.product_variants ?? []).find(
-        (productVariant) => productVariant.id === variantId,
+  // Live inventory is required for catalog products — never sell when stock
+  // cannot be verified against Supabase.
+  if (productResult.error || productResult.missingEnv || !productResult.data) {
+    if (LIVE_CATALOG_SLUGS.has(slug)) {
+      throw new Error(
+        "Unable to verify live inventory. Please try checkout again in a moment.",
       );
-
-      if (!variant || variant.is_active !== true) {
-        throw new Error(`${productResult.data.name} is out of stock.`);
-      }
-
-      const inventoryQuantity = variant.inventory_quantity ?? 0;
-
-      if (inventoryQuantity <= 0) {
-        throw new Error(`${productResult.data.name} ${variant.size ?? ""} is out of stock.`);
-      }
-
-      if (quantity > inventoryQuantity) {
-        throw new Error(
-          `Only ${inventoryQuantity} ${productResult.data.name} ${variant.size ?? ""} left in stock.`,
-        );
-      }
-
-      return {
-        name: `${productResult.data.name}${variant.size ? ` - ${variant.size}` : ""}`,
-        price: variant.price_cents ?? productResult.data.base_price_cents,
-        quantity,
-      };
     }
 
-    const activeVariants = (productResult.data.product_variants ?? []).filter(
-      (variant) => variant.is_active === true,
-    );
-    const inventoryQuantity = activeVariants.reduce(
-      (total, variant) => total + (variant.inventory_quantity ?? 0),
-      0,
-    );
+    throw new Error("Please re-add this item before checkout.");
+  }
 
-    if (activeVariants.length === 0 || inventoryQuantity <= 0) {
+  const variants = productResult.data.product_variants ?? [];
+  const requestedSize = sizeFromItem(item);
+
+  if (variantId || requestedSize) {
+    let variant =
+      (variantId
+        ? variants.find((productVariant) => productVariant.id === variantId)
+        : undefined) ?? null;
+
+    // Cart may still hold offline IDs (e.g. "berserk-m") — resolve by size.
+    if (!variant && requestedSize) {
+      variant =
+        variants.find(
+          (productVariant) =>
+            normalizeSize(productVariant.size) === requestedSize,
+        ) ?? null;
+    }
+
+    if (!variant || variant.is_active !== true) {
       throw new Error(`${productResult.data.name} is out of stock.`);
+    }
+
+    const inventoryQuantity = variant.inventory_quantity ?? 0;
+
+    if (inventoryQuantity <= 0) {
+      throw new Error(
+        `${productResult.data.name} ${variant.size ?? ""} is out of stock.`,
+      );
     }
 
     if (quantity > inventoryQuantity) {
       throw new Error(
-        `Only ${inventoryQuantity} ${productResult.data.name} left in stock.`,
+        `Only ${inventoryQuantity} ${productResult.data.name} ${variant.size ?? ""} left in stock.`,
       );
     }
 
-    const representativeVariant = activeVariants.find(
-      (variant) => typeof variant.price_cents === "number",
-    );
-
     return {
-      name: productResult.data.name,
-      price: representativeVariant?.price_cents ?? productResult.data.base_price_cents,
+      name: `${productResult.data.name}${variant.size ? ` - ${variant.size}` : ""}`,
+      price: variant.price_cents ?? productResult.data.base_price_cents,
       quantity,
+      inventoryLine: {
+        variantId: variant.id,
+        sku: variant.sku,
+        quantity,
+      },
     };
   }
 
-  const fallbackPrice = Math.round(Number(item.price) * 100);
+  const activeVariants = variants.filter((variant) => variant.is_active === true);
+  const inventoryQuantity = activeVariants.reduce(
+    (total, variant) => total + (variant.inventory_quantity ?? 0),
+    0,
+  );
 
-  if (!Number.isFinite(fallbackPrice) || fallbackPrice <= 0) {
-    throw new Error("Please re-add this item before checkout.");
+  if (activeVariants.length === 0 || inventoryQuantity <= 0) {
+    throw new Error(`${productResult.data.name} is out of stock.`);
   }
 
+  if (quantity > inventoryQuantity) {
+    throw new Error(
+      `Only ${inventoryQuantity} ${productResult.data.name} left in stock.`,
+    );
+  }
+
+  const representativeVariant =
+    activeVariants.find((variant) => (variant.inventory_quantity ?? 0) > 0) ??
+    activeVariants[0];
+
   return {
-    name:
-      typeof item.name === "string" && item.name.trim()
-        ? item.name.trim()
-        : "FORGE Product",
-    price: fallbackPrice,
+    name: productResult.data.name,
+    price:
+      representativeVariant?.price_cents ?? productResult.data.base_price_cents,
     quantity,
+    inventoryLine: representativeVariant
+      ? {
+          variantId: representativeVariant.id,
+          sku: representativeVariant.sku,
+          quantity,
+        }
+      : null,
   };
 }
 
 function allowedCheckoutOrigin(req: Request) {
   const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const fallbackOrigin = configuredBaseUrl || "http://localhost:3000";
+  const fallbackOrigin = configuredBaseUrl || "http://localhost:3001";
   const requestOrigin = req.headers.get("origin");
 
   const allowedOrigins = new Set(
-    [configuredBaseUrl, "https://capacitygears.com", "http://localhost:3000"]
+    [
+      configuredBaseUrl,
+      "https://capacitygears.com",
+      "https://forgegym.us",
+      "https://www.forgegym.us",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ]
       .filter(Boolean)
       .map((value) => new URL(value as string).origin),
   );
@@ -159,6 +224,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: "Checkout is not configured yet." },
+        { status: 500 },
+      );
+    }
+
     const body: { items?: CheckoutItem[] } = await req.json();
     const items: CheckoutItem[] = Array.isArray(body?.items) ? body.items : [];
     const normalizedItems = (
@@ -169,8 +241,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
     }
 
+    const inventoryItems = normalizedItems
+      .map((item) => item.inventoryLine)
+      .filter((line): line is InventoryLine => Boolean(line));
+
     const origin = allowedCheckoutOrigin(req);
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -185,6 +261,10 @@ export async function POST(req: Request) {
         },
         quantity: item.quantity,
       })),
+      // Used by /api/webhooks/stripe to decrement live Supabase inventory.
+      metadata: {
+        inventory_items: JSON.stringify(inventoryItems),
+      },
       success_url: `${origin}/success`,
       cancel_url: `${origin}/cancel`,
     });
@@ -200,7 +280,7 @@ export async function POST(req: Request) {
       message.includes("verify live inventory");
 
     if (!isInventoryError) {
-      console.error("Checkout failed");
+      console.error("Checkout failed", message);
     }
 
     return NextResponse.json(

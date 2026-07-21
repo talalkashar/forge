@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowUp,
-  Dumbbell,
-  Heart,
-  Mail,
-  Music2,
-} from "lucide-react";
+import { ArrowUp, Mail, Music2 } from "lucide-react";
 import ForgeLogo from "./ForgeLogo";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -67,8 +61,8 @@ const socialLinks = [
     icon: InstagramIcon,
   },
   {
-    href: "https://www.tiktok.com/@forgegym.us",
-    label: "FORGE TikTok",
+    href: "https://shop.tiktok.com/us/store/forgesports/7496252332747098142",
+    label: "FORGE TikTok Shop",
     icon: Music2,
   },
 ];
@@ -84,83 +78,68 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mx-auto mt-12 w-full border-y border-dotted border-red-600/25 bg-black px-2 text-white sm:mt-16 md:mt-20">
-      <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)] md:px-8">
-        <ForgeLogo
-          className="mx-auto flex items-center justify-center rounded-full border border-dotted border-white/15 bg-white/[0.03] p-4 transition-colors hover:border-red-600/45 hover:bg-red-600/10 md:mx-0"
-          markClassName="h-10 w-10"
-        />
-        <p className="max-w-4xl text-center text-sm leading-6 text-white/55 md:text-left">
-          FORGE builds focused lifting gear for heavy training days: lever belts,
-          wrist straps, and essentials made to feel locked-in, aggressive, and
-          ready under load.
-        </p>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <div className="border-b border-dotted border-white/15" />
-        <div className="grid grid-cols-2 gap-8 py-10 sm:grid-cols-3 md:flex md:justify-between">
-          {navigation.map((section) => (
-            <div key={section.title}>
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-red-500">
-                {section.title}
-              </h3>
-              <ul className="flex flex-col space-y-2" role="list">
-                {section.links.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-white/55 transition-colors hover:text-white md:text-xs"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+    <footer className="mt-0 w-full border-t border-white/[0.08] bg-black text-white">
+      <div className="mx-auto max-w-7xl px-6 py-14 sm:px-8 sm:py-16">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <ForgeLogo
+              className="inline-flex items-center"
+              markClassName="h-9 w-9"
+            />
+            <p className="mt-6 max-w-sm text-sm leading-7 text-white/50">
+              FORGE GYM™ — lever belts and wrist straps built for heavy training.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              {socialLinks.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={label}
+                  aria-label={label}
+                  href={href}
+                  rel={href.startsWith("http") ? "noreferrer" : undefined}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  className="rounded-full border border-white/12 bg-white/[0.03] p-3 text-white/70 transition-[border-color,color,background-color,transform] hover:-translate-y-0.5 hover:border-red-600/50 hover:bg-red-600/10 hover:text-white"
+                >
+                  <Icon className="h-4 w-4" strokeWidth={1.5} />
+                </Link>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7 lg:justify-items-end">
+            {navigation.map((section) => (
+              <div key={section.title} className="lg:min-w-[8rem]">
+                <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
+                  {section.title}
+                </h3>
+                <ul className="flex flex-col gap-2.5" role="list">
+                  {section.links.map((item) => (
+                    <li key={item.href + item.label}>
+                      <Link
+                        href={item.href}
+                        className="text-sm text-white/60 transition-colors hover:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="border-b border-dotted border-white/15" />
-      </div>
 
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-6 px-4 py-8 sm:px-6 md:px-8">
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {socialLinks.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={label}
-              aria-label={label}
-              href={href}
-              rel={href.startsWith("http") ? "noreferrer" : undefined}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              className="rounded-xl border border-dotted border-white/18 bg-white/[0.03] p-3 text-white/75 transition-[border-color,color,transform,background-color] hover:-translate-y-1 hover:border-red-600/60 hover:bg-red-600/10 hover:text-white"
-            >
-              <Icon className="h-5 w-5" strokeWidth={1.5} />
-            </Link>
-          ))}
-
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-white/40">
+            © {year} Capacity Gears LLC · forgegym.us
+          </p>
           <button
             type="button"
             onClick={handleScrollTop}
-            className="flex items-center rounded-full border border-dotted border-white/18 bg-white/[0.03] px-4 py-3 text-white/75 transition-[border-color,color,transform,background-color] hover:-translate-y-1 hover:border-red-600/60 hover:bg-red-600/10 hover:text-white"
+            className="inline-flex w-fit items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-white"
           >
-            <ArrowUp className="h-4 w-4" strokeWidth={1.8} />
-            <span className="sr-only">Back to top</span>
+            Back to top
+            <ArrowUp className="h-3.5 w-3.5" strokeWidth={1.8} />
           </button>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-2 text-center text-xs text-white/45 sm:flex-row">
-          <span>© {year} Capacity Gears LLC</span>
-          <span className="hidden text-white/20 sm:inline">-</span>
-          <span className="flex items-center gap-1">
-            Built with
-            <Heart className="h-4 w-4 animate-pulse text-red-600" />
-            for heavy training
-          </span>
-          <span className="hidden text-white/20 sm:inline">-</span>
-          <span className="flex items-center gap-1 font-semibold text-white/70">
-            <Dumbbell className="h-4 w-4 text-red-600" />
-            Strength Built Different
-          </span>
         </div>
       </div>
     </footer>

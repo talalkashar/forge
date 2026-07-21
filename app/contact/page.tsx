@@ -1,6 +1,7 @@
 "use client";
 
-import { Mail, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
+import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 import { FormEvent, useState } from "react";
@@ -22,7 +23,9 @@ const initialFields: FormFields = {
 export default function ContactPage() {
   const [fields, setFields] = useState<FormFields>(initialFields);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
-  const [messageState, setMessageState] = useState<"idle" | "success" | "error">("idle");
+  const [messageState, setMessageState] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -57,38 +60,82 @@ export default function ContactPage() {
     }, 150);
   };
 
+  const fieldClass = (key: string) =>
+    `w-full border bg-black px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 ${
+      invalidFields.includes(key)
+        ? "border-red-500"
+        : "border-white/12 focus:border-white/35"
+    }`;
+
   return (
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main>
-        <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 bg-black">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 fade-in-up">
-              Get in <span className="text-red-600">Touch</span>
+      <main className="bg-black">
+        <section className="border-b border-white/[0.06] px-6 py-16 sm:px-8 sm:py-20">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="text-4xl font-black tracking-[-0.03em] text-white sm:text-6xl">
+              Contact
             </h1>
-            <p className="text-xl text-gray-400 fade-in-up-delay-1">
-              Have a question? We&apos;re here to help.
+            <p className="mt-4 max-w-xl text-base text-white/50">
+              Sizing, orders, or product questions. Replies typically within 1–2 business days.
             </p>
           </div>
         </section>
 
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-black">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-gray-900 rounded-2xl p-8 md:p-12 animate-on-scroll animated">
-              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-                {([
-                  ["name", "Name", "text", "Your name"],
-                  ["email", "Email", "email", "your.email@example.com"],
-                  ["subject", "Subject", "text", "What's this about?"],
-                ] as const).map(([key, label, type, placeholder]) => (
+        <section className="px-6 py-14 sm:px-8 sm:py-20">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <a
+                href="mailto:contact@forgegym.us"
+                className="group flex items-start gap-4 border border-white/[0.08] bg-[#080808] p-5 transition-colors hover:border-white/20"
+              >
+                <span className="border border-white/12 p-3 text-white/70 transition-colors group-hover:text-white">
+                  <Mail className="h-4 w-4" strokeWidth={1.5} />
+                </span>
+                <span>
+                  <span className="block text-xs font-bold uppercase tracking-[0.16em] text-white/40">
+                    Email
+                  </span>
+                  <span className="mt-1 block text-sm font-semibold text-white">
+                    contact@forgegym.us
+                  </span>
+                </span>
+              </a>
+              <p className="mt-6 text-sm leading-6 text-white/40">
+                Prefer policies first?{" "}
+                <Link href="/shipping" className="text-white/70 hover:text-white">
+                  Shipping
+                </Link>
+                {" · "}
+                <Link href="/returns" className="text-white/70 hover:text-white">
+                  Returns
+                </Link>
+                {" · "}
+                <Link href="/faq" className="text-white/70 hover:text-white">
+                  FAQ
+                </Link>
+              </p>
+            </div>
+
+            <div className="border border-white/[0.08] bg-[#080808] p-6 sm:p-8 lg:col-span-8">
+              <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+                {(
+                  [
+                    ["name", "Name", "text"],
+                    ["email", "Email", "email"],
+                    ["subject", "Subject", "text"],
+                  ] as const
+                ).map(([key, label, type]) => (
                   <div key={key}>
-                    <label htmlFor={key} className="block text-white font-semibold mb-2">
+                    <label
+                      htmlFor={key}
+                      className="mb-2 block text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/40"
+                    >
                       {label}
                     </label>
                     <input
                       id={key}
-                      name={key}
                       type={type}
                       value={fields[key]}
                       onChange={(event) =>
@@ -97,26 +144,22 @@ export default function ContactPage() {
                           [key]: event.target.value,
                         }))
                       }
-                      autoComplete={key}
-                      required
-                      aria-invalid={invalidFields.includes(key)}
-                      className={`w-full px-4 py-3 bg-black border rounded-lg text-white focus:border-red-600 transition-colors duration-300 ${
-                        invalidFields.includes(key) ? "border-red-600" : "border-gray-700"
-                      }`}
-                      placeholder={placeholder}
+                      className={fieldClass(key)}
+                      autoComplete={key === "email" ? "email" : "on"}
                     />
-                    <span className="error-message text-red-600 text-sm hidden" />
                   </div>
                 ))}
 
                 <div>
-                  <label htmlFor="message" className="block text-white font-semibold mb-2">
+                  <label
+                    htmlFor="message"
+                    className="mb-2 block text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/40"
+                  >
                     Message
                   </label>
                   <textarea
                     id="message"
-                    name="message"
-                    rows={6}
+                    rows={5}
                     value={fields.message}
                     onChange={(event) =>
                       setFields((current) => ({
@@ -124,62 +167,28 @@ export default function ContactPage() {
                         message: event.target.value,
                       }))
                     }
-                    required
-                    aria-invalid={invalidFields.includes("message")}
-                    className={`w-full px-4 py-3 bg-black border rounded-lg text-white focus:border-red-600 transition-colors duration-300 resize-none ${
-                      invalidFields.includes("message") ? "border-red-600" : "border-gray-700"
-                    }`}
-                    placeholder="Tell us what's on your mind..."
+                    className={`${fieldClass("message")} resize-y`}
                   />
-                  <span className="error-message text-red-600 text-sm hidden" />
                 </div>
+
+                {messageState === "error" ? (
+                  <p className="text-sm text-red-400">
+                    Fill in all fields with a valid email.
+                  </p>
+                ) : null}
+                {messageState === "success" ? (
+                  <p className="text-sm text-emerald-400">
+                    Opening your email client…
+                  </p>
+                ) : null}
 
                 <button
                   type="submit"
-                  className="w-full bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 glow-red"
+                  className="w-full rounded-full bg-red-600 px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-500 sm:w-auto sm:px-10"
                 >
-                  Email Support
+                  Send message
                 </button>
               </form>
-
-              <div
-                className={`${messageState === "success" ? "block" : "hidden"} mt-6 p-4 bg-green-900/30 border border-green-600 rounded-lg text-green-400 text-center`}
-              >
-                <p className="font-semibold">Opening your email app with your message.</p>
-              </div>
-
-              <div
-                className={`${messageState === "error" ? "block" : "hidden"} mt-6 p-4 bg-red-900/30 border border-red-600 rounded-lg text-red-400 text-center`}
-              >
-                <p className="font-semibold">Please complete the highlighted fields before continuing.</p>
-              </div>
-            </div>
-
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 animate-on-scroll animated max-w-2xl mx-auto">
-              <div className="bg-gray-900 p-6 rounded-lg text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600/15 text-red-500">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <h3 className="text-white font-bold mb-2">Email</h3>
-                <a
-                  href="mailto:contact@forgegym.us"
-                  className="text-gray-400 hover:text-red-600 transition-colors duration-300 text-sm break-all"
-                >
-                  contact@forgegym.us
-                </a>
-              </div>
-              <div className="bg-gray-900 p-6 rounded-lg text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600/15 text-red-500">
-                  <Phone className="h-5 w-5" />
-                </div>
-                <h3 className="text-white font-bold mb-2">Phone</h3>
-                <a
-                  href="tel:5714160080"
-                  className="text-gray-400 hover:text-red-600 transition-colors duration-300"
-                >
-                  (571) 416-0080
-                </a>
-              </div>
             </div>
           </div>
         </section>

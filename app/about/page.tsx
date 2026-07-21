@@ -1,28 +1,27 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
 export const metadata: Metadata = {
-  title: "About | FORGE",
-  description: "Learn the story, standards, and training philosophy behind FORGE.",
+  title: "About",
+  description:
+    "FORGE GYM builds premium 10mm lever belts and wrist straps for heavy, disciplined training.",
 };
 
-const storyCards = [
+const pillars = [
   {
-    title: "Premium Materials",
-    text: "Our product pages list the materials and specs currently available for each FORGE item.",
+    title: "Brace",
+    body: "10mm lever belts built to lock in under squats and pulls — rigid core, fast setup.",
   },
   {
-    title: "Training-Focused",
-    text: "FORGE gear is positioned around the lifts it is meant to support: bracing, pulling, and repeated heavy sessions.",
+    title: "Grip",
+    body: "Wrist straps for high-volume back work when your hands give out before your back does.",
   },
   {
-    title: "No Compromises",
-    text: "The store keeps sizing, pricing, inventory, and checkout details visible before purchase.",
-  },
-  {
-    title: "Clear Support",
-    text: "Shipping, returns, privacy, FAQ, and contact pages are available from the storefront footer.",
+    title: "No soft brand",
+    body: "Clean hardware. Dark storefront. Zero gimmick marketing. Just gear for heavy work.",
   },
 ];
 
@@ -31,68 +30,85 @@ export default function AboutPage() {
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main>
-        <section className="pt-12 pb-16 px-4 sm:px-6 lg:px-8 bg-black">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 fade-in-up">
-              Our <span className="text-red-600">Story</span>
+      <main className="bg-black">
+        <section className="border-b border-white/[0.06] px-6 py-16 sm:px-8 sm:py-24">
+          <div className="mx-auto max-w-7xl">
+            <h1 className="max-w-3xl text-4xl font-black tracking-[-0.03em] text-white sm:text-6xl">
+              Strength gear for people who actually lift.
             </h1>
-            <p className="text-xl text-gray-400 fade-in-up-delay-1">
-              Strength gear with clear sizing, real product details, and secure checkout.
+            <p className="mt-6 max-w-2xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">
+              FORGE GYM makes lever belts and wrist straps for heavy, disciplined
+              training. We care about bracing, grip, and build quality — not
+              hype drops or soft lifestyle filler.
             </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="/shop"
+                className="rounded-full bg-red-600 px-7 py-3.5 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-500"
+              >
+                Shop gear
+              </Link>
+              <Link
+                href="/shop/belts"
+                className="rounded-full border border-white/15 px-7 py-3.5 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/35"
+              >
+                Lever belts
+              </Link>
+            </div>
           </div>
         </section>
 
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-12">
-              <div className="animate-on-scroll animated">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">The Beginning</h2>
-                <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                  FORGE focuses on lifting gear for disciplined training: lever belts for bracing and wrist straps for
-                  heavy pulls. The store is built around clear product paths, straightforward specs, and live catalog data.
+        <section className="px-6 py-16 sm:px-8 sm:py-20">
+          <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-3">
+            {pillars.map((item) => (
+              <div
+                key={item.title}
+                className="border border-white/[0.08] bg-[#080808] p-6"
+              >
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-red-400">
+                  {item.title}
                 </p>
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The current lineup is intentionally narrow so each product can have its own sizing, images, availability,
-                  and checkout path without hiding important purchase details.
-                </p>
+                <p className="mt-3 text-sm leading-6 text-white/55">{item.body}</p>
               </div>
+            ))}
+          </div>
+        </section>
 
-              <div className="animate-on-scroll animated">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">Our Mission</h2>
-                <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                  At FORGE, the goal is to keep the buying experience as focused as the training itself. Product pages
-                  should make it easy to understand what is included, what size is available, and what happens at checkout.
-                </p>
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  As the catalog grows, FORGE can add more proof points only when they are real: verified reviews,
-                  tested policies, and confirmed marketplace or federation details.
-                </p>
-              </div>
-
-              <div className="animate-on-scroll animated">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">What Makes Us Different</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {storyCards.map((card) => (
-                    <div key={card.title} className="bg-gray-900 p-6 rounded-lg">
-                      <h3 className="text-xl font-bold text-white mb-3">{card.title}</h3>
-                      <p className="text-gray-400">{card.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="animate-on-scroll animated">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-600">Join the FORGE</h2>
-                <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                  FORGE is for lifters who want a direct path to the gear they need without inflated claims or confusing
-                  product options.
-                </p>
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  When you choose FORGE, you should be able to see the product, select the right option, and check out
-                  with confidence in the details shown on the page.
-                </p>
-              </div>
+        <section className="border-t border-white/[0.06] px-6 py-16 sm:px-8 sm:py-20">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
+            <div className="relative aspect-[4/5] overflow-hidden border border-white/[0.08] bg-neutral-950">
+              <Image
+                src="/images/belts/listing/berserk/1-hero.jpg"
+                alt="FORGE GYM Berserk lever belt"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={86}
+                className="object-contain p-8"
+              />
+            </div>
+            <div>
+              <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
+                The standard
+              </p>
+              <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                One platform. Three finishes.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-white/50">
+                Zeus, Berserk, and Black share the same 10mm lever platform.
+                Pick the finish that fits your gym — keep the brace, speed, and
+                structure identical.
+              </p>
+              <ul className="mt-6 space-y-3 text-sm text-white/60">
+                <li>· 10mm thickness · 4&quot; width</li>
+                <li>· Lever closure for repeatable setup</li>
+                <li>· Secure Stripe checkout</li>
+              </ul>
+              <Link
+                href="/shop/belts"
+                className="mt-8 inline-flex rounded-full border border-white/15 px-6 py-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/35"
+              >
+                Shop lever belts →
+              </Link>
             </div>
           </div>
         </section>

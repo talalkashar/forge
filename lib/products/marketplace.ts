@@ -1,5 +1,6 @@
 import "server-only";
 
+import { readFileSync, writeFileSync } from "fs";
 import { createClient } from "@supabase/supabase-js";
 import { getSupabaseEnv, hasSupabaseEnv } from "@/lib/supabase/env";
 import {
@@ -63,6 +64,38 @@ const PRODUCT_SELECT = `
 const PRODUCT_COLUMNS =
   "id, slug, name, subtitle, description, category, status, base_price_cents, currency, brand, is_featured, sort_order, created_at, updated_at";
 
+/**
+ * Catalog query budget. Keep snappy, but long enough for nested variant/image
+ * payloads so we don't silently fall back to offline catalog and fake stock.
+ */
+const CATALOG_QUERY_TIMEOUT_MS = 3000;
+
+/** Short cooldown after timeouts — prefer retrying live inventory quickly. */
+const CATALOG_COOLDOWN_MS = 30_000;
+const CATALOG_COOLDOWN_FILE = "/tmp/forge-catalog-cooldown";
+
+function catalogIsInCooldown() {
+  try {
+    const raw = readFileSync(CATALOG_COOLDOWN_FILE, "utf8");
+    const until = Number(raw);
+    return Number.isFinite(until) && Date.now() < until;
+  } catch {
+    return false;
+  }
+}
+
+function markCatalogCooldown() {
+  try {
+    writeFileSync(
+      CATALOG_COOLDOWN_FILE,
+      String(Date.now() + CATALOG_COOLDOWN_MS),
+      "utf8",
+    );
+  } catch {
+    // Ignore filesystem issues; timeout path still returns fallback data.
+  }
+}
+
 function emptyResult<T>(data: T): ProductQueryResult<T> {
   return {
     data,
@@ -79,6 +112,33 @@ function errorResult<T>(data: T, error: string): ProductQueryResult<T> {
   };
 }
 
+async function withTimeout<T>(
+  promise: PromiseLike<T>,
+  label: string,
+  timeoutMs = CATALOG_QUERY_TIMEOUT_MS,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      Promise.resolve(promise),
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(
+            new Error(
+              `${label} timed out after ${timeoutMs}ms (Supabase unreachable or slow)`,
+            ),
+          );
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+}
+
 async function createCatalogClient() {
   const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
 
@@ -86,6 +146,14 @@ async function createCatalogClient() {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+    },
+    global: {
+      fetch: (input, init) =>
+        fetch(input, {
+          ...init,
+          // Browser/Node fetch abort if the remote never answers.
+          signal: AbortSignal.timeout(CATALOG_QUERY_TIMEOUT_MS),
+        }),
     },
   });
 }
@@ -186,23 +254,39 @@ export async function getProducts(): Promise<
     return emptyResult([]);
   }
 
-  const supabase = await createCatalogClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select(PRODUCT_SELECT)
-    .eq("status", "active")
-    .order("sort_order", { ascending: true })
-    .order("name", { ascending: true });
-
-  if (error) {
-    return errorResult([], error.message);
+  if (catalogIsInCooldown()) {
+    return errorResult([], "Catalog cooldown active after recent Supabase timeout");
   }
 
-  return {
-    data: (data ?? []) as ProductWithRelations[],
-    error: null,
-    missingEnv: false,
-  };
+  try {
+    const supabase = await createCatalogClient();
+    const { data, error } = await withTimeout(
+      supabase
+        .from("products")
+        .select(PRODUCT_SELECT)
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true }),
+      "getProducts",
+    );
+
+    if (error) {
+      markCatalogCooldown();
+      return errorResult([], error.message);
+    }
+
+    return {
+      data: (data ?? []) as ProductWithRelations[],
+      error: null,
+      missingEnv: false,
+    };
+  } catch (error) {
+    markCatalogCooldown();
+    return errorResult(
+      [],
+      error instanceof Error ? error.message : "Failed to load products",
+    );
+  }
 }
 
 export async function getFeaturedProducts(): Promise<
@@ -223,23 +307,42 @@ export async function getProductBySlug(
     return emptyResult(null);
   }
 
-  const supabase = await createCatalogClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select(PRODUCT_SELECT)
-    .eq("slug", slug)
-    .eq("status", "active")
-    .maybeSingle();
-
-  if (error) {
-    return errorResult(null, error.message);
+  if (catalogIsInCooldown()) {
+    return errorResult(
+      null,
+      "Catalog cooldown active after recent Supabase timeout",
+    );
   }
 
-  return {
-    data: (data as ProductWithRelations | null) ?? null,
-    error: null,
-    missingEnv: false,
-  };
+  try {
+    const supabase = await createCatalogClient();
+    const { data, error } = await withTimeout(
+      supabase
+        .from("products")
+        .select(PRODUCT_SELECT)
+        .eq("slug", slug)
+        .eq("status", "active")
+        .maybeSingle(),
+      `getProductBySlug(${slug})`,
+    );
+
+    if (error) {
+      markCatalogCooldown();
+      return errorResult(null, error.message);
+    }
+
+    return {
+      data: (data as ProductWithRelations | null) ?? null,
+      error: null,
+      missingEnv: false,
+    };
+  } catch (error) {
+    markCatalogCooldown();
+    return errorResult(
+      null,
+      error instanceof Error ? error.message : "Failed to load product",
+    );
+  }
 }
 
 export async function getProductVariants(

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { readFileSync } from "fs";
 import {
   beltVariantOrder,
   featuredProductOrder,
@@ -57,6 +58,9 @@ function fallbackProductFromPresentation(
   );
   const basePriceCents = isBelt ? 7997 : 999;
   const sizes = isBelt ? ["S", "M", "L", "XL"] : [];
+  // Offline presentation-only catalog. Never invent sellable stock —
+  // live quantities come only from Supabase product_variants.
+  const offlineStock = 0;
   const variants: ProductVariantRow[] =
     sizes.length > 0
       ? sizes.map((size) => ({
@@ -67,10 +71,10 @@ function fallbackProductFromPresentation(
           size,
           color: presentation.slug === "black" ? "Black" : titleCase(presentation.slug),
           price_cents: basePriceCents,
-          inventory_quantity: 0,
+          inventory_quantity: offlineStock,
           stripe_price_id: null,
           stripe_product_id: null,
-          is_active: true,
+          is_active: false,
           created_at: null,
           updated_at: null,
         }))
@@ -83,10 +87,10 @@ function fallbackProductFromPresentation(
             size: null,
             color: "Black",
             price_cents: basePriceCents,
-            inventory_quantity: 0,
+            inventory_quantity: offlineStock,
             stripe_price_id: null,
             stripe_product_id: null,
-            is_active: true,
+            is_active: false,
             created_at: null,
             updated_at: null,
           },
@@ -105,7 +109,7 @@ function fallbackProductFromPresentation(
     status: "active",
     base_price_cents: basePriceCents,
     currency: "USD",
-    brand: "FORGE",
+    brand: "FORGE GYM",
     is_featured: featuredProductOrder.includes(
       presentation.slug as (typeof featuredProductOrder)[number],
     ),
@@ -182,6 +186,46 @@ function firstActiveVariant(product: ProductWithRelations) {
   return sortVariants(product.product_variants ?? []).find((variant) => variant.is_active);
 }
 
+
+/**
+ * Reject uncurated gallery noise from storefront product carousels.
+ * Allow TikTok-style listing packs: main/card + numbered slides 1–7
+ * (hero product shot + red/black branded infographics).
+ */
+function isMarketingSlide(src: string): boolean {
+  if (!src.includes("/images/")) return true;
+  if (src.includes("/listing/")) {
+    const base = src.split("/").pop() || "";
+    // Explicit packshot / hero names
+    if (
+      base === "main.jpg" ||
+      base === "card.jpg" ||
+      base === "1-removebg.png" ||
+      base === "1-removebg.webp"
+    ) {
+      return false;
+    }
+    // Numbered TikTok-style gallery slides: 1.jpg … 7.jpg (and .png/.webp)
+    if (/^[1-7]\.(jpe?g|png|webp)$/i.test(base)) {
+      return false;
+    }
+    // Cache-busted curated gallery packs from productData (gallery-v2-1.jpg, etc.)
+    if (/^gallery-v\d+-\d+\.(jpe?g|png|webp)$/i.test(base)) {
+      return false;
+    }
+    // Everything else under listing/ is leftover spam (01.jpg, product-white, etc.)
+    return true;
+  }
+  // Description marketing art never as product gallery from DB
+  if (src.toLowerCase().includes("product description")) return true;
+  if (src.toLowerCase().includes("size-chart")) return true;
+  // lifestyle paths only if presentation explicitly includes them
+  if (src.includes("/lifestyle/")) return true;
+  if (src.includes("life-")) return true;
+  return false;
+}
+
+
 function createStorefrontProduct(product: ProductWithRelations): StorefrontProduct {
   const presentation = productPresentationBySlug[product.slug];
   const variants = sortVariants(product.product_variants ?? []);
@@ -189,28 +233,17 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
   const representativeVariant = firstActiveVariant(product);
   const sortedImages = sortImages(product.product_images ?? []);
   const imageSources = sortedImages.map((image) => image.src);
-  const appendedPresentationImages =
-    imageSources.length > 0
-      ? (presentation?.images ?? []).filter(
-          (src) => src.includes("/lifestyle/") && !imageSources.includes(src),
-        )
-      : [];
-  const featuredBerserkImage = appendedPresentationImages.find((src) =>
-    src.includes("bench-detail"),
-  );
-  const remainingAppendedPresentationImages = appendedPresentationImages.filter(
-    (src) => src !== featuredBerserkImage,
+  // Prefer curated presentation order when available (product shots → lifestyle).
+  // Append any DB-only images that presentation does not already include.
+  // Curated presentation galleries only — never append raw DB listing spam
+  // (webp/marketing/white-bg/legacy 1-7 Amazon slides).
+  const presentationImages = (presentation?.images ?? []).filter(
+    (src) => !isMarketingSlide(src),
   );
   const images =
-    imageSources.length > 0
-      ? product.slug === "berserk" && featuredBerserkImage
-        ? [
-            featuredBerserkImage,
-            ...imageSources,
-            ...remainingAppendedPresentationImages,
-          ]
-        : [...imageSources, ...appendedPresentationImages]
-      : presentation?.images ?? [];
+    presentationImages.length > 0
+      ? presentationImages
+      : imageSources.filter((src) => !isMarketingSlide(src));
   const getPresentationImageAlt = (src: string) => {
     const presentationIndex = presentation?.images.indexOf(src) ?? -1;
 
@@ -220,9 +253,6 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
       `${product.name} lifestyle image`
     );
   };
-  const appendedPresentationImageAlts = appendedPresentationImages.map(
-    getPresentationImageAlt,
-  );
   const priceCents = representativeVariant?.price_cents ?? product.base_price_cents;
   const categoryLabel = presentation?.categoryLabel ?? titleCase(product.category);
   const descriptionText = product.description?.trim() ?? "";
@@ -230,7 +260,7 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
   return {
     id: product.id,
     slug: product.slug,
-    brand: product.brand ?? "FORGE",
+    brand: product.brand ?? "FORGE GYM",
     subtitle: product.subtitle,
     status: product.status,
     databaseCategory: product.category,
@@ -255,20 +285,14 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
     cartName: product.name,
     price: centsToDollars(priceCents),
     originalPrice: presentation?.originalPrice,
-    kicker: presentation?.kicker ?? product.brand ?? "FORGE",
+    kicker: presentation?.kicker ?? product.brand ?? "FORGE GYM",
     images,
     imageAlts:
-      sortedImages.length > 0
-        ? product.slug === "berserk" && featuredBerserkImage
-          ? [
-              getPresentationImageAlt(featuredBerserkImage),
-              ...sortedImages.map((image) => image.alt),
-              ...remainingAppendedPresentationImages.map(getPresentationImageAlt),
-            ]
-          : [
-              ...sortedImages.map((image) => image.alt),
-              ...appendedPresentationImageAlts,
-            ]
+      images.length > 0
+        ? images.map((src) => {
+            const dbMatch = sortedImages.find((image) => image.src === src);
+            return getPresentationImageAlt(src) || dbMatch?.alt || `${product.name}`;
+          })
         : presentation?.imageAlts,
     featureList: presentation?.featureList ?? [],
     intro:
@@ -297,11 +321,17 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
 function storefrontResult(
   result: ProductQueryResult<ProductWithRelations[]>,
 ): ProductQueryResult<StorefrontProduct[]> {
-  if (result.missingEnv) {
+  // Prefer live Supabase rows (real inventory). Only use presentation fallback
+  // when the catalog is unreachable — and that fallback has zero sellable stock.
+  if (result.missingEnv || result.error || result.data.length === 0) {
+    if (result.error) {
+      console.warn("[storefront] catalog fallback (zero stock):", result.error);
+    }
+
     return {
       data: getFallbackStorefrontProducts(),
-      error: null,
-      missingEnv: false,
+      error: result.error,
+      missingEnv: result.missingEnv,
     };
   }
 
@@ -314,7 +344,35 @@ function storefrontResult(
 export async function getStorefrontProducts(): Promise<
   ProductQueryResult<StorefrontProduct[]>
 > {
+  // When Supabase is known-down, return presentation catalog with zero stock
+  // so the UI stays up without inventing inventory.
+  if (!hasSupabaseEnvCheck() || isCatalogInCooldown()) {
+    return {
+      data: getFallbackStorefrontProducts(),
+      error: isCatalogInCooldown()
+        ? "Catalog cooldown active after recent Supabase timeout"
+        : null,
+      missingEnv: !hasSupabaseEnvCheck(),
+    };
+  }
+
   return storefrontResult(await getProducts());
+}
+
+function hasSupabaseEnvCheck() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
+
+function isCatalogInCooldown() {
+  try {
+    const raw = readFileSync("/tmp/forge-catalog-cooldown", "utf8");
+    const until = Number(raw);
+    return Number.isFinite(until) && Date.now() < until;
+  } catch {
+    return false;
+  }
 }
 
 export async function getFeaturedStorefrontProducts(): Promise<
@@ -342,20 +400,39 @@ export async function getFeaturedStorefrontProducts(): Promise<
 export async function getStorefrontProductBySlug(
   slug: string,
 ): Promise<ProductQueryResult<StorefrontProduct | null>> {
+  const fallback =
+    getFallbackStorefrontProducts().find((product) => product.slug === slug) ?? null;
+
+  if (!hasSupabaseEnvCheck() || isCatalogInCooldown()) {
+    return {
+      data: fallback,
+      error: isCatalogInCooldown()
+        ? "Catalog cooldown active after recent Supabase timeout"
+        : null,
+      missingEnv: !hasSupabaseEnvCheck(),
+    };
+  }
+
   const result = await getProductBySlug(slug);
 
-  if (result.missingEnv) {
+  if (result.missingEnv || result.error || !result.data) {
+    if (result.error) {
+      console.warn(
+        `[storefront] product fallback zero-stock (${slug}):`,
+        result.error,
+      );
+    }
+
     return {
-      data:
-        getFallbackStorefrontProducts().find((product) => product.slug === slug) ?? null,
-      error: null,
-      missingEnv: false,
+      data: fallback,
+      error: result.error,
+      missingEnv: result.missingEnv,
     };
   }
 
   return {
     ...result,
-    data: result.data ? createStorefrontProduct(result.data) : null,
+    data: createStorefrontProduct(result.data),
   };
 }
 

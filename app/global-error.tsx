@@ -16,7 +16,7 @@ export default function GlobalError({
           <h1 className="mt-5 text-4xl font-black tracking-[-0.05em] sm:text-6xl">
             Something went wrong
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-gray-400">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-white/50">
             Refresh the page or return to the shop.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

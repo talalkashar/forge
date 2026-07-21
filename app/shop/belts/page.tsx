@@ -4,7 +4,7 @@ import ShopCatalogPage from "../../components/product/ShopCatalogPage";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Lever Belts | FORGE",
+  title: "Lever Belts",
   description: "Shop FORGE lever belts built for heavy squats, deadlifts, and locked-in bracing.",
 };
 

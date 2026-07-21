@@ -7,8 +7,11 @@ export default function Loading() {
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main>
-        <section className="bg-black px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
+      <main className="bg-black">
+        <section className="px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
+          <p className="mx-auto mb-6 max-w-7xl text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35">
+            Loading FORGE GYM straps…
+          </p>
           <ProductDetailLoading />
         </section>
       </main>

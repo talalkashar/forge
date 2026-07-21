@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import type { StorefrontProduct } from "@/lib/products";
 
 function getActiveVariants(product: StorefrontProduct) {
@@ -10,13 +13,46 @@ function formatSize(size: string | null) {
   return size?.trim().toUpperCase() ?? null;
 }
 
-export default function ProductCard({ product }: { product: StorefrontProduct }) {
-  const mainImage =
-    product.slug === "berserk"
-      ? "/images/belts/listing/berserk/1.webp"
-      : product.images[0];
+function galleryShots(product: StorefrontProduct) {
+  const productShots = product.images.filter(
+    (src) => !src.includes("/lifestyle/"),
+  );
+  const pool = productShots.length > 0 ? productShots : product.images;
+  // Prefer curated main.jpg (then card.jpg) in listing folders for consistent cards
+  const primary = pool[0];
+  let hero: string | null = null;
+  if (primary && primary.includes("/listing/")) {
+    const mainGuess = primary.replace(/\/[^/]+$/, "/main.jpg");
+    const cardGuess = primary.replace(/\/[^/]+$/, "/card.jpg");
+    hero = mainGuess || cardGuess;
+    // prefer main path string; file existence is guaranteed by asset pipeline
+    if (primary.includes("/main.jpg") || primary.includes("/card.jpg")) {
+      hero = primary.includes("/main.jpg") ? primary : primary.replace(/card\.jpg$/, "main.jpg");
+    } else {
+      hero = mainGuess;
+    }
+  }
+  const primaryOut = hero ?? primary;
+  return {
+    primary: primaryOut,
+    secondary:
+      pool.find((src) => src !== primaryOut && src !== primary) ??
+      product.images.find((src) => src !== primaryOut) ??
+      null,
+  };
+}
+
+export default function ProductCard({
+  product,
+}: {
+  product: StorefrontProduct;
+}) {
+  const { primary, secondary } = useMemo(() => galleryShots(product), [product]);
+  const [showSecondary, setShowSecondary] = useState(false);
   const activeVariants = getActiveVariants(product);
-  const sizedVariants = activeVariants.filter((variant) => formatSize(variant.size));
+  const sizedVariants = activeVariants.filter((variant) =>
+    formatSize(variant.size),
+  );
   const inStockVariants = activeVariants.filter(
     (variant) => (variant.inventory_quantity ?? 0) > 0,
   );
@@ -31,85 +67,113 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
   );
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(21,21,21,0.98),rgba(5,5,5,1))] shadow-[0_18px_52px_rgba(0,0,0,0.3)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-red-600/45 hover:shadow-[0_24px_68px_rgba(0,0,0,0.38)]">
+    <article
+      className="group flex h-full flex-col overflow-hidden border border-white/[0.08] bg-black transition-colors duration-150 hover:border-white/25"
+      onMouseEnter={() => {
+        if (secondary) setShowSecondary(true);
+      }}
+      onMouseLeave={() => setShowSecondary(false)}
+    >
       <Link
         href={product.href}
         className="flex flex-1 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
       >
-        <div className="relative aspect-[4/5] overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.18),transparent_40%),linear-gradient(180deg,rgba(22,22,22,0.95),rgba(8,8,8,1))]">
-          <div className="absolute inset-x-8 bottom-8 h-10 rounded-full bg-red-600/18 blur-2xl transition-opacity duration-300 group-hover:opacity-80" />
-          <Image
-            src={mainImage}
-            alt={product.name}
-            fill
-            sizes="(max-width: 1024px) 100vw, 33vw"
-            quality={75}
-            className="object-contain p-6 drop-shadow-[0_22px_34px_rgba(0,0,0,0.42)] transition-[transform,filter] duration-500 group-hover:scale-[1.04] group-hover:brightness-105"
+        <div className="relative aspect-square overflow-hidden bg-black">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(90,12,12,0.2),transparent_58%)]"
+            aria-hidden="true"
           />
+          {primary ? (
+            <Image
+              src={primary}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
+              quality={86}
+              className={`object-contain p-1.5 transition-opacity duration-200 sm:p-2 ${
+                showSecondary && secondary ? "opacity-0" : "opacity-100"
+              }`}
+            />
+          ) : null}
+
+          {showSecondary && secondary ? (
+            <Image
+              src={secondary}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
+              quality={86}
+              loading="lazy"
+              className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.03] sm:p-2"
+              aria-hidden="true"
+            />
+          ) : null}
+
+          {isOutOfStock ? (
+            <span className="absolute left-3 top-3 border border-amber-400/30 bg-black/80 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-amber-200">
+              Sold out
+            </span>
+          ) : (
+            <span className="absolute left-3 top-3 border border-emerald-400/25 bg-black/80 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-emerald-300/90">
+              In stock
+            </span>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <p className="mb-3 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-red-500/90">
+          <p className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.2em] text-white/40">
             {product.category}
           </p>
-          <h2 className="min-h-[3.4rem] text-2xl font-black leading-tight tracking-normal text-white">
+          <h2 className="text-lg font-black tracking-tight text-white sm:text-xl">
             {product.name}
           </h2>
-          <p className="mt-4 line-clamp-3 text-sm leading-6 text-gray-400">
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/45">
             {product.description}
           </p>
 
           {sizedVariants.length > 0 ? (
-            <div className="mt-5">
-              <p className="mb-2 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-white/45">
-                {availableSizes.length > 0 ? "Available Sizes" : "Sizes"}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {sizedVariants.map((variant) => {
-                  const size = formatSize(variant.size);
-                  const hasStock = (variant.inventory_quantity ?? 0) > 0;
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {sizedVariants.map((variant) => {
+                const size = formatSize(variant.size);
+                const hasStock = (variant.inventory_quantity ?? 0) > 0;
 
-                  return (
-                    <span
-                      key={variant.id}
-                      className={`rounded-full border px-2.5 py-1 text-[0.68rem] font-bold ${
-                        hasStock
-                          ? "border-red-600/45 bg-red-600/12 text-white"
-                          : "border-white/10 bg-white/[0.03] text-white/35 line-through"
-                      }`}
-                    >
-                      {hasStock ? size : `${size} Out`}
-                    </span>
-                  );
-                })}
-              </div>
+                return (
+                  <span
+                    key={variant.id}
+                    className={`border px-2 py-0.5 text-[0.62rem] font-semibold tracking-wide ${
+                      hasStock
+                        ? "border-white/15 text-white/75"
+                        : "border-white/8 text-white/25 line-through"
+                    }`}
+                  >
+                    {size}
+                  </span>
+                );
+              })}
             </div>
           ) : (
             <p
-              className={`mt-5 text-xs font-bold uppercase tracking-[0.16em] ${
-                isOutOfStock ? "text-amber-300" : "text-red-400"
+              className={`mt-4 text-[0.62rem] font-semibold uppercase tracking-[0.14em] ${
+                isOutOfStock ? "text-amber-300/90" : "text-white/40"
               }`}
             >
-              {isOutOfStock ? "Out of Stock" : "In Stock"}
+              {isOutOfStock ? "Out of stock" : "In stock"}
             </p>
           )}
 
-          <div className="mt-6 flex items-end justify-between gap-4 border-t border-white/8 pt-5">
-            <div>
-              <div className="flex items-baseline gap-3">
-                <span className="text-2xl font-black tracking-normal text-red-500">
-                  ${product.price}
+          <div className="mt-auto flex items-end justify-between gap-3 border-t border-white/[0.06] pt-4">
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-black tracking-tight text-white">
+                ${Number(product.price).toFixed(2)}
+              </span>
+              {product.originalPrice ? (
+                <span className="text-sm text-white/30 line-through">
+                  {product.originalPrice}
                 </span>
-                {product.originalPrice ? (
-                  <span className="text-base text-white/35 line-through">
-                    {product.originalPrice}
-                  </span>
-                ) : null}
-              </div>
+              ) : null}
             </div>
-
-            <span className="inline-flex shrink-0 rounded-full border border-red-600/40 bg-red-600/0 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition-[transform,border-color,background-color,box-shadow] duration-300 group-hover:-translate-y-0.5 group-hover:border-red-500 group-hover:bg-red-600/12 group-hover:shadow-[0_12px_28px_rgba(220,38,38,0.14)]">
-              View Details
+            <span className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/45 transition-colors group-hover:text-white">
+              Shop →
             </span>
           </div>
         </div>

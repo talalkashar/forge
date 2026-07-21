@@ -51,10 +51,16 @@ export default async function AdminInventoryPage() {
 
   return (
     <AdminShell>
-      <AdminCard title="Manual Inventory Protection">
-        <p className="text-sm leading-6 text-amber-100">
-          Inventory values are live database data. Do not rerun schema.sql or
-          seed.sql without exporting inventory first.
+      <AdminCard title="Live Supabase inventory">
+        <p className="text-sm leading-6 text-emerald-100">
+          Quantities below are read/written directly on{" "}
+          <code className="text-white/80">product_variants.inventory_quantity</code>{" "}
+          in Supabase. The storefront and checkout use these same rows — no demo
+          stock.
+        </p>
+        <p className="mt-3 text-sm leading-6 text-amber-100">
+          Before reseeding or schema resets:{" "}
+          <code className="text-white/80">npm run inventory:export</code>
         </p>
       </AdminCard>
 

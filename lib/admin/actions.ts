@@ -298,4 +298,11 @@ export async function adjustInventoryAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/products");
   revalidatePath("/admin/inventory");
+  // Storefront reads live Supabase inventory — bust catalog caches after edits.
+  revalidatePath("/shop");
+  revalidatePath("/shop/belts");
+  revalidatePath("/shop/wrist-straps");
+  revalidatePath("/product/belt");
+  revalidatePath("/product/straps");
+  revalidatePath("/");
 }

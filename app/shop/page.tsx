@@ -4,7 +4,7 @@ import ShopCatalogPage from "../components/product/ShopCatalogPage";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Shop | FORGE",
+  title: "Shop",
   description: "Browse the current FORGE lineup of lifting belts and wrist straps.",
 };
 

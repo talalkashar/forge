@@ -1,0 +1,10 @@
+{
+  "name": "FORGE GYM",
+  "short_name": "FORGE",
+  "description": "Premium lever belts and wrist straps",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#dc2626",
+  "lang": "en"
+}

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ProductCollectionState({
   eyebrow,
   title,
@@ -8,16 +10,22 @@ export default function ProductCollectionState({
   message: string;
 }) {
   return (
-    <div className="rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] p-8 text-white shadow-[0_18px_52px_rgba(0,0,0,0.32)]">
-      <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-        {eyebrow}
+    <div className="border border-white/[0.08] bg-[#080808] px-6 py-14 text-center sm:px-10">
+      <p className="text-[0.65rem] font-bold uppercase tracking-[0.22em] text-red-500">
+        FORGE GYM · {eyebrow}
       </p>
-      <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
+      <h2 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
         {title}
       </h2>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-gray-400">
+      <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-white/50">
         {message}
       </p>
+      <Link
+        href="/shop"
+        className="mt-8 inline-flex rounded-full bg-red-600 px-6 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:bg-red-500"
+      >
+        Back to shop
+      </Link>
     </div>
   );
 }

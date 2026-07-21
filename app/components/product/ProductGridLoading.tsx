@@ -1,12 +1,12 @@
 function LoadingCard() {
   return (
-    <div className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(6,6,6,1))] shadow-[0_18px_52px_rgba(0,0,0,0.32)]">
-      <div className="aspect-[4/5] animate-pulse border-b border-white/8 bg-white/[0.04]" />
-      <div className="space-y-4 p-6">
-        <div className="h-3 w-24 animate-pulse rounded-full bg-white/[0.08]" />
-        <div className="h-8 w-2/3 animate-pulse rounded-full bg-white/[0.08]" />
-        <div className="h-16 w-full animate-pulse rounded-2xl bg-white/[0.05]" />
-        <div className="h-6 w-28 animate-pulse rounded-full bg-white/[0.08]" />
+    <div className="overflow-hidden border border-white/[0.08] bg-[#080808]">
+      <div className="aspect-[4/5] animate-pulse border-b border-white/[0.06] bg-[radial-gradient(circle_at_50%_30%,rgba(120,20,20,0.15),transparent_50%),#101010]" />
+      <div className="space-y-3 p-5">
+        <div className="h-2.5 w-20 animate-pulse bg-white/10" />
+        <div className="h-6 w-2/3 animate-pulse bg-white/10" />
+        <div className="h-10 w-full animate-pulse bg-white/[0.06]" />
+        <div className="h-5 w-16 animate-pulse bg-white/10" />
       </div>
     </div>
   );
@@ -14,7 +14,7 @@ function LoadingCard() {
 
 export default function ProductGridLoading() {
   return (
-    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 lg:grid-cols-3">
+    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
       <LoadingCard />
       <LoadingCard />
       <LoadingCard />

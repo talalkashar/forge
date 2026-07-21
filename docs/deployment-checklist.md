@@ -12,11 +12,22 @@ Add these in Vercel Project Settings:
 
 - `STRIPE_SECRET_KEY`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
 - `NEXT_PUBLIC_BASE_URL`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `ADMIN_DASHBOARD_PASSWORD`
+
+### Stripe webhook (live inventory decrement)
+
+- Endpoint route: `POST /api/webhooks/stripe`
+- Production URL: `https://forgegym.us/api/webhooks/stripe`
+- Required event: `checkout.session.completed`
+- On paid checkout, the webhook decrements Supabase `product_variants.inventory_quantity` and writes `inventory_movements`.
+- Create the endpoint in Stripe Dashboard (or API) for the **same mode** as `STRIPE_SECRET_KEY` (test vs live).
+- Put the endpoint signing secret in `STRIPE_WEBHOOK_SECRET` locally and in Vercel.
+- After deploy, send a test `checkout.session.completed` event and confirm stock drops in `/admin/inventory`.
 
 Do not commit `.env.local`.
 

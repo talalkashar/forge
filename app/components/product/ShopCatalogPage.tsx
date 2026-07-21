@@ -1,4 +1,5 @@
 import { getStorefrontProducts } from "@/lib/products";
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,17 +30,15 @@ const catalogCategoryDetails: Record<
 > = {
   belts: {
     id: "lever-belts",
-    eyebrow: "Lever Belts",
+    eyebrow: "Belts",
     title: "Lever Belts",
-    description:
-      "Premium lever belts built for bracing hard, moving heavy, and staying locked in under load.",
+    description: "10mm, 4-inch lever belts built for bracing under load.",
   },
   straps: {
     id: "wrist-straps",
-    eyebrow: "Wrist Straps",
+    eyebrow: "Straps",
     title: "Wrist Straps",
-    description:
-      "Grip support for heavy pulls, rows, and high-volume back training when your hands need to stay locked in.",
+    description: "Padded grip support for deadlifts, rows, and pull work.",
   },
 };
 
@@ -69,78 +68,93 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
     : allProductSections;
   const heroTitle = activeCategory
     ? catalogCategoryDetails[activeCategory].title
-    : "All FORGE Products";
+    : "All gear";
   const heroDescription = activeCategory
     ? catalogCategoryDetails[activeCategory].description
-    : "Browse the current FORGE lineup. Every product card links directly to a dedicated detail page so sizing, specs, and checkout stay clear and consistent.";
+    : "Belts for bracing. Straps for grip.";
   const breadcrumbPage = activeCategory
     ? catalogCategoryDetails[activeCategory].title
-    : "All Gear";
+    : "Shop";
 
   return (
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
       <main className="bg-black">
-        <section className="border-b border-red-600/10 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.18),transparent_38%),linear-gradient(180deg,#090909_0%,#000000_100%)] px-6 py-16 sm:px-8 sm:py-20">
-          <div className="mx-auto max-w-7xl">
+        <section className="relative overflow-hidden border-b border-white/[0.06] px-6 py-14 sm:px-8 sm:py-20">
+          <div
+            className="pointer-events-none absolute -left-16 top-0 h-64 w-64 rounded-full bg-red-700/15 blur-[90px]"
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto max-w-7xl">
             <Breadcrumb className="mb-8">
-              <BreadcrumbList className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
+              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/40">
                 <BreadcrumbItem>
                   <BreadcrumbLink className="hover:text-white" href="/">
                     Home
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-red-500/70" />
+                <BreadcrumbSeparator className="text-white/20" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-white">{breadcrumbPage}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
 
-            <p className="mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-              Shop
-            </p>
-            <h1 className="max-w-4xl text-4xl font-black tracking-[-0.05em] text-white sm:text-5xl md:text-6xl">
+            <h1 className="max-w-3xl text-4xl font-black tracking-[-0.035em] text-white sm:text-6xl">
               {heroTitle}
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
+            <p className="mt-4 max-w-xl text-base leading-7 text-white/50">
               {heroDescription}
             </p>
+
+            {!activeCategory ? (
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/shop/belts"
+                  className="rounded-full bg-red-600 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-500"
+                >
+                  Belts
+                </Link>
+                <Link
+                  href="/shop/wrist-straps"
+                  className="rounded-full border border-white/15 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/35"
+                >
+                  Straps
+                </Link>
+              </div>
+            ) : (
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/shop"
+                  className="text-xs font-bold uppercase tracking-[0.14em] text-white/40 transition-colors hover:text-white"
+                >
+                  ← All gear
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
-        <section className={`px-6 sm:px-8 ${activeCategory === "straps" ? "py-10 sm:py-12" : "py-14 sm:py-18"}`}>
-          {missingEnv ? (
+        <section className="px-6 py-12 sm:px-8 sm:py-16">
+          {missingEnv || error || products.length === 0 ? (
             <div className="mx-auto max-w-7xl">
               <ProductCollectionState
                 eyebrow="Shop"
-                title="Products are temporarily unavailable"
-                message="Please check back soon for the latest FORGE belts and wrist straps."
+                title={
+                  products.length === 0 && !error && !missingEnv
+                    ? "No products in this filter yet"
+                    : "Catalog is loading — try refresh"
+                }
+                message="Please check back soon for the latest FORGE GYM belts and wrist straps."
               />
             </div>
-          ) : error ? (
-            <div className="mx-auto max-w-7xl">
-              <ProductCollectionState
-                eyebrow="Shop"
-                title="Products are temporarily unavailable"
-                message="Please check back soon for the latest FORGE belts and wrist straps."
-              />
-            </div>
-          ) : products.length > 0 ? (
+          ) : (
             <ShopCatalogResults
               sections={productSections.filter((section) => section.products.length > 0)}
               showSearch={!activeCategory}
               category={activeCategory}
             />
-          ) : (
-            <div className="mx-auto max-w-7xl">
-              <ProductCollectionState
-                eyebrow="Shop"
-                title="Gear is coming soon"
-                message="Please check back soon for the latest FORGE belts and wrist straps."
-              />
-            </div>
           )}
         </section>
       </main>

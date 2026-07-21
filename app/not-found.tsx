@@ -1,30 +1,34 @@
 import Link from "next/link";
-import Footer from "@/app/components/home/Footer";
-import Navbar from "@/app/components/home/Navbar";
+import Footer from "./components/home/Footer";
+import Navbar from "./components/home/Navbar";
 
 export default function NotFound() {
   return (
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main className="min-h-screen bg-black px-6 py-24 text-white sm:px-8">
-        <section className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-red-500/90">
-            FORGE
-          </p>
-          <h1 className="mt-5 text-4xl font-black tracking-[-0.05em] sm:text-6xl">
-            Page not found
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-gray-400">
-            The page you are looking for is not available.
-          </p>
+      <main className="flex min-h-[70vh] flex-col items-center justify-center bg-black px-6 text-center">
+        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
+          FORGE GYM™
+        </p>
+        <h1 className="mt-4 text-5xl font-black text-white sm:text-7xl">404</h1>
+        <p className="mt-4 max-w-md text-sm text-white/50">
+          That page does not exist. Head back to the shop and keep training.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
             href="/shop"
-            className="mt-8 inline-flex rounded-full border border-red-600/60 px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/10"
+            className="rounded-full bg-red-600 px-7 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white hover:bg-red-500"
           >
-            Shop FORGE
+            Shop gear
           </Link>
-        </section>
+          <Link
+            href="/"
+            className="rounded-full border border-white/15 px-7 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white hover:border-white/35"
+          >
+            Home
+          </Link>
+        </div>
       </main>
       <Footer />
     </>

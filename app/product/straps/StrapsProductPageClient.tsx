@@ -22,61 +22,33 @@ export default function StrapsProductPageClient({
 }) {
   const variant = getPrimaryVariant(product);
   const inventoryQuantity = variant?.inventory_quantity ?? 0;
-  const isPurchasable = Boolean(variant?.is_active === true && inventoryQuantity > 0);
+  const isPurchasable = Boolean(
+    variant?.is_active === true && inventoryQuantity > 0,
+  );
   const stockMessage = isPurchasable
     ? inventoryQuantity <= 5
-      ? `Only ${inventoryQuantity} left in stock`
+      ? `Only ${inventoryQuantity} left`
       : "In stock"
     : "Out of stock";
-  const stockTone = isPurchasable
-    ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
-    : "border-red-600/25 bg-red-950/30 text-red-200";
-  const strapsConversionSection = (
+
+  const bottom = (
     <>
-      <section className="bg-black px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(24,24,24,0.96),rgba(5,5,5,1))] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.26)] sm:p-8">
-          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-            <div>
-              <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                Gear Pairing
-              </p>
-              <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
-                Straps are for grip. Belts are for bracing.
-              </h2>
-              <p className="mt-4 text-sm leading-6 text-gray-400 sm:text-base">
-                Use straps when grip is limiting your pull work. Use a lever
-                belt when you want a consistent brace on heavy compound lifts.
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/8 bg-black/35 p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-400">
-                  FORGE Lifting Straps
-                </p>
-                <h3 className="mt-2 text-xl font-black text-white">$9.99</h3>
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  For deadlifts, rows, RDLs, pull-ups, and higher-volume pull
-                  sessions where grip fatigue ends the set first.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/8 bg-black/35 p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-400">
-                  FORGE Lever Belts
-                </p>
-                <h3 className="mt-2 text-xl font-black text-white">$79.97</h3>
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  For squats, deadlifts, and loaded strength work where bracing
-                  support matters more than grip support.
-                </p>
-                <Link
-                  href="/product/belt"
-                  className="mt-5 inline-flex rounded-full border border-red-600/50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/12"
-                >
-                  Compare belts
-                </Link>
-              </div>
-            </div>
+      <section className="border-t border-white/[0.06] bg-black px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-red-400">
+              FORGE GYM
+            </p>
+            <p className="mt-2 text-sm text-white/50">
+              Need bracing too? Shop lever belts.
+            </p>
           </div>
+          <Link
+            href="/product/belt?variant=berserk"
+            className="inline-flex w-fit rounded-full border border-white/15 px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-white/35"
+          >
+            Shop belts →
+          </Link>
         </div>
       </section>
       {bottomSection}
@@ -86,38 +58,31 @@ export default function StrapsProductPageClient({
   return (
     <ProductDetailPage
       product={product}
-      bottomSection={strapsConversionSection}
+      bottomSection={bottom}
       addToCartDisabled={!isPurchasable}
       extraPanel={
-        <div>
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
-                Stock
-              </p>
-              <p className="mt-1 text-xs leading-5 text-gray-500">
-                Inventory is checked again before Stripe checkout.
-              </p>
-            </div>
-            <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] ${stockTone}`}>
-              {stockMessage}
-            </span>
+        <div className="flex items-center justify-between gap-3 border border-white/[0.08] px-4 py-3">
+          <div>
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/40">
+              Stock
+            </p>
+            <p className="mt-1 text-sm font-semibold text-white">{stockMessage}</p>
           </div>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-6 text-gray-300">
-            One black straps variant is currently managed in the live FORGE catalog.
-            Quantity limits are enforced against the current inventory before checkout.
-          </div>
+          <span
+            className={`h-2 w-2 rounded-full ${
+              isPurchasable ? "bg-emerald-400" : "bg-red-500"
+            }`}
+            aria-hidden="true"
+          />
         </div>
       }
       validateAddToCart={(quantity) => {
         if (!isPurchasable) {
-          return "FORGE Lifting Straps are out of stock";
+          return "FORGE GYM Lifting Straps are out of stock";
         }
-
         if (quantity > inventoryQuantity) {
-          return `Only ${inventoryQuantity} FORGE Lifting Straps left in stock`;
+          return `Only ${inventoryQuantity} left in stock`;
         }
-
         return null;
       }}
       resolveCartItem={() => ({

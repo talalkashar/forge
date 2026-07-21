@@ -41,9 +41,12 @@ export default function CheckoutButton() {
       type="button"
       onClick={handleCheckout}
       disabled={cart.length === 0 || isLoading}
-      className="w-full rounded-full bg-red-600 px-6 py-4 text-base font-bold text-white transition-all duration-300 hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-900/60 disabled:text-white/60"
+      className="group relative w-full overflow-hidden rounded-full bg-red-600 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-white transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35 disabled:hover:translate-y-0"
     >
-      {isLoading ? "Redirecting..." : "Checkout"}
+      <span className="absolute inset-0 translate-y-full bg-white/10 transition-transform duration-300 group-hover:translate-y-0 group-disabled:hidden" />
+      <span className="relative">
+        {isLoading ? "Redirecting to Stripe…" : "Checkout — FORGE GYM"}
+      </span>
     </button>
   );
 }

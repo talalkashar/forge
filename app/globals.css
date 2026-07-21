@@ -1,5 +1,53 @@
 @import "tailwindcss";
 
+
+/* ========== FORGE GYM design tokens ========== */
+:root {
+  --forge-black: #000000;
+  --forge-surface: #050505;
+  --forge-panel: #080808;
+  --forge-panel-2: #0c0c0c;
+  --forge-border: rgba(255, 255, 255, 0.08);
+  --forge-border-strong: rgba(255, 255, 255, 0.16);
+  --forge-text: #ffffff;
+  --forge-muted: rgba(255, 255, 255, 0.55);
+  --forge-faint: rgba(255, 255, 255, 0.35);
+  --forge-red: #dc2626;
+  --forge-red-hot: #ef4444;
+  --forge-red-dim: rgba(220, 38, 38, 0.18);
+  --forge-stage: radial-gradient(circle at 50% 38%, rgba(100, 16, 16, 0.16), transparent 58%), #050505;
+  --forge-tracking-label: 0.22em;
+  --forge-tracking-micro: 0.16em;
+  --forge-radius-btn: 9999px;
+  --forge-radius-panel: 0;
+}
+
+/* Unified page shell helpers */
+.forge-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: var(--forge-tracking-label);
+  text-transform: uppercase;
+  color: var(--forge-red);
+}
+
+.forge-panel {
+  border: 1px solid var(--forge-border);
+  background: var(--forge-panel);
+}
+
+.forge-product-stage {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(80, 12, 12, 0.22), transparent 55%),
+    #000000;
+}
+
+.forge-product-frame {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* Selection already brand red elsewhere */
 @theme inline {
   --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
 }
@@ -14,9 +62,73 @@ html {
 }
 
 body {
+  background: var(--forge-black, #000);
+  color: var(--forge-text, #fff);
   background: #000000;
   color: #ffffff;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(220, 38, 38, 0.35);
+  color: #fff;
+}
+
+@keyframes forgeMarquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.forge-marquee {
+  animation: forgeMarquee 32s linear infinite;
+}
+
+/* Page enter disabled — avoid paint on every navigation */
+.page-enter {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forge-marquee {
+    animation: none !important;
+  }
+}
+
+/* Premium focus rings */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid rgba(239, 68, 68, 0.65);
+  outline-offset: 2px;
+}
+
+/* Dark scrollbars */
+html {
+  scrollbar-color: rgba(220, 38, 38, 0.55) #0a0a0a;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(220, 38, 38, 0.45);
+  border: 2px solid #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(239, 68, 68, 0.7);
 }
 
 body.menu-open {
@@ -319,19 +431,13 @@ body.menu-open {
   transform: none;
 }
 
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translate3d(0, 24px, 0);
-  transition:
-    opacity 0.55s ease,
-    transform 0.55s ease;
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
-}
-
+/* Reveal disabled for scroll FPS */
+.reveal-on-scroll,
 .reveal-on-scroll.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: none;
+  transition: none;
+  will-change: auto;
 }
 
 @keyframes floatOrb {
@@ -391,5 +497,47 @@ body.menu-open {
   .cta-btn {
     animation: none;
     transition: none;
+  }
+}
+
+
+/* Product stage */
+.forge-img-stage {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(120, 20, 20, 0.22), transparent 55%),
+    linear-gradient(180deg, #101010, #050505);
+}
+
+
+
+
+/* GSAP ScrollSmoother shell */
+#smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#smooth-content {
+  overflow: visible;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Fixed portal children need pointer events */
+#forge-fixed-layer > * {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #smooth-wrapper {
+    position: relative;
+    height: auto;
+    overflow: visible;
   }
 }

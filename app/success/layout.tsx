@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Payment Successful | FORGE",
-  description: "Your FORGE checkout is complete.",
+  title: "Order Confirmed",
+  description: "Your FORGE GYM checkout is complete.",
 };
 
 export default function SuccessLayout({

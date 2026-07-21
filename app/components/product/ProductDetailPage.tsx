@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "re
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import type { StorefrontProduct } from "@/lib/products";
 import {
@@ -16,36 +17,26 @@ import {
 } from "@/components/ui/breadcrumb";
 import Footer from "../home/Footer";
 import Navbar from "../home/Navbar";
+import {
+  BELT_SIZE_CHART_BETWEEN_SIZES,
+  BELT_SIZE_CHART_MEASURE_TIP,
+  BELT_SIZE_CHART_ROWS,
+  resolveBeltSizeChartImage,
+} from "./beltSizeChartData";
 import ProductReviewsPanel from "./ProductReviewsPanel";
-
-type TabName = "description" | "specs" | "reviews";
-type FaqItem = [string, ReactNode];
+import TikTokShopLink from "./TikTokShopLink";
+import { FixedPortal } from "@/app/components/providers/FixedPortal";
 
 function isEditorialGalleryImage(image: string) {
   return image.includes("/lifestyle/");
 }
 
 function galleryImagePosition(image: string) {
-  if (image.includes("zeus-belt-worn-front")) {
-    return "center 62%";
-  }
-
-  if (image.includes("zeus-belt-lift-angle")) {
-    return "center 58%";
-  }
-
-  if (image.includes("deadlift")) {
-    return "center 46%";
-  }
-
-  if (image.includes("front-detail")) {
-    return "center 44%";
-  }
-
-  if (image.includes("bench-detail")) {
-    return "center 50%";
-  }
-
+  if (image.includes("zeus-belt-worn-front")) return "center 62%";
+  if (image.includes("zeus-belt-lift-angle")) return "center 58%";
+  if (image.includes("deadlift")) return "center 46%";
+  if (image.includes("front-detail")) return "center 44%";
+  if (image.includes("bench-detail")) return "center 50%";
   return "center";
 }
 
@@ -76,13 +67,14 @@ export default function ProductDetailPage({
 }) {
   const router = useRouter();
   const { addToCart } = useCart();
+  const prefersReducedMotion = useReducedMotion();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<TabName>(
-    product.slug === "zeus" ? "specs" : "description",
-  );
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
   const [notification, setNotification] = useState("");
   const notificationTimeoutRef = useRef<number | null>(null);
+
   const currentImage = useMemo(
     () => product.images[currentImageIndex] ?? product.images[0],
     [currentImageIndex, product.images],
@@ -91,107 +83,14 @@ export default function ProductDetailPage({
     product.imageAlts?.[currentImageIndex] ??
     `${product.name} image ${currentImageIndex + 1}`;
   const currentImageIsEditorial = isEditorialGalleryImage(currentImage);
-  const showStandaloneDescriptionGallery =
-    product.slug === "straps" &&
-    Array.isArray(product.descriptionGalleryImages) &&
-    product.descriptionGalleryImages.length > 0;
-  const detailTabs: Array<[TabName, string]> =
-    product.slug === "zeus"
-      ? [
-          ["specs", "Specifications"],
-          ["reviews", "Reviews"],
-        ]
-      : [
-          ["description", "Description"],
-          ["specs", "Specifications"],
-          ["reviews", "Reviews"],
-        ];
   const isStraps = product.slug === "straps";
   const disabledPurchaseLabel =
-    disabledCtaLabel ?? (isStraps ? "Out of Stock" : "Select Size");
-  const sizeGuidance = [
-    [
-      "Measure where it sits",
-      "Measure around your waist where the belt will sit, usually around the navel. Do not use your pants size.",
-    ],
-    [
-      "Brace before deciding",
-      "Take the measurement while standing relaxed, then check how the belt position feels when you brace.",
-    ],
-    [
-      "Between sizes",
-      "Exact size ranges are being finalized. Contact support if you are between sizes.",
-    ],
-  ];
-  const buyReassurance = isStraps
-    ? ["Secure checkout", "Inventory verified before checkout", "Contact support for order help"]
-    : ["Secure checkout", "Live stock by size", "Contact support for sizing help"];
-  const purchaseConfidence = isStraps
-    ? "Inventory is checked before Stripe Checkout opens. Contact support if you need order help."
-    : "Measure at the navel-level belt position, not pants size. Inventory is checked before Stripe Checkout opens.";
-  const includedItems = isStraps
-    ? ["One pair of FORGE lifting straps"]
-    : ["One FORGE lever belt", "Lever hardware"];
-  const availabilityMessage = isStraps
-    ? product.inventoryQuantity > 0
-      ? "In stock"
-      : "Out of stock"
-    : "Select size for live stock";
-  const categoryLabel = product.catalogCategory === "straps" ? "Wrist Straps" : "Lever Belts";
-  const categoryHref = product.catalogCategory === "straps" ? "/shop/wrist-straps" : "/shop/belts";
-  const beltActiveSizes = product.availableSizes.length > 0
-    ? product.availableSizes.join(", ")
-    : "Select a size to confirm availability";
-  const beltQuickSpecs: Array<[string, string]> = [
-    ["Product", "FORGE Lever Belt"],
-    ["Price", `$${product.price.toFixed(2)}`],
-    ["Sizes", beltActiveSizes],
-    ["Closure", "Lever"],
-    ["Use", "Strength training"],
-    ["Included", "Belt and lever hardware"],
-  ];
-  const productBenefits = isStraps
-    ? [
-        ["Grip stays locked", "Textured webbing helps keep heavy pulls from slipping first."],
-        ["Wrist comfort", "Padding spreads pressure through longer deadlift, row, and pull-up work."],
-        ["Fast setup", "Easy wrap-and-release handling between working sets."],
-      ]
-    : [
-        ["Brace harder", "A structured belt wall gives your core something consistent to press into."],
-        ["Lever speed", "Clamp down before the lift and release quickly after the set."],
-        ["Heavy-session support", "Built for squats, deadlifts, and loaded compound training."],
-      ];
-  const faqItems: FaqItem[] = isStraps
-    ? [
-        ["Are these sold as a pair?", "Yes. The straps product includes one pair."],
-        ["What lifts should I use them for?", "Use them for deadlifts, rows, RDLs, pull-ups, and other pull movements where grip fatigue limits the set."],
-        ["Will the padding feel bulky?", "The wrist padding is designed to reduce pressure without making the wrap hard to control."],
-        [
-          "Can I return or exchange them?",
-          <>
-            Check the{" "}
-            <Link className="font-semibold text-red-300 hover:text-red-200" href="/returns">
-              returns policy
-            </Link>{" "}
-            or contact support before ordering.
-          </>,
-        ],
-      ]
-    : [
-        ["How do I choose my size?", "Measure around your waist where the belt will sit, usually around the navel. Do not use your pants size. Exact size ranges are being finalized, so contact support if you are between sizes."],
-        ["Is this for squats and deadlifts?", "Yes. This lever belt is intended for strength training movements where you want more consistent bracing, including squats and deadlifts."],
-        ["What if my size is out of stock?", "Choose another available size only if it fits your measured belt position. Otherwise, wait for restock or contact support before ordering."],
-        [
-          "Can I return or exchange it?",
-          <>
-            Check the{" "}
-            <Link className="font-semibold text-red-300 hover:text-red-200" href="/returns">
-              returns policy
-            </Link>{" "}
-            or contact support before ordering.
-          </>,
-        ],
-      ];
+    disabledCtaLabel ?? (isStraps ? "Out of stock" : "Select size");
+  const categoryLabel =
+    product.catalogCategory === "straps" ? "Wrist Straps" : "Lever Belts";
+  const categoryHref =
+    product.catalogCategory === "straps" ? "/shop/wrist-straps" : "/shop/belts";
+  const beltSizeChartImage = !isStraps ? resolveBeltSizeChartImage(product) : null;
 
   const clearNotification = useCallback(() => {
     if (notificationTimeoutRef.current) {
@@ -207,33 +106,51 @@ export default function ProductDetailPage({
       notificationTimeoutRef.current = window.setTimeout(() => {
         setNotification("");
         notificationTimeoutRef.current = null;
-      }, 3000);
+      }, 2800);
     },
     [clearNotification],
   );
 
   useEffect(() => clearNotification, [clearNotification]);
 
-  const updateImage = useCallback((nextIndex: number) => {
-    if (nextIndex < 0) {
-      setCurrentImageIndex(product.images.length - 1);
-      return;
-    }
+  useEffect(() => {
+    if (!isZoomed) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [isZoomed]);
 
-    if (nextIndex >= product.images.length) {
-      setCurrentImageIndex(0);
-      return;
-    }
+  const updateImage = useCallback(
+    (nextIndex: number) => {
+      if (product.images.length === 0) return;
+      if (nextIndex < 0) {
+        setCurrentImageIndex(product.images.length - 1);
+        return;
+      }
+      if (nextIndex >= product.images.length) {
+        setCurrentImageIndex(0);
+        return;
+      }
+      setCurrentImageIndex(nextIndex);
+    },
+    [product.images.length],
+  );
 
-    setCurrentImageIndex(nextIndex);
-  }, [product.images.length]);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") updateImage(currentImageIndex - 1);
+      if (event.key === "ArrowRight") updateImage(currentImageIndex + 1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [currentImageIndex, updateImage]);
 
   const addSelectedItemToCart = useCallback(() => {
     try {
       const validationError = validateAddToCart?.(quantity);
-
       if (validationError) {
-        window.alert(validationError);
         queueNotification(validationError);
         return false;
       }
@@ -242,6 +159,7 @@ export default function ProductDetailPage({
         slug: product.slug,
         name: product.cartName,
       };
+
       addToCart({
         slug: cartItem.slug,
         cartKey: cartItem.cartKey,
@@ -253,633 +171,553 @@ export default function ProductDetailPage({
         images: cartItem.images ?? product.images,
         href: cartItem.href ?? product.href,
       });
-      queueNotification(`${cartItem.name} added to cart!`);
+      queueNotification("Added to cart");
       return true;
     } catch {
-      queueNotification("Error: Cart system not available");
+      queueNotification("Cart unavailable");
       return false;
     }
   }, [
     addToCart,
+    product.cartName,
     product.href,
     product.images,
     product.price,
     product.slug,
-    product.cartName,
     quantity,
     queueNotification,
     resolveCartItem,
     validateAddToCart,
   ]);
 
-  const handleAddToCart = () => {
-    addSelectedItemToCart();
-  };
-
   const handleBuyNow = () => {
-    const didAddToCart = addSelectedItemToCart();
-
-    if (didAddToCart) {
+    if (addSelectedItemToCart()) {
       router.push("/cart");
     }
   };
+
+  const coreSpecs = isStraps
+    ? [
+        ["Type", "Wrist straps"],
+        ["Set", "Pair"],
+        ["Material", "Cotton blend + neoprene"],
+      ]
+    : [
+        ["Brand", "FORGE GYM"],
+        ["Thickness", "10mm"],
+        ["Closure", "Lever"],
+      ];
 
   return (
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main>
-        <section className="bg-black px-4 pb-28 pt-7 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+      <main className="bg-black pb-20 sm:pb-0">
+        <section className="relative overflow-hidden px-4 pb-28 pt-6 sm:px-6 sm:pb-20 sm:pt-10 lg:px-8">
+          {/* Ambient stage — CSS only, no WebGL hang risk */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-90"
+            aria-hidden="true"
+          >
+            <div className="absolute -left-1/4 top-0 h-[40rem] w-[40rem] rounded-full bg-red-700/15 blur-[120px]" />
+            <div className="absolute -right-1/4 top-1/3 h-[36rem] w-[36rem] rounded-full bg-red-950/40 blur-[130px]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.04),transparent_45%)]" />
+          </div>
+
+          <div className="relative mx-auto max-w-7xl">
             <Breadcrumb className="mb-6 sm:mb-8">
-              <BreadcrumbList className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
+              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/40">
                 <BreadcrumbItem>
                   <BreadcrumbLink className="hover:text-white" href="/">
                     Home
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-red-500/70" />
-                <BreadcrumbItem>
-                  <BreadcrumbLink className="hover:text-white" href="/shop">
-                    Shop
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-red-500/70" />
+                <BreadcrumbSeparator className="text-white/20" />
                 <BreadcrumbItem>
                   <BreadcrumbLink className="hover:text-white" href={categoryHref}>
                     {categoryLabel}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-red-500/70" />
+                <BreadcrumbSeparator className="text-white/20" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-white">{product.name}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-[4.5rem]">
-              <div className="animate-on-scroll animated">
-                <div className="group relative mb-4 overflow-hidden rounded-[1.4rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-900 p-2.5 shadow-[0_18px_56px_rgba(0,0,0,0.38)] sm:mb-5 sm:rounded-[1.75rem] sm:p-5">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[1.1rem] border border-white/6 bg-[radial-gradient(circle_at_20%_0%,rgba(220,38,38,0.16),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(255,255,255,0.05),transparent_22%),linear-gradient(180deg,rgba(22,22,24,0.96),rgba(5,5,5,1))] sm:aspect-square sm:rounded-2xl">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_46%)]" />
-                    <div className="absolute inset-x-[18%] bottom-[10%] h-10 rounded-full bg-red-600/20 blur-[30px]" />
-                    <Image
-                      src={currentImage}
-                      alt={currentImageLabel}
-                      fill
-                      priority={currentImageIndex === 0}
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      quality={currentImageIsEditorial ? 86 : 74}
-                      style={{
-                        objectPosition: currentImageIsEditorial
-                          ? galleryImagePosition(currentImage)
-                          : undefined,
-                      }}
-                      className={`product-image gpu-accelerated h-full w-full transition-transform duration-500 ease-out ${
-                        currentImageIsEditorial
-                          ? "object-cover brightness-[0.86] contrast-[1.12] saturate-[0.96]"
-                          : "object-contain p-6 drop-shadow-[0_22px_40px_rgba(0,0,0,0.42)] sm:p-8"
-                      }`}
+            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14">
+              {/* Gallery */}
+              <div className="lg:col-span-7">
+                <div className="group relative overflow-hidden border border-white/[0.08] bg-black">
+                  <div className="relative aspect-square">
+                    <div
+                      className="absolute inset-0 bg-black"
+                      aria-hidden="true"
                     />
-                    {currentImageIsEditorial ? (
-                      <div
-                        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),transparent_42%,rgba(0,0,0,0.24)),radial-gradient(circle_at_50%_16%,rgba(220,38,38,0.12),transparent_34%)]"
-                        aria-hidden="true"
-                      />
-                    ) : null}
 
                     <button
                       type="button"
-                      aria-label={`Show previous ${product.name} image`}
-                      className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/10 bg-black/60 p-3 text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-black/85 group-hover:opacity-100"
+                      className="absolute inset-0 cursor-zoom-in"
+                      onClick={() => setIsZoomed(true)}
+                      aria-label="Open fullscreen image"
+                    >
+                      <Image
+                        key={currentImage}
+                        src={currentImage}
+                        alt={currentImageLabel}
+                        fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 58vw"
+                        quality={86}
+                        style={{
+                          objectPosition: currentImageIsEditorial
+                            ? galleryImagePosition(currentImage)
+                            : "center",
+                        }}
+                        className={
+                          currentImageIsEditorial
+                            ? "object-cover"
+                            : "object-contain p-5 sm:p-8"
+                        }
+                        draggable={false}
+                      />
+                    </button>
+
+                    <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 border border-white/10 bg-black/55 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white/55 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 sm:bottom-4">
+                      Click to expand
+                    </div>
+
+                    <button
+                      type="button"
+                      aria-label="Previous image"
+                      className="absolute left-3 top-1/2 z-10 -translate-y-1/2 border border-white/15 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:left-4"
                       onClick={() => updateImage(currentImageIndex - 1)}
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
                     <button
                       type="button"
-                      aria-label={`Show next ${product.name} image`}
-                      className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/10 bg-black/60 p-3 text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-black/85 group-hover:opacity-100"
+                      aria-label="Next image"
+                      className="absolute right-3 top-1/2 z-10 -translate-y-1/2 border border-white/15 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:right-4"
                       onClick={() => updateImage(currentImageIndex + 1)}
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
 
-                    <div className="absolute bottom-4 right-4 rounded-full border border-white/10 bg-black/65 px-3 py-1 text-sm font-semibold tracking-[0.16em] text-white shadow-lg backdrop-blur-sm">
-                      <span>{currentImageIndex + 1}</span> / <span>{product.images.length}</span>
+                    <div className="absolute bottom-3 left-3 border border-white/10 bg-black/55 px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.16em] text-white/75 backdrop-blur-sm sm:bottom-4 sm:left-4">
+                      {String(currentImageIndex + 1).padStart(2, "0")} /{" "}
+                      {String(product.images.length).padStart(2, "0")}
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-5 gap-2 sm:grid-cols-5 sm:gap-3 lg:grid-cols-6">
+                <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 sm:mt-3">
                   {product.images.map((image, index) => {
-                    const isEditorial = isEditorialGalleryImage(image);
-
+                    const editorial = isEditorialGalleryImage(image);
+                    const selected = index === currentImageIndex;
                     return (
                       <button
                         key={image}
                         type="button"
-                        aria-label={`Show ${product.name} image ${index + 1}`}
-                        className={`product-thumbnail group/thumb relative aspect-square overflow-hidden rounded-xl border bg-[linear-gradient(180deg,rgba(22,22,22,0.95),rgba(7,7,7,1))] shadow-[0_10px_30px_rgba(0,0,0,0.24)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 sm:rounded-2xl ${
-                          index === currentImageIndex
-                            ? "border-red-600 ring-1 ring-red-600/60 shadow-[0_14px_36px_rgba(220,38,38,0.18)]"
-                            : "border-white/8 hover:border-red-600/70"
+                        aria-label={`Image ${index + 1}`}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`relative aspect-square h-[4.25rem] w-[4.25rem] shrink-0 overflow-hidden border bg-black transition-[border-color] duration-200 sm:h-auto sm:w-auto ${
+                          selected
+                            ? "border-white/60"
+                            : "border-white/[0.08] hover:border-white/30"
                         }`}
-                        onClick={() => updateImage(index)}
                       >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.12),transparent_42%)]" />
                         <Image
                           src={image}
-                          alt={
-                            product.imageAlts?.[index] ??
-                            `${product.name} image ${index + 1}`
-                          }
+                          alt=""
                           fill
-                          sizes="(max-width: 640px) 20vw, 120px"
-                          quality={isEditorial ? 82 : 70}
+                          sizes="72px"
+                          quality={86}
                           style={{
-                            objectPosition: isEditorial
+                            objectPosition: editorial
                               ? galleryImagePosition(image)
-                              : undefined,
+                              : "center",
                           }}
-                          className={`relative transition-transform duration-300 group-hover/thumb:scale-[1.03] ${
-                            isEditorial
-                              ? "object-cover brightness-[0.86] contrast-[1.12] saturate-[0.96]"
-                              : "object-contain p-1.5 sm:p-2"
-                          }`}
+                          className={
+                            editorial ? "object-cover" : "object-contain p-1"
+                          }
                         />
-                        {isEditorial ? (
-                          <div
-                            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02),transparent_46%,rgba(0,0,0,0.16))]"
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                        <span className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/65 px-1.5 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.08em] text-white/70 sm:bottom-2 sm:right-2 sm:px-2 sm:text-[0.62rem]">
-                          {index + 1}
-                        </span>
-                    </button>
-                  );
-                })}
-              </div>
-              {!isStraps ? (
-                <div className="mt-4 rounded-2xl border border-red-600/20 bg-red-950/12 p-4 text-sm leading-6 text-gray-300 lg:hidden">
-                  <span className="font-black text-white">Sizing tip:</span>{" "}
-                  measure around your waist where the belt will sit, usually
-                  around the navel. Do not use pants size.
+                      </button>
+                    );
+                  })}
                 </div>
-              ) : null}
               </div>
 
-              <div className="animate-on-scroll animated">
-                <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-5 shadow-[0_18px_56px_rgba(0,0,0,0.3)] sm:p-8 lg:sticky lg:top-24">
-                  <div className="mb-6 border-b border-white/10 pb-5 sm:mb-8 sm:pb-6">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                      {product.kicker}
+              {/* Buy panel */}
+              <div className="lg:col-span-5">
+                <div className="border border-white/[0.08] bg-black p-5 sm:p-7 lg:sticky lg:top-24">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-red-400">
+                    {product.kicker}
+                  </p>
+                  <h1 className="mt-3 text-3xl font-black tracking-[-0.03em] text-white sm:text-4xl">
+                    {product.name}
+                  </h1>
+                  {product.reviewCount > 0 ? (
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
+                      {Number(product.rating).toFixed(1)} ★ · {product.reviewCount} reviews
                     </p>
-                    <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-                      {product.name}
-                    </h1>
-                    <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-                      <p className="text-3xl font-black tracking-tight text-red-500 sm:text-[2rem]">
-                        ${product.price.toFixed(2)}
-                      </p>
-                      {product.originalPrice ? (
-                        <p className="pb-1 text-lg font-medium text-white/35 line-through sm:text-xl">
-                          {product.originalPrice}
-                        </p>
-                      ) : null}
-                    </div>
-                    {!isStraps ? (
-                      <p className="mt-3 text-sm font-semibold text-gray-400">
-                        Select a belt variant and size to confirm live inventory before checkout.
+                  ) : null}
+
+                  <div className="mt-4 flex items-baseline gap-3">
+                    <p className="text-2xl font-black text-white">
+                      ${product.price.toFixed(2)}
+                    </p>
+                    {product.originalPrice ? (
+                      <p className="text-base text-white/30 line-through">
+                        {product.originalPrice}
                       </p>
                     ) : null}
                   </div>
 
-                  <div className="mb-6 sm:mb-8">
-                    <p className="mb-5 max-w-xl text-base leading-7 text-gray-300 sm:text-lg sm:leading-8">
-                      {product.intro}
-                    </p>
-                    <div className="mb-5 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">
-                        {availabilityMessage}
-                      </span>
-                      {!isStraps && product.availableSizes.length > 0 ? (
-                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                          Sizes {product.availableSizes.join(", ")}
-                        </span>
-                      ) : null}
-                    </div>
-                    <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
-                      {product.featureList.map((feature) => (
-                        <li key={feature} className="flex items-start gap-3 rounded-2xl border border-white/6 bg-white/[0.03] px-4 py-3">
-                          <span className="mt-0.5 text-red-600">✓</span>
-                          <span className="leading-6">{feature}</span>
+                  <p className="mt-4 max-w-md text-sm leading-6 text-white/55">
+                    {product.intro}
+                  </p>
+
+                  {product.featureList?.length ? (
+                    <ul className="mt-4 space-y-1.5 text-sm text-white/50">
+                      {product.featureList.slice(0, 4).map((f) => (
+                        <li key={f} className="flex gap-2">
+                          <span className="text-red-500" aria-hidden="true">
+                            /
+                          </span>
+                          <span>{f}</span>
                         </li>
                       ))}
                     </ul>
-                  </div>
-
-                  {extraPanel ? (
-                    <div className="mb-6 rounded-2xl border border-red-600/20 bg-black/45 p-5 shadow-[0_16px_42px_rgba(0,0,0,0.28)] sm:mb-8">
-                      {extraPanel}
-                    </div>
                   ) : null}
 
-                  <div className="mb-6 rounded-2xl border border-red-600/20 bg-red-950/12 p-4 text-sm leading-6 text-gray-300 sm:mb-8">
-                    <span className="font-black text-white">Before checkout:</span>{" "}
-                    {purchaseConfidence}
-                  </div>
+                  <dl className="mt-6 grid grid-cols-3 gap-2 border-y border-white/[0.08] py-4">
+                    {coreSpecs.map(([label, value]) => (
+                      <div key={label}>
+                        <dt className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white/35">
+                          {label}
+                        </dt>
+                        <dd className="mt-1 text-sm font-semibold text-white">
+                          {value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
 
-                  <div className="mb-8 rounded-2xl border border-white/8 bg-black/40 p-5">
-                    <label htmlFor="quantity" className="mb-3 block text-sm font-semibold uppercase tracking-[0.22em] text-gray-300">
-                      Quantity
-                    </label>
-                    <div className="flex items-center gap-3">
+                  <ul className="mt-4 grid grid-cols-2 gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-white/45">
+                    <li className="border border-white/[0.07] px-3 py-2">Secure Stripe checkout</li>
+                    <li className="border border-white/[0.07] px-3 py-2">Tracked US shipping</li>
+                    <li className="border border-white/[0.07] px-3 py-2">Size guide below</li>
+                    <li className="border border-white/[0.07] px-3 py-2">30-day returns policy</li>
+                  </ul>
+
+                  {extraPanel ? <div className="mt-6">{extraPanel}</div> : null}
+
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="flex items-center border border-white/12">
                       <button
                         type="button"
-                        className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-neutral-900 text-lg font-bold text-white transition-all hover:border-red-600/70 hover:bg-neutral-800"
-                        onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                        className="flex h-11 w-11 items-center justify-center text-lg text-white transition-colors hover:bg-white/5"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        aria-label="Decrease quantity"
                       >
-                        -
+                        −
                       </button>
-                      <input
-                        id="quantity"
-                        type="number"
-                        min="1"
-                        value={quantity}
-                        onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))}
-                        className="h-11 w-24 rounded-xl border border-white/10 bg-neutral-950 text-center text-base font-semibold text-white outline-none transition-colors focus:border-red-600"
-                      />
+                      <span className="w-10 text-center text-sm font-bold text-white">
+                        {quantity}
+                      </span>
                       <button
                         type="button"
-                        className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-neutral-900 text-lg font-bold text-white transition-all hover:border-red-600/70 hover:bg-neutral-800"
-                        onClick={() => setQuantity((current) => current + 1)}
+                        className="flex h-11 w-11 items-center justify-center text-lg text-white transition-colors hover:bg-white/5"
+                        onClick={() => setQuantity((q) => q + 1)}
+                        aria-label="Increase quantity"
                       >
                         +
                       </button>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <button
+                  <div className="mt-4 space-y-2">
+                    <motion.button
                       type="button"
-                      onClick={handleAddToCart}
+                      onClick={() => addSelectedItemToCart()}
                       disabled={addToCartDisabled}
-                      className={`glow-red w-full rounded-full px-8 py-4 text-base font-bold transition-[transform,background-color,border-color,box-shadow] duration-300 sm:text-lg ${
+                      whileTap={addToCartDisabled || prefersReducedMotion ? undefined : { scale: 0.98 }}
+                      className={`w-full rounded-full px-6 py-4 text-sm font-black uppercase tracking-[0.16em] transition-colors ${
                         addToCartDisabled
-                          ? "cursor-not-allowed border border-white/8 bg-white/[0.04] text-white/45 shadow-none"
-                          : "bg-red-600 text-white hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_16px_38px_rgba(220,38,38,0.24)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+                          ? "cursor-not-allowed border border-white/10 bg-white/[0.04] text-white/35"
+                          : "bg-red-600 text-white hover:bg-red-500"
                       }`}
                     >
-                      {addToCartDisabled ? disabledPurchaseLabel : "Add to Cart"}
-                    </button>
-
+                      {addToCartDisabled ? disabledPurchaseLabel : "Add to cart"}
+                    </motion.button>
                     <button
                       type="button"
                       onClick={handleBuyNow}
                       disabled={addToCartDisabled}
-                      className={`w-full rounded-full border-2 px-8 py-4 text-base font-bold transition-[transform,background-color,border-color,box-shadow] duration-300 sm:text-lg ${
+                      className={`w-full rounded-full border px-6 py-3.5 text-sm font-black uppercase tracking-[0.16em] transition-colors ${
                         addToCartDisabled
-                          ? "cursor-not-allowed border-white/8 bg-transparent text-white/30"
-                          : "border-red-600 bg-transparent text-red-500 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-600/12 hover:text-white hover:shadow-[0_16px_38px_rgba(220,38,38,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+                          ? "cursor-not-allowed border-white/[0.08] text-white/25"
+                          : "border-white/20 text-white hover:border-white/40 hover:bg-white/[0.04]"
                       }`}
                     >
-                      Buy Now
+                      Buy now
                     </button>
                   </div>
 
-                  <div className="mt-6 grid grid-cols-1 gap-3 text-sm text-gray-300 sm:grid-cols-3">
-                    {buyReassurance.map((message) => (
-                      <div
-                        key={message}
-                        className="rounded-xl border border-white/8 bg-black/35 px-4 py-3 text-center font-semibold"
-                      >
-                        {message}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-gray-400">
-                    <Link className="transition-colors hover:text-red-400" href="/shipping">
-                      Shipping policy
+                  <p className="mt-4 text-center text-xs text-white/35">
+                    Secure checkout via Stripe ·{" "}
+                    <Link href="/shipping" className="underline-offset-2 hover:text-white/60 hover:underline">
+                      Shipping
                     </Link>
-                    <Link className="transition-colors hover:text-red-400" href="/returns">
-                      Returns policy
+                    {" · "}
+                    <Link href="/returns" className="underline-offset-2 hover:text-white/60 hover:underline">
+                      Returns
                     </Link>
-                    <Link className="transition-colors hover:text-red-400" href="/contact">
-                      Contact support
-                    </Link>
-                  </div>
-                  <p className="mt-3 text-center text-xs leading-5 text-gray-500">
-                    Payment details are entered only on Stripe Checkout.
                   </p>
+                  <div className="mt-2 flex justify-center">
+                    <TikTokShopLink slug={product.slug} />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="animate-on-scroll animated mt-16 sm:mt-20">
-              {!isStraps ? (
-                <section
-                  aria-labelledby="sizing-guidance"
-                  className="mb-12 rounded-[1.5rem] border border-white/8 bg-white/[0.03] p-6 sm:p-8"
-                >
-                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
-                    <div>
-                      <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                        Size Guide
-                      </p>
-                      <h2
-                        id="sizing-guidance"
-                        className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl"
-                      >
-                        How to choose your size.
-                      </h2>
-                      <p className="mt-4 text-sm leading-6 text-gray-400 sm:text-base">
-                        Exact size ranges are not currently published on the product page. Measure around your waist where the belt will sit, usually around the navel. Do not use your pants size. Contact support before ordering if you are between sizes.
-                      </p>
-                      <Link
-                        href="/contact"
-                        className="mt-5 inline-flex rounded-full border border-red-600/50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-red-600/12"
-                      >
-                        Ask sizing support
-                      </Link>
-                    </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                      {sizeGuidance.map(([title, text]) => (
-                        <div
-                          key={title}
-                          className="rounded-2xl border border-white/8 bg-black/35 p-5 text-sm leading-6 text-gray-300"
-                        >
-                          <h3 className="mb-2 text-base font-black text-white">
-                            {title}
-                          </h3>
-                          <p>{text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {product.availableSizes.length > 0 ? (
-                    <div className="mt-8 overflow-hidden rounded-2xl border border-white/8">
-                      <div className="grid grid-cols-[0.8fr_1.2fr] bg-black/50 text-sm font-bold uppercase tracking-[0.16em] text-white">
-                        <div className="border-r border-white/8 px-4 py-3">Size</div>
-                        <div className="px-4 py-3">Current guidance</div>
-                      </div>
-                      {product.availableSizes.map((size) => (
-                        <div
-                          key={size}
-                          className="grid grid-cols-[0.8fr_1.2fr] border-t border-white/8 text-sm text-gray-300"
-                        >
-                          <div className="border-r border-white/8 px-4 py-3 font-bold text-white">
-                            {size}
-                          </div>
-                          <div className="px-4 py-3">
-                            Available in the live catalog. Exact range pending; choose from your belt-position measurement, not pants size.
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                </section>
-              ) : null}
-
-              {!isStraps ? (
-                <section
-                  aria-labelledby="belt-quick-specs"
-                  className="mb-12 rounded-[1.5rem] border border-red-600/15 bg-[linear-gradient(180deg,rgba(127,29,29,0.16),rgba(8,8,8,0.92))] p-6 sm:p-8"
-                >
-                  <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                    Specs
-                  </p>
-                  <h2
-                    id="belt-quick-specs"
-                    className="mb-6 text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl"
-                  >
-                    Belt details at a glance.
-                  </h2>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {beltQuickSpecs.map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="rounded-2xl border border-white/8 bg-black/40 p-5"
-                      >
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/45">
-                          {label}
-                        </p>
-                        <p className="mt-2 text-base font-black text-white">
-                          {value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              ) : null}
-
-              <section className="mb-12 grid grid-cols-1 gap-5 md:grid-cols-3">
-                {productBenefits.map(([title, description]) => (
-                  <div
-                    key={title}
-                    className="rounded-[1.5rem] border border-white/8 bg-gradient-to-b from-neutral-900 to-black p-6"
-                  >
-                    <h3 className="text-xl font-black tracking-[-0.03em] text-white">
-                      {title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-6 text-gray-400">
-                      {description}
-                    </p>
-                  </div>
-                ))}
-              </section>
-
-              {showStandaloneDescriptionGallery ? (
-                <section
-                  aria-labelledby="product-description-images"
-                  className="mb-16 space-y-6 sm:mb-20"
-                >
-                  <div className="max-w-3xl">
-                    <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                      Description
-                    </p>
-                    <h2
-                      id="product-description-images"
-                      className="text-3xl font-black leading-[0.95] tracking-[-0.05em] text-white sm:text-4xl"
-                    >
-                      Wrist Straps Details
+            {/* Compact details — one collapsible area instead of five sections */}
+            <div className="mt-14 border-t border-white/[0.08] pt-10 sm:mt-16 sm:pt-12">
+              {!isStraps && beltSizeChartImage ? (
+                <div className="mb-10 grid gap-8 lg:grid-cols-2 lg:items-start">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight text-white">
+                      Size guide
                     </h2>
+                    <p className="mt-3 max-w-md text-sm leading-6 text-white/50">
+                      {BELT_SIZE_CHART_MEASURE_TIP} {BELT_SIZE_CHART_BETWEEN_SIZES}
+                    </p>
+                    <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-red-400/90">
+                      Tip: most lifters size down for a firmer brace.
+                    </p>
+                    <ul className="mt-5 space-y-2 text-sm text-white/65">
+                      {BELT_SIZE_CHART_ROWS.map((row) => (
+                        <li
+                          key={row.size}
+                          className="flex justify-between border-b border-white/[0.06] py-2"
+                        >
+                          <span className="font-bold text-white">{row.size}</span>
+                          <span>{row.inches}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-
-                  <div className="space-y-5">
-                    {product.descriptionGalleryImages?.map((image, index) => (
+                  <div className="relative aspect-[5/4] overflow-hidden border border-white/[0.08] bg-neutral-950">
                     <Image
-                      key={`standalone-${image}`}
-                      src={image}
-                      alt={`${product.name} detail image ${index + 1}`}
-                      width={1600}
-                      height={1600}
-                      priority={index === 0}
-                      sizes="(max-width: 1280px) 100vw, 1200px"
-                      quality={70}
-                      className="h-auto w-full object-contain"
+                      src={beltSizeChartImage}
+                      alt={`${product.name} size chart`}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      quality={86}
+                      className="object-contain p-4"
                     />
-                    ))}
                   </div>
-                </section>
-              ) : null}
-
-              <div className="mb-8 rounded-[1.75rem] border border-white/8 bg-white/[0.03] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.22)]">
-                <div className="flex flex-wrap gap-2">
-                  {detailTabs.map(([tabName, label]) => (
-                    <button
-                      key={tabName}
-                      type="button"
-                      className={`tab-btn rounded-2xl px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition-all sm:px-6 ${
-                        activeTab === tabName
-                          ? "bg-red-600 text-white shadow-[0_12px_30px_rgba(220,38,38,0.24)]"
-                          : "text-gray-400 hover:bg-white/[0.04] hover:text-white"
-                      }`}
-                      onClick={() => setActiveTab(tabName)}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {activeTab === "description" && product.slug !== "zeus" ? (
-                <div className="space-y-5">
-                  {product.descriptionGalleryImages?.map((image, index) => (
-                    <Image
-                      key={image}
-                      src={image}
-                      alt={`${product.name} description image ${index + 1}`}
-                      width={1600}
-                      height={1600}
-                      sizes="(max-width: 1280px) 100vw, 1200px"
-                      quality={70}
-                      className="h-auto w-full"
-                    />
-                  ))}
                 </div>
               ) : null}
 
-              {activeTab === "specs" ? (
-                <div>
-                  <h3 className="mb-8 text-2xl font-bold tracking-[0.12em] text-white">SPECIFICATIONS</h3>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="rounded-[1.5rem] border border-white/8 bg-gradient-to-b from-neutral-900 to-black p-6 shadow-[0_16px_50px_rgba(0,0,0,0.24)]">
-                      <h4 className="mb-5 border-b border-white/10 pb-3 text-lg font-bold tracking-[0.06em] text-white">
-                        Included
-                      </h4>
-                      <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
-                        {includedItems.map((item) => (
-                          <li key={item} className="flex items-start gap-3 rounded-xl bg-white/[0.03] px-4 py-3">
-                            <span className="text-red-600">•</span>
-                            <span className="text-white">{item}</span>
-                          </li>
+              <button
+                type="button"
+                onClick={() => setDetailsOpen((open) => !open)}
+                className="flex w-full items-center justify-between border border-white/[0.08] px-5 py-4 text-left transition-colors hover:border-white/20"
+              >
+                <span className="text-sm font-black uppercase tracking-[0.16em] text-white">
+                  Specs & details
+                </span>
+                <span className="text-white/50" aria-hidden="true">
+                  {detailsOpen ? "−" : "+"}
+                </span>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {detailsOpen ? (
+                  <motion.div
+                    initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="border border-t-0 border-white/[0.08] bg-black p-5 sm:p-6">
+                      <div className="grid gap-6 md:grid-cols-2">
+                        {product.specificationGroups.map((group) => (
+                          <div key={group.title}>
+                            <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-white/40">
+                              {group.title}
+                            </h3>
+                            {group.rows ? (
+                              <ul className="mt-3 space-y-2 text-sm">
+                                {group.rows.map(([label, value]) => (
+                                  <li
+                                    key={label}
+                                    className="flex justify-between gap-4 border-b border-white/[0.05] py-2 text-white/70"
+                                  >
+                                    <span className="text-white/40">{label}</span>
+                                    <span className="text-right font-medium text-white">
+                                      {value}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <ul className="mt-3 space-y-2 text-sm text-white/65">
+                                {group.bullets?.map((bullet) => (
+                                  <li key={bullet}>• {bullet}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
                         ))}
-                      </ul>
-                    </div>
-                    {product.specificationGroups.map((group) => (
-                      <div key={group.title} className="rounded-[1.5rem] border border-white/8 bg-gradient-to-b from-neutral-900 to-black p-6 shadow-[0_16px_50px_rgba(0,0,0,0.24)]">
-                        <h4 className="mb-5 border-b border-white/10 pb-3 text-lg font-bold tracking-[0.06em] text-white">
-                          {group.title}
-                        </h4>
-                        {group.rows ? (
-                          <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
-                            {group.rows.map(([label, value]) => (
-                              <li key={label} className="flex justify-between gap-4 rounded-xl bg-white/[0.03] px-4 py-3">
-                                <span className="text-gray-400">{label}</span>
-                                <span className={`text-right font-semibold text-white ${group.mono ? "font-mono text-sm" : ""}`}>
-                                  {value}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
-                            {group.bullets?.map((bullet) => (
-                              <li key={bullet} className="flex items-start gap-3 rounded-xl bg-white/[0.03] px-4 py-3">
-                                <span className="text-red-600">•</span>
-                                <span className="text-white">{bullet}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
 
-              {activeTab === "reviews" ? (
-                <ProductReviewsPanel reviews={product.reviews} />
-              ) : null}
-
-              <section className="mt-12 rounded-[1.5rem] border border-white/8 bg-white/[0.03] p-6 sm:p-8">
-                <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                  FAQ
-                </p>
-                <h2 className="mb-6 text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
-                  Product questions
-                </h2>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  {faqItems.map(([question, answer]) => (
-                    <div
-                      key={question}
-                      className="rounded-2xl border border-white/8 bg-black/35 p-5"
-                    >
-                      <h3 className="text-base font-black text-white">
-                        {question}
-                      </h3>
-                      <p className="mt-3 text-sm leading-6 text-gray-400">
-                        {answer}
-                      </p>
                     </div>
-                  ))}
-                </div>
-              </section>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
             </div>
           </div>
         </section>
+
+        {product.reviews.length > 0 ? (
+          <section className="border-t border-white/[0.06] bg-[#050505] px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+              <ProductReviewsPanel reviews={product.reviews} />
+            </div>
+          </section>
+        ) : null}
+
         {bottomSection}
       </main>
       <Footer />
 
-      {notification ? (
-        <div className="fixed top-24 right-4 z-50 rounded-lg bg-red-600 px-6 py-3 text-white shadow-lg transition-transform duration-300">
-          {notification}
-        </div>
-      ) : null}
+      <FixedPortal>
+      <AnimatePresence>
+        {notification ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            className="fixed bottom-24 right-4 z-50 border border-white/10 bg-red-600 px-5 py-3 text-sm font-bold text-white shadow-2xl sm:bottom-8"
+          >
+            {notification}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-      {product.catalogCategory === "belts" || product.catalogCategory === "straps" ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/90 px-4 py-3 shadow-[0_-18px_42px_rgba(0,0,0,0.45)] backdrop-blur-md lg:hidden">
+
+      <AnimatePresence>
+        {isZoomed ? (
+          <motion.div
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Fullscreen product image"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsZoomed(false)}
+          >
+            <button
+              type="button"
+              className="absolute right-4 top-4 z-[112] border border-white/15 bg-black/60 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white"
+              onClick={() => setIsZoomed(false)}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              className="absolute left-3 top-1/2 z-[112] -translate-y-1/2 border border-white/15 bg-black/60 p-3 text-white sm:left-6"
+              aria-label="Previous image"
+              onClick={(event) => {
+                event.stopPropagation();
+                updateImage(currentImageIndex - 1);
+              }}
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 z-[112] -translate-y-1/2 border border-white/15 bg-black/60 p-3 text-white sm:right-6"
+              aria-label="Next image"
+              onClick={(event) => {
+                event.stopPropagation();
+                updateImage(currentImageIndex + 1);
+              }}
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <motion.div
+              className="relative h-[min(88vh,900px)] w-full max-w-5xl"
+              initial={prefersReducedMotion ? false : { scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Image
+                src={currentImage}
+                alt={currentImageLabel}
+                fill
+                sizes="100vw"
+                quality={86}
+                style={{
+                  objectPosition: currentImageIsEditorial
+                    ? galleryImagePosition(currentImage)
+                    : "center",
+                }}
+                className={
+                  currentImageIsEditorial
+                    ? "object-contain"
+                    : "object-contain p-4"
+                }
+              />
+            </motion.div>
+            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/50">
+              {String(currentImageIndex + 1).padStart(2, "0")} /{" "}
+              {String(product.images.length).padStart(2, "0")} · FORGE GYM
+            </p>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      {(product.catalogCategory === "belts" ||
+        product.catalogCategory === "straps") && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black px-4 py-3 lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center gap-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-black text-white">
-                {product.name}
-              </p>
-              <p className="text-sm font-bold text-red-400">
+              <p className="truncate text-sm font-black text-white">{product.name}</p>
+              <p className="text-sm font-bold text-white/70">
                 ${product.price.toFixed(2)}
               </p>
             </div>
             <button
               type="button"
-              onClick={handleAddToCart}
+              onClick={() => addSelectedItemToCart()}
               disabled={addToCartDisabled}
-              className={`shrink-0 rounded-full px-5 py-3 text-sm font-black transition-colors ${
+              className={`shrink-0 rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.12em] ${
                 addToCartDisabled
-                  ? "border border-white/8 bg-white/[0.04] text-white/45"
-                  : "bg-red-600 text-white hover:bg-red-700"
+                  ? "border border-white/10 text-white/35"
+                  : "bg-red-600 text-white"
               }`}
             >
-              {addToCartDisabled ? disabledPurchaseLabel : "Add to Cart"}
+              {addToCartDisabled ? disabledPurchaseLabel : "Add"}
             </button>
           </div>
         </div>
-      ) : null}
+      )}
+      </FixedPortal>
     </>
   );
 }

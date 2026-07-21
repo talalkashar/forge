@@ -15,27 +15,31 @@ export default function ProductDetailState({
     <>
       <Navbar />
       <div className="h-16 sm:h-20" />
-      <main>
-        <section className="bg-black px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.02] p-8 shadow-[0_18px_56px_rgba(0,0,0,0.3)] sm:p-10">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                {eyebrow}
-              </p>
-              <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-                {title}
-              </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-gray-300 sm:text-lg">
-                {message}
-              </p>
-              <div className="mt-8">
-                <Link
-                  href="/shop"
-                  className="inline-flex rounded-full border border-red-600 bg-red-600 px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition-all hover:scale-[1.01] hover:bg-red-700"
-                >
-                  Back To Shop
-                </Link>
-              </div>
+      <main className="bg-black">
+        <section className="px-4 pb-20 pt-12 sm:px-6 sm:pb-24 sm:pt-16 lg:px-8">
+          <div className="mx-auto max-w-3xl border border-white/[0.08] bg-[#080808] p-8 sm:p-10">
+            <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-red-500">
+              FORGE GYM · {eyebrow}
+            </p>
+            <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">
+              {title}
+            </h1>
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-white/50 sm:text-base sm:leading-7">
+              {message}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/shop"
+                className="inline-flex rounded-full bg-red-600 px-6 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:bg-red-500"
+              >
+                Back to shop
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex rounded-full border border-white/15 px-6 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-white/35"
+              >
+                Home
+              </Link>
             </div>
           </div>
         </section>

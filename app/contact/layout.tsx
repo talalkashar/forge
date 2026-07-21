@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact | FORGE",
+  title: "Contact",
   description: "Contact FORGE for product questions, order support, and training gear inquiries.",
 };
 

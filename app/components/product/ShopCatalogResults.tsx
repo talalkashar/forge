@@ -325,16 +325,16 @@ export default function ShopCatalogResults({
       className={`mx-auto max-w-7xl ${showFilterBar ? "space-y-10" : "space-y-0"}`}
     >
       {showFilterBar ? (
-        <div className="grid gap-4 rounded-[1.25rem] border border-white/8 bg-white/[0.03] p-4 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] lg:items-end">
+        <div className="sticky top-20 z-20 grid gap-5 border border-white/[0.08] bg-black p-4 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:p-5 lg:top-24 lg:grid-cols-[minmax(0,1.2fr)_auto_auto_auto] lg:items-end">
           {enableSearch ? (
             <div className="min-w-0">
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+              <label className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
                 Search
               </label>
               <ForgeSearchBar
                 value={query}
                 onChange={updateQuery}
-                placeholder="Filter by belt, zeus, berserk, straps..."
+                placeholder="Belt, Zeus, Berserk, straps..."
               />
             </div>
           ) : (
@@ -343,23 +343,23 @@ export default function ShopCatalogResults({
 
           {enableSizeFilters ? (
             <div>
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
                 Size
               </span>
-              <div className="flex flex-wrap gap-2">
-                {sizeOptions.map(([size, label]) => (
+              <div className="flex flex-wrap gap-1.5">
+                {sizeOptions.map(([size]) => (
                   <button
                     key={size}
                     type="button"
                     onClick={() => toggleSize(size)}
                     aria-pressed={selectedSizes.includes(size)}
-                    className={`h-12 min-w-12 rounded-xl border px-4 text-sm font-bold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                    className={`h-10 min-w-10 border px-3 text-xs font-black tracking-[0.1em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
                       selectedSizes.includes(size)
-                        ? "border-red-500 bg-red-600/25"
-                        : "border-white/10 bg-black hover:border-red-600/60"
+                        ? "border-red-600 bg-red-600"
+                        : "border-white/12 bg-black hover:border-white/30"
                     }`}
                   >
-                    {label}
+                    {size}
                   </button>
                 ))}
               </div>
@@ -368,37 +368,37 @@ export default function ShopCatalogResults({
 
           {enableStockFilter ? (
             <div>
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
                 Stock
               </span>
               <button
                 type="button"
                 onClick={updateInStock}
                 aria-pressed={inStockOnly}
-                className={`h-12 rounded-xl border px-4 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                className={`h-10 border px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
                   inStockOnly
-                    ? "border-red-500 bg-red-600/25"
-                    : "border-white/10 bg-black hover:border-red-600/60"
+                    ? "border-red-600 bg-red-600"
+                    : "border-white/12 bg-black hover:border-white/30"
                 }`}
               >
-                In Stock Only
+                In stock
               </button>
             </div>
           ) : null}
 
           {enablePriceFilter ? (
             <label className="block">
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
                 Price
               </span>
               <select
                 value={priceMode}
                 onChange={(event) => updatePrice(event.target.value)}
-                className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
+                className="h-10 w-full border border-white/12 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/35"
               >
-                <option value="all">All prices</option>
+                <option value="all">All</option>
                 <option value="under-25">Under $25</option>
-                <option value="25-100">$25 to $100</option>
+                <option value="25-100">$25–$100</option>
                 <option value="over-100">Over $100</option>
               </select>
             </label>
@@ -406,17 +406,17 @@ export default function ShopCatalogResults({
 
           {enableSort ? (
             <label className="block">
-              <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
                 Sort
               </span>
               <select
                 value={sortMode}
                 onChange={(event) => updateSort(event.target.value)}
-                className="h-12 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-red-600"
+                className="h-10 w-full border border-white/12 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/35"
               >
                 <option value="featured">Featured</option>
-                <option value="price-low">Price: low to high</option>
-                <option value="price-high">Price: high to low</option>
+                <option value="price-low">Price ↑</option>
+                <option value="price-high">Price ↓</option>
                 <option value="name">Name</option>
               </select>
             </label>
@@ -426,7 +426,7 @@ export default function ShopCatalogResults({
             <button
               type="button"
               onClick={clearFilters}
-              className="h-12 rounded-xl border border-white/10 bg-white/[0.03] px-4 text-sm font-bold uppercase tracking-[0.12em] text-white/70 transition-colors hover:border-white/20 hover:text-white lg:col-start-4"
+              className="h-10 border border-white/12 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white/55 transition-colors hover:border-white/30 hover:text-white"
             >
               Clear
             </button>
@@ -442,63 +442,61 @@ export default function ShopCatalogResults({
 
       {visibleSections.length > 0 ? (
         <div className="space-y-14">
-          {visibleSections.map((section) => (
+          {visibleSections.map((section) => {
+            // Category pages already have a page hero — skip repeating the same title.
+            const showSectionHeader = visibleSections.length > 1;
+
+            return (
             <section key={section.id} id={section.id} className="scroll-mt-28">
-              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-red-500/90">
-                    {section.eyebrow}
-                  </p>
-                  <h2 className="text-3xl font-black tracking-[-0.05em] text-white sm:text-4xl">
-                    {section.title}
-                  </h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-                    {section.description}
-                  </p>
+              {showSectionHeader ? (
+                <div className="mb-7 flex flex-col gap-2 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
+                      {section.title}
+                    </h2>
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-white/45">
+                      {section.description}
+                    </p>
+                  </div>
+                  <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/35">
+                    {section.products.length}{" "}
+                    {section.products.length === 1 ? "product" : "products"}
+                  </span>
                 </div>
-                <span className="text-sm font-semibold text-white/55">
-                  {section.products.length}{" "}
-                  {section.products.length === 1 ? "product" : "products"}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              ) : null}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
                 {section.products.map((product) => (
                   <ProductCard key={product.slug} product={product} />
                 ))}
               </div>
             </section>
-          ))}
+            );
+          })}
         </div>
       ) : showFilterBar ? (
-        <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-8 text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500/90">
-            No Results
+        <div className="border border-white/[0.08] bg-[#080808] px-6 py-12 text-center">
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-red-500">
+            No results
           </p>
-          <h2 className="mt-3 text-3xl font-black text-white">
-            No gear matches those filters.
+          <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
+            Nothing matches those filters.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-400">
-            Adjust the selected sizes or stock filter to see what is currently available.
-          </p>
           <button
             type="button"
             onClick={clearFilters}
-            className="mt-6 rounded-xl border border-red-600/45 bg-red-600/12 px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-red-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+            className="mt-6 rounded-full bg-red-600 px-6 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:bg-red-500"
           >
-            Clear Filters
+            Clear filters
           </button>
         </div>
       ) : (
-        <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-8 text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500/90">
-            No Products
+        <div className="border border-white/[0.08] bg-[#080808] px-6 py-12 text-center">
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-red-500">
+            FORGE GYM
           </p>
-          <h2 className="mt-3 text-3xl font-black text-white">
-            This collection is coming soon.
+          <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
+            Nothing matches those filters — clear filters or browse all gear.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-400">
-            Please check back soon for the latest FORGE gear.
-          </p>
         </div>
       )}
     </div>
