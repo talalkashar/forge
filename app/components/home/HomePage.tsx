@@ -57,17 +57,28 @@ export default function HomePage() {
       <main>
         <HeroSlot />
 
-        <section className="border-y border-white/[0.06] bg-[#050505]">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-white/[0.06] sm:grid-cols-4">
+        {/* Trust bar — brand seam between cinematic hero and shop */}
+        <section className="relative border-b border-white/[0.06] bg-[#050505]">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/55 to-transparent"
+            aria-hidden="true"
+          />
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-white/[0.07] sm:grid-cols-4">
             {trustPoints.map((item) => (
               <div
                 key={item.label}
-                className="bg-black px-5 py-5 sm:px-6 sm:py-6"
+                className="relative bg-black px-5 py-7 sm:px-7 sm:py-8"
               >
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-red-400">
+                <div
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-red-600/0 via-red-500/35 to-red-600/0 opacity-80"
+                  aria-hidden="true"
+                />
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-red-400">
                   {item.label}
                 </p>
-                <p className="mt-2 text-sm text-white/55">{item.detail}</p>
+                <p className="mt-2.5 text-sm leading-snug text-white/60 sm:text-[0.95rem]">
+                  {item.detail}
+                </p>
               </div>
             ))}
           </div>
@@ -75,21 +86,34 @@ export default function HomePage() {
 
         <section
           id="shop-collections"
-          className="border-t border-white/[0.06] bg-black px-6 py-20 sm:px-8 sm:py-24"
+          className="relative overflow-hidden border-t border-white/[0.06] bg-black px-6 py-24 sm:px-8 sm:py-28"
         >
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10 flex items-end justify-between gap-6">
+          {/* Soft red stage so black isn’t dead after the hero */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(140,18,18,0.14),transparent_55%)]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent"
+            aria-hidden="true"
+          />
+
+          <div className="relative z-10 mx-auto max-w-7xl">
+            <div className="mb-12 flex items-end justify-between gap-6 sm:mb-14">
               <div>
-                <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
-                  Shop
-                </p>
-                <h2 className="text-2xl font-black tracking-tight text-white sm:text-4xl">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-red-500">
+                    Shop
+                  </p>
+                </div>
+                <h2 className="text-4xl font-black leading-[0.9] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
                   Gear
                 </h2>
               </div>
               <Link
                 href="/shop"
-                className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-white/40 transition-colors hover:text-white"
+                className="mb-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/45 transition-colors hover:text-white"
               >
                 View all →
               </Link>
@@ -100,11 +124,15 @@ export default function HomePage() {
                 <Link
                   key={product.title}
                   href={product.href}
-                  className="group flex h-full flex-col overflow-hidden border border-white/[0.08] bg-black transition-colors duration-150 hover:border-white/25"
+                  className="group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
                 >
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-200 group-hover:via-red-500/70"
+                    aria-hidden="true"
+                  />
                   <div className="relative aspect-square overflow-hidden bg-black">
                     <div
-                      className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(90,12,12,0.2),transparent_58%)]"
+                      className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(110,14,14,0.28),transparent_58%)] transition-opacity duration-200 group-hover:opacity-100"
                       aria-hidden="true"
                     />
                     <Image
@@ -113,20 +141,20 @@ export default function HomePage() {
                       fill
                       sizes="(max-width: 640px) 100vw, 25vw"
                       quality={90}
-                      className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.03] sm:p-2"
+                      className="object-contain p-2 transition-transform duration-300 group-hover:scale-[1.05] sm:p-2.5"
                     />
                   </div>
-                  <div className="flex items-start justify-between gap-3 p-5">
+                  <div className="flex items-start justify-between gap-3 border-t border-white/[0.06] p-5 sm:p-5">
                     <div>
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-[1.05rem] font-bold tracking-tight text-white">
                         {product.title}
                       </h3>
-                      <p className="mt-1 text-xs uppercase tracking-[0.14em] text-white/35">
+                      <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-white/40 transition-colors group-hover:text-white/55">
                         {product.detail}
                       </p>
                     </div>
                     <span
-                      className="mt-0.5 text-white/30 transition-colors group-hover:text-white"
+                      className="mt-0.5 text-lg text-white/25 transition-colors group-hover:text-red-400"
                       aria-hidden="true"
                     >
                       →

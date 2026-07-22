@@ -185,8 +185,14 @@ function InActionSection() {
         className="scroll-mt-20 border-t border-white/[0.06] bg-black px-6 py-20 sm:px-8 sm:py-28"
       >
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10 sm:mb-12">
-            <h2 className="text-3xl font-black tracking-[-0.03em] text-white sm:text-4xl">
+          <div className="mb-12 sm:mb-14">
+            <div className="mb-4 flex items-center gap-3">
+              <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-red-500">
+                Proof
+              </p>
+            </div>
+            <h2 className="text-4xl font-black leading-[0.9] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
               Training
             </h2>
           </div>
@@ -201,7 +207,7 @@ function InActionSection() {
                 <button
                   type="button"
                   onClick={() => setActiveIndex(index)}
-                  className="group relative block h-full w-full overflow-hidden border border-white/[0.08] bg-[#080808] text-left transition-colors duration-150 hover:border-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+                  className="group relative block h-full w-full overflow-hidden border border-white/[0.1] bg-[#080808] text-left transition-[border-color,box-shadow] duration-200 hover:border-red-500/40 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
                 >
                   {image.media === "video" ? (
                     <GridVideo
