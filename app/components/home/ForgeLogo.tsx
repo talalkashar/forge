@@ -5,14 +5,14 @@ type ForgeLogoProps = {
   className?: string;
   /** Size scale for the stacked belt wordmark */
   markClassName?: string;
-  /** @deprecated Kept for call-site compatibility — logo is always the belt lockup */
+  /** @deprecated Kept for call-site compatibility , logo is always the belt lockup */
   variant?: "text" | "mark";
 };
 
 /**
  * Product emboss lockup:
  *   FORGE
- * — GYM —
+ * GYM between horizontal rules 
  * Matches the logo stamped on the lever belts.
  */
 export default function ForgeLogo({

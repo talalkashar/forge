@@ -58,7 +58,7 @@ function fallbackProductFromPresentation(
   );
   const basePriceCents = isBelt ? 7997 : 999;
   const sizes = isBelt ? ["S", "M", "L", "XL"] : [];
-  // Offline presentation-only catalog. Never invent sellable stock —
+  // Offline presentation-only catalog. Never invent sellable stock , 
   // live quantities come only from Supabase product_variants.
   const offlineStock = 0;
   const variants: ProductVariantRow[] =
@@ -189,7 +189,7 @@ function firstActiveVariant(product: ProductWithRelations) {
 
 /**
  * Reject uncurated gallery noise from storefront product carousels.
- * Allow TikTok-style listing packs: main/card + numbered slides 1–7
+ * Allow TikTok-style listing packs: main/card + numbered slides 1 to 7
  * (hero product shot + red/black branded infographics).
  */
 function isMarketingSlide(src: string): boolean {
@@ -235,7 +235,7 @@ function createStorefrontProduct(product: ProductWithRelations): StorefrontProdu
   const imageSources = sortedImages.map((image) => image.src);
   // Prefer curated presentation order when available (product shots → lifestyle).
   // Append any DB-only images that presentation does not already include.
-  // Curated presentation galleries only — never append raw DB listing spam
+  // Curated presentation galleries only , never append raw DB listing spam
   // (webp/marketing/white-bg/legacy 1-7 Amazon slides).
   const presentationImages = (presentation?.images ?? []).filter(
     (src) => !isMarketingSlide(src),
@@ -322,7 +322,7 @@ function storefrontResult(
   result: ProductQueryResult<ProductWithRelations[]>,
 ): ProductQueryResult<StorefrontProduct[]> {
   // Prefer live Supabase rows (real inventory). Only use presentation fallback
-  // when the catalog is unreachable — and that fallback has zero sellable stock.
+  // when the catalog is unreachable , and that fallback has zero sellable stock.
   if (result.missingEnv || result.error || result.data.length === 0) {
     if (result.error) {
       console.warn("[storefront] catalog fallback (zero stock):", result.error);

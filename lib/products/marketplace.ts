@@ -70,7 +70,7 @@ const PRODUCT_COLUMNS =
  */
 const CATALOG_QUERY_TIMEOUT_MS = 3000;
 
-/** Short cooldown after timeouts — prefer retrying live inventory quickly. */
+/** Short cooldown after timeouts , prefer retrying live inventory quickly. */
 const CATALOG_COOLDOWN_MS = 30_000;
 const CATALOG_COOLDOWN_FILE = "/tmp/forge-catalog-cooldown";
 

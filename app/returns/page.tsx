@@ -33,7 +33,7 @@ export default function ReturnsPage() {
             <p>
               Unused items in original condition may be eligible for return
               within the stated policy window. Worn training gear generally
-              cannot be resold — hygiene and safety first.
+              cannot be resold for hygiene and safety reasons.
             </p>
             <p>
               Approved returns need a return authorization before shipping

@@ -73,7 +73,7 @@ export type ProductPresentation = {
 };
 
 /* gallery-v4: 1 = official product photo with transparent BG (like belt heroes);
-   2–6 = TikTok marketing pack (IMG_4041–4045). */
+   2 to 6 = TikTok marketing pack (IMG_4041 to 4045). */
 const strapProductImages = [
   "/images/straps/listing/gallery-v4-1.png",
   "/images/straps/listing/gallery-v4-2.jpg",
@@ -84,11 +84,11 @@ const strapProductImages = [
 ];
 
 const strapProductImageAlts = [
-  "FORGE lifting straps product cutout — padded wrist loops and long cotton straps on transparent background.",
-  "FORGE lifting straps perfect length for secure wrap — 20.8 in length, 1.6 in width.",
+  "FORGE lifting straps product cutout with padded wrist loops and long cotton straps on transparent background.",
+  "FORGE lifting straps perfect length for secure wrap: 20.8 in length, 1.6 in width.",
   "FORGE lifting straps grip without slip benefits while holding a dumbbell.",
   "FORGE lifting straps how-to wrap steps for any wrist size.",
-  "FORGE lifting straps enhance grip power — padding, non-slip silicone, high-density knit.",
+  "FORGE lifting straps enhance grip power with padding, non-slip silicone, and high-density knit.",
   "FORGE lifting straps train-smarter lifestyle shot in the gym.",
 ];
 
@@ -109,7 +109,7 @@ const zeusBeltImageAlts = [
   "FORGE Zeus lever belt dual-angle product view on pure black background.",
   "FORGE Zeus lever belt thickness and width specs.",
   "FORGE Zeus lever belt uncompromised strength feature callouts.",
-  "FORGE Zeus lever belt size chart — how to measure.",
+  "FORGE Zeus lever belt size chart and how to measure.",
   "FORGE Zeus lever belt multi-exercise compatibility.",
   "FORGE Zeus lever belt built for heavy lifting.",
   "FORGE Zeus lever belt secure locking how-to.",
@@ -129,14 +129,14 @@ const berserkBeltImageAlts = [
   "FORGE Berserk lever belt dual-angle product view on pure black background.",
   "FORGE Berserk lever belt thickness and width specs.",
   "FORGE Berserk lever belt uncompromised strength feature callouts.",
-  "FORGE Berserk lever belt size chart — how to measure.",
+  "FORGE Berserk lever belt size chart and how to measure.",
   "FORGE Berserk lever belt multi-exercise compatibility.",
   "FORGE Berserk lever belt built for heavy lifting.",
   "FORGE Berserk lever belt secure locking how-to.",
 ];
 
 // 1 = real dual-angle product hero (correct lever + emboss).
-// 2–4 = marketing frames that use the same belt design (no alternate buckle artwork).
+// 2 to 4 = marketing frames that use the same belt design (no alternate buckle artwork).
 const blackBeltImages = [
   "/images/belts/listing/black/1.jpg",
   "/images/belts/listing/black/2.jpg",
@@ -145,10 +145,10 @@ const blackBeltImages = [
 ];
 
 const blackBeltImageAlts = [
-  "FORGE GYM black lever belt dual-angle product view — embossed logo and steel lever on pure black.",
+  "FORGE GYM black lever belt dual-angle product view with embossed logo and steel lever on pure black.",
   "FORGE GYM black lever belt feature callouts on the same product design as the hero shot.",
-  "FORGE GYM black lever belt size chart — measure at the navel, not pant size.",
-  "FORGE GYM black lever belt specs — 10mm thickness, 4-inch width, same embossed design.",
+  "FORGE GYM black lever belt size chart. Measure at the navel, not pant size.",
+  "FORGE GYM black lever belt specs: 10mm thickness, 4-inch width, same embossed design.",
 ];
 
 const strapDescriptionGalleryImages = [
@@ -203,7 +203,7 @@ const forgeBeltReviews = [
     name: "Marcus T.",
     rating: 5 as const,
     date: "2026-03-12",
-    text: "Lever snaps on tight and stays put through heavy squats. Build feels solid — no soft core flex.",
+    text: "Lever snaps on tight and stays put through heavy squats. Build feels solid with no soft core flex.",
   },
   {
     name: "Aisha K.",
@@ -215,7 +215,7 @@ const forgeBeltReviews = [
     name: "Diego R.",
     rating: 4 as const,
     date: "2026-01-19",
-    text: "Quality is there. Size down if you want a firmer brace — chart was accurate for me.",
+    text: "Quality is there. Size down if you want a firmer brace. Chart was accurate for me.",
   },
 ];
 
@@ -298,7 +298,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     href: "/product/belt?variant=zeus",
     images: zeusBeltImages,
     description:
-      "FORGE GYM Zeus lever belt — 10mm premium leather powerlifting belt with steel lever buckle. Lightning-inspired Zeus finish for heavy squats, deadlifts, and powerlifting.",
+      "FORGE GYM Zeus lever belt. 10mm premium leather powerlifting belt with steel lever buckle. Lightning-inspired Zeus finish for heavy squats, deadlifts, and powerlifting.",
     categoryLabel: "Lifting Belt",
     rating: 4.8,
     reviewCount: 3,
@@ -311,7 +311,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     href: "/product/belt?variant=berserk",
     images: berserkBeltImages,
     description:
-      "FORGE GYM Berserk lever belt — 10mm premium leather powerlifting belt with steel lever buckle for squats and deadlifts. Bold battle-inspired design, locked-in core support.",
+      "FORGE GYM Berserk lever belt. 10mm premium leather powerlifting belt with steel lever buckle for squats and deadlifts. Bold battle-inspired design, locked-in core support.",
     categoryLabel: "Lifting Belt",
     rating: 4.9,
     reviewCount: 3,
@@ -324,7 +324,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     href: "/product/belt?variant=black",
     images: blackBeltImages,
     description:
-      "FORGE GYM Black lever belt — 10mm premium leather powerlifting belt with steel lever buckle. Stealth black finish, same rigid platform and fast lever closure.",
+      "FORGE GYM Black lever belt. 10mm premium leather powerlifting belt with steel lever buckle. Stealth black finish, same rigid platform and fast lever closure.",
     categoryLabel: "Lifting Belt",
     rating: 4.8,
     reviewCount: 3,
@@ -337,7 +337,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     href: "/product/straps",
     images: strapProductImages,
     description:
-      "FORGE GYM heavy-duty lifting straps in black — comfortable grip and rugged wrist support for deadlifts, rows, and pull work.",
+      "FORGE GYM heavy-duty lifting straps in black with comfortable grip and rugged wrist support for deadlifts, rows, and pull work.",
     categoryLabel: "Accessories",
     rating: 4.9,
     reviewCount: 2,
@@ -372,7 +372,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
       {
         title: "4. Adjustable Fit:",
         images: ["/images/straps/listing/gallery-v4-4.jpg"],
-        text: "Designed to fit any wrist size or lifting style. Easy to wrap, quick to release, and always stable - comfort without compromise. Extended length and optimized width ensure secure grip performance.",
+        text: "Designed to fit any wrist size or lifting style. Easy to wrap, quick to release, and always stable. Comfort without compromise. Extended length and optimized width ensure secure grip performance.",
       },
       {
         title: "5. Trusted Support:",

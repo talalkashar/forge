@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           <div className="mx-auto max-w-3xl space-y-6 text-sm leading-7 text-white/60">
             <p>
               We collect information needed to process orders, support customers,
-              and improve the storefront — such as contact details and checkout
+              and improve the storefront, such as contact details and checkout
               data handled by Stripe.
             </p>
             <p>

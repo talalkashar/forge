@@ -78,7 +78,7 @@ export default function ContactPage() {
               Contact
             </h1>
             <p className="mt-4 max-w-xl text-base text-white/50">
-              Sizing, orders, or product questions. Replies typically within 1–2 business days.
+              Sizing, orders, or product questions. Replies typically within 1 to 2 business days.
             </p>
           </div>
         </section>

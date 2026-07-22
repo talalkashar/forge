@@ -39,7 +39,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
       smooth: 0.85,
-      // Light touch smoothing — full smooth on phones often feels laggy
+      // Light touch smoothing , full smooth on phones often feels laggy
       smoothTouch: 0.08,
       effects: true,
       // Avoid mobile address-bar resize thrash

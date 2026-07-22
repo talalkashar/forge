@@ -9,11 +9,11 @@ export type BeltSizeChartRow = {
 };
 
 export const BELT_SIZE_CHART_ROWS: readonly BeltSizeChartRow[] = [
-  { size: "S", inches: '28" – 32"', cm: "71 – 81 cm" },
-  { size: "M", inches: '32" – 36"', cm: "82 – 91 cm" },
-  { size: "L", inches: '36" – 40"', cm: "91 – 101 cm" },
-  { size: "XL", inches: '40" – 44"', cm: "101 – 111 cm" },
-  { size: "XXL", inches: '44" – 48"', cm: "111 – 121 cm" },
+  { size: "S", inches: '28" to 32"', cm: "71 to 81 cm" },
+  { size: "M", inches: '32" to 36"', cm: "82 to 91 cm" },
+  { size: "L", inches: '36" to 40"', cm: "91 to 101 cm" },
+  { size: "XL", inches: '40" to 44"', cm: "101 to 111 cm" },
+  { size: "XXL", inches: '44" to 48"', cm: "111 to 121 cm" },
 ] as const;
 
 export const BELT_SIZE_CHART_IMAGE_BY_SLUG: Record<string, string> = {

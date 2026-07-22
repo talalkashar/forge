@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 /**
  * Pass-through wrapper.
- * Scroll-linked reveal animations were removed — they hurt trackpad scroll FPS.
+ * Scroll-linked reveal animations were removed , they hurt trackpad scroll FPS.
  */
 export default function Reveal({
   children,

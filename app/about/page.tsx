@@ -6,7 +6,7 @@ import Navbar from "../components/home/Navbar";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "FORGE GYM makes lever belts and wrist straps that actually work — support for heavy sets, built to protect and push hard.",
+    "FORGE GYM makes lever belts and wrist straps that actually work, built to protect and push hard on heavy sets.",
 };
 
 export default function AboutPage() {
@@ -27,7 +27,7 @@ export default function AboutPage() {
             <div className="mt-10 space-y-6 text-base leading-8 text-white/55 sm:text-lg sm:leading-9">
               <p>
                 We built FORGE because we wanted gym accessories that actually
-                work — gear with a clear purpose, not noise on a shelf. Lever
+                work: gear with a clear purpose, not noise on a shelf. Lever
                 belts and wrist straps that help you brace, hold on, and train
                 with intent.
               </p>
@@ -39,7 +39,7 @@ export default function AboutPage() {
               </p>
               <p>
                 That&apos;s why we stay focused on the essentials. No filler
-                products — just equipment made to serve the work.
+                products. Just equipment made to serve the work.
               </p>
             </div>
 

@@ -144,7 +144,7 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
                 title={
                   products.length === 0 && !error && !missingEnv
                     ? "No products in this filter yet"
-                    : "Catalog is loading — try refresh"
+                    : "Catalog is loading. Try refresh."
                 }
                 message="Please check back soon for the latest FORGE GYM belts and wrist straps."
               />

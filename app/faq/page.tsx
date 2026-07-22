@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "What is the belt thickness?",
-    a: "FORGE lever belts use a 10mm core with a 4-inch width — built for heavy squats and deadlifts.",
+    a: "FORGE lever belts use a 10mm core with a 4-inch width, built for heavy squats and deadlifts.",
   },
   {
     q: "Zeus vs Berserk vs Black?",

@@ -103,7 +103,7 @@ function GridVideo({
       const playPromise = el.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {
-          // Autoplay blocked — poster / first frame still visible.
+          // Autoplay blocked , poster / first frame still visible.
         });
       }
     };

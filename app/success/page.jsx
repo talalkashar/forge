@@ -34,7 +34,7 @@ export default function SuccessPage() {
           Order locked in
         </h1>
         <p className="mt-4 text-sm leading-6 text-white/50 sm:text-base">
-          Payment cleared through Stripe. Your cart is empty — gear is on the
+          Payment cleared through Stripe. Your cart is empty. Gear is on the
           way. Check your email for confirmation when it lands.
         </p>
         <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/30">

@@ -214,7 +214,7 @@ export default function ProductDetailPage({
       <div className="h-16 sm:h-20" />
       <main className="bg-black pb-20 sm:pb-0">
         <section className="relative overflow-hidden px-4 pb-28 pt-6 sm:px-6 sm:pb-20 sm:pt-10 lg:px-8">
-          {/* Ambient stage — CSS only, no WebGL hang risk */}
+          {/* Ambient stage , CSS only, no WebGL hang risk */}
           <div
             className="pointer-events-none absolute inset-0 opacity-90"
             aria-hidden="true"
@@ -488,7 +488,7 @@ export default function ProductDetailPage({
               </div>
             </div>
 
-            {/* Compact details — one collapsible area instead of five sections */}
+            {/* Compact details , one collapsible area instead of five sections */}
             <div className="mt-14 border-t border-white/[0.08] pt-10 sm:mt-16 sm:pt-12">
               {!isStraps && beltSizeChartImage ? (
                 <div className="mb-10 grid gap-8 lg:grid-cols-2 lg:items-start">

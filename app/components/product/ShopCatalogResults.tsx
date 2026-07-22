@@ -398,7 +398,7 @@ export default function ShopCatalogResults({
               >
                 <option value="all">All</option>
                 <option value="under-25">Under $25</option>
-                <option value="25-100">$25–$100</option>
+                <option value="25-100">$25 to $100</option>
                 <option value="over-100">Over $100</option>
               </select>
             </label>
@@ -443,7 +443,7 @@ export default function ShopCatalogResults({
       {visibleSections.length > 0 ? (
         <div className="space-y-14">
           {visibleSections.map((section) => {
-            // Category pages already have a page hero — skip repeating the same title.
+            // Category pages already have a page hero , skip repeating the same title.
             const showSectionHeader = visibleSections.length > 1;
 
             return (
@@ -495,7 +495,7 @@ export default function ShopCatalogResults({
             FORGE GYM
           </p>
           <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
-            Nothing matches those filters — clear filters or browse all gear.
+            Nothing matches those filters. Clear filters or browse all gear.
           </h2>
         </div>
       )}

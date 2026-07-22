@@ -129,7 +129,7 @@ export default async function AdminInventoryPage() {
                   <td className="px-3 py-4 font-mono text-xs text-white/70">
                     {variant.sku}
                   </td>
-                  <td className="px-3 py-4">{variant.size ?? "—"}</td>
+                  <td className="px-3 py-4">{variant.size ?? "n/a"}</td>
                   <td className="px-3 py-4">
                     <form
                       action={adjustInventoryAction}
@@ -152,7 +152,7 @@ export default async function AdminInventoryPage() {
                     </form>
                     {(variant.inventory_quantity ?? 0) <= 0 ? (
                       <p className="mt-2 text-xs font-bold text-amber-300">
-                        Out of stock on website — check TikTok qty
+                        Out of stock on website. Check TikTok qty
                       </p>
                     ) : null}
                   </td>
@@ -174,7 +174,7 @@ export default async function AdminInventoryPage() {
                       </p>
                     ) : (
                       <p className="mt-1 text-amber-200/80">
-                        No TikTok product ID — map when PDP exists
+                        No TikTok product ID. Map when PDP exists
                       </p>
                     )}
                     <p className="mt-1 text-white/35">

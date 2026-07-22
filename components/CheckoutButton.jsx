@@ -45,7 +45,7 @@ export default function CheckoutButton() {
     >
       <span className="absolute inset-0 translate-y-full bg-white/10 transition-transform duration-300 group-hover:translate-y-0 group-disabled:hidden" />
       <span className="relative">
-        {isLoading ? "Redirecting to Stripe…" : "Checkout — FORGE GYM"}
+        {isLoading ? "Redirecting to Stripe…" : "Checkout · FORGE GYM"}
       </span>
     </button>
   );

@@ -23,7 +23,7 @@ function getReducedMotionServerSnapshot() {
 }
 
 /**
- * Full-viewport cinematic hero — muted looping product video with poster LCP fallback.
+ * Full-viewport cinematic hero , muted looping product video with poster LCP fallback.
  * Reduced-motion users get the static poster only.
  */
 export default function Hero() {
@@ -47,7 +47,7 @@ export default function Hero() {
       const playPromise = el.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {
-          // Autoplay blocked — poster / first frame still visible.
+          // Autoplay blocked , poster / first frame still visible.
         });
       }
     };
@@ -145,7 +145,7 @@ export default function Hero() {
             </h1>
 
             <p className="mt-7 max-w-md text-base leading-7 text-white/70 sm:text-lg sm:leading-8">
-              Lever belts and wrist straps for serious training — rigid support,
+              Lever belts and wrist straps for serious training: rigid support,
               clean hardware, zero soft branding.
             </p>
 

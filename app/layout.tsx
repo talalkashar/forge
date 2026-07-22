@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | FORGE GYM",
   },
   description:
-    "FORGE GYM — premium 10mm lever belts and wrist straps built for heavy training. Secure Stripe checkout.",
+    "FORGE GYM premium 10mm lever belts and wrist straps built for heavy training. Secure Stripe checkout.",
   openGraph: {
     title: "FORGE GYM | Premium Strength Gear",
     description:
@@ -68,7 +68,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col bg-black text-white">
         <JsonLd data={orgJsonLd} />
         <CartProvider>
-          {/* Fixed UI (nav, modals, sticky cart) portals here — outside ScrollSmoother content */}
+          {/* Fixed UI (nav, modals, sticky cart) portals here , outside ScrollSmoother content */}
           <div id="forge-fixed-layer" className="pointer-events-none fixed inset-0 z-[200]" />
           <FixedPortalProvider>
             <SmoothScroll>

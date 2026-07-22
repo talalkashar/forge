@@ -76,7 +76,7 @@ async function normalizeCheckoutItem(
 
   const productResult = await getProductBySlug(slug);
 
-  // Live inventory is required for catalog products — never sell when stock
+  // Live inventory is required for catalog products , never sell when stock
   // cannot be verified against Supabase.
   if (productResult.error || productResult.missingEnv || !productResult.data) {
     if (LIVE_CATALOG_SLUGS.has(slug)) {
@@ -97,7 +97,7 @@ async function normalizeCheckoutItem(
         ? variants.find((productVariant) => productVariant.id === variantId)
         : undefined) ?? null;
 
-    // Cart may still hold offline IDs (e.g. "berserk-m") — resolve by size.
+    // Cart may still hold offline IDs (e.g. "berserk-m") , resolve by size.
     if (!variant && requestedSize) {
       variant =
         variants.find(

@@ -18,7 +18,7 @@ export default function CancelPage() {
           Checkout paused
         </h1>
         <p className="mt-4 text-sm leading-6 text-white/50">
-          No charge went through. Your cart is still there — finish when you are
+          No charge went through. Your cart is still there. Finish when you are
           ready.
         </p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:justify-center">
