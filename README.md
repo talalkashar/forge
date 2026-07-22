@@ -1,7 +1,9 @@
 # FORGE
 
 **Live:** https://forgegym.us  
+**Legacy domain:** https://capacitygears.com → redirects to forgegym.us  
 **Repo:** https://github.com/talalkashar/forge  
+**Vercel:** team `talaldev` · project `forge` (Hobby)
 
 Premium gym gear storefront for **FORGE** (lever belts, lifting straps) — owned brand e-commerce with Stripe checkout and a Supabase-backed catalog / admin inventory dashboard.
 

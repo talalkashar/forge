@@ -3,7 +3,8 @@
 ## Identity
 
 - Brand: FORGE / FORGE Gym
-- Live storefront(s): `https://forgegym.us` (also referenced as capacitygears.com in deployment docs — confirm which domain is primary before SEO or redirect work)
+- Live storefront: `https://forgegym.us` (primary). Legacy `capacitygears.com` redirects to forgegym — keep for SEO/bookmarks.
+- Vercel: team `talaldev`, project `forge`, GitHub `talalkashar/forge`. Keep capacitygears email as secondary Vercel login if still owned.
 - Repo: this repository (`forge-site`)
 - Product category: lifting belts, lever belts, wrist straps / lifting straps
 

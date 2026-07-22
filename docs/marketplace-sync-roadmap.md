@@ -91,7 +91,7 @@ TikTok Shop credentials/checklist:
 TikTok approval and authorization flow:
 
 1. Create the TikTok Shop Partner Center app/service.
-2. Add the FORGE callback URL: `https://capacitygears.com/api/marketplaces/tiktok/callback`.
+2. Add the FORGE callback URL: `https://forgegym.us/api/marketplaces/tiktok/callback` (legacy `capacitygears.com` host redirects to forgegym; prefer the primary domain in Partner Center).
 3. Enable only the minimum read-only scopes needed for product, order, inventory, and shop identity previews.
 4. Complete company details review.
 5. Complete partner registration review.

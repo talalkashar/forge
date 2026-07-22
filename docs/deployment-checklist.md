@@ -31,7 +31,9 @@ Add these in Vercel Project Settings:
 
 Do not commit `.env.local`.
 
-For production, set `NEXT_PUBLIC_BASE_URL` to `https://capacitygears.com`.
+For production, set `NEXT_PUBLIC_BASE_URL` to `https://forgegym.us`.
+
+Scope env vars for **Production**, **Preview**, and **Development** where the app needs them (Stripe, Supabase, base URL, admin password). Production secrets must not be overwritten casually when expanding Preview/Dev.
 
 Optional read-only marketplace connector variables can be added later. They are not required for storefront build or checkout:
 
@@ -50,20 +52,39 @@ Optional read-only marketplace connector variables can be added later. They are 
 
 The admin sync dashboard only checks whether these values are present. It must never display the values.
 
-## Admin Subdomain Deployment
+## Domains (Vercel project: `forge`, team: `talaldev`)
 
-- Main storefront domain: `capacitygears.com`.
-- Admin dashboard domain: `admin.capacitygears.com`.
-- Add `admin.capacitygears.com` as a domain on the same Vercel project.
-- Configure DNS using Vercel's instructions.
-- The Next.js `proxy.ts` router maps admin subdomain paths to the existing admin routes:
-  - `https://admin.capacitygears.com` -> `/admin`
-  - `https://admin.capacitygears.com/products` -> `/admin/products`
-  - `https://admin.capacitygears.com/marketplace` -> `/admin/marketplace`
-  - `https://admin.capacitygears.com/inventory` -> `/admin/inventory`
-  - `https://admin.capacitygears.com/sync` -> `/admin/sync`
-- Test `https://admin.capacitygears.com` after deploy.
-- If subdomain routing fails, use `/admin` on the main domain as the fallback URL.
+**Primary production domain:** `forgegym.us`
+
+| Domain | Role |
+|--------|------|
+| `forgegym.us` | Primary storefront |
+| `www.forgegym.us` | Redirect → apex |
+| `admin.forgegym.us` | Admin subdomain |
+| `capacitygears.com` | Legacy — redirect → `forgegym.us` (keep for SEO / old links) |
+| `www.capacitygears.com` | Legacy — redirect → `forgegym.us` |
+| `admin.capacitygears.com` | Legacy — redirect → `admin.forgegym.us` |
+
+Do not remove `capacitygears.com` aliases unless you intentionally retire that domain.
+
+### Admin subdomain paths
+
+The Next.js `proxy.ts` router maps admin subdomain paths to existing admin routes:
+
+- `https://admin.forgegym.us` → `/admin`
+- `https://admin.forgegym.us/products` → `/admin/products`
+- `https://admin.forgegym.us/marketplace` → `/admin/marketplace`
+- `https://admin.forgegym.us/inventory` → `/admin/inventory`
+- `https://admin.forgegym.us/sync` → `/admin/sync`
+
+Legacy `admin.capacitygears.com` should continue redirecting to the forgegym admin host. Fallback: `/admin` on the main domain.
+
+### Vercel account notes
+
+- Vercel team slug: `talaldev` (Hobby).
+- GitHub repo: `talalkashar/forge`.
+- Primary account email may be personal (`talalkashar@…`); keep `capacitygears@…` attached as a **secondary login** email if you still own and use it.
+- Billing email can match the personal address on Hobby (no card required for free tier).
 
 ## Pre-Deploy Security
 

@@ -6,7 +6,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # FORGE site — agent guide
 
-Next.js App Router storefront for FORGE (lever belts, lifting straps). Stripe checkout + Supabase catalog/admin. Live site commonly referenced as `forgegym.us` (also `capacitygears.com` in deployment docs — confirm primary domain before SEO/redirect work).
+Next.js App Router storefront for FORGE (lever belts, lifting straps). Stripe checkout + Supabase catalog/admin.
+
+**Primary live domain:** `forgegym.us`. **Legacy:** `capacitygears.com` redirects to forgegym (keep for SEO/bookmarks). Vercel team: `talaldev`; project: `forge`; GitHub: `talalkashar/forge`. Keep `capacitygears@…` as a secondary Vercel login email if still owned — do not remove it just for cleanup.
 
 ## Inventory source of truth: TikTok Shop
 
