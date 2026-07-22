@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
+import { checkRateLimitAsync, clientIp } from "@/lib/security/rate-limit";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import {
   clearAdminSession,
@@ -56,10 +56,13 @@ async function requireAdminSession() {
 
 export async function loginAdminAction(formData: FormData) {
   const headerStore = await headers();
-  const rateLimit = checkRateLimit(`admin-login:${clientIp(headerStore)}`, {
-    limit: 8,
-    windowMs: 15 * 60 * 1000,
-  });
+  const rateLimit = await checkRateLimitAsync(
+    `admin-login:${clientIp(headerStore)}`,
+    {
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    },
+  );
 
   if (rateLimit.limited) {
     redirect("/admin?error=too_many_attempts");

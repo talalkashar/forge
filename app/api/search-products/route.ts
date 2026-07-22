@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import { getStorefrontProducts } from "@/lib/products";
 import { searchProducts, toProductSearchItem } from "@/lib/product-search";
-import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
+import {
+  checkRateLimitAsync,
+  clientIp,
+} from "@/lib/security/rate-limit";
 
 const searchRateLimit = {
-  limit: 90,
+  limit: 60,
   windowMs: 60 * 1000,
 };
 
 export async function GET(request: Request) {
-  const rateLimit = checkRateLimit(
+  const rateLimit = await checkRateLimitAsync(
     `search:${clientIp(request.headers)}`,
     searchRateLimit,
   );
@@ -25,7 +28,7 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const query = (searchParams.get("q") ?? "").slice(0, 120);
+  const query = (searchParams.get("q") ?? "").slice(0, 80);
   const requestedLimit = Number(searchParams.get("limit") ?? 6);
   const limit = Number.isFinite(requestedLimit)
     ? Math.min(Math.max(Math.floor(requestedLimit), 1), 12)

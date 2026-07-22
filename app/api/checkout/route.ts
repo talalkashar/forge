@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import type { InventoryLine } from "@/lib/inventory/stock";
 import { getProductBySlug } from "@/lib/products/marketplace";
-import { checkRateLimit, clientIp } from "@/lib/security/rate-limit";
+import {
+  checkRateLimitAsync,
+  clientIp,
+} from "@/lib/security/rate-limit";
+import {
+  assertContentLength,
+  isRequestGuardError,
+} from "@/lib/security/request-guards";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,9 +36,14 @@ const beltSlugs = new Set(["zeus", "berserk", "black"]);
 const LIVE_CATALOG_SLUGS = new Set(["zeus", "berserk", "black", "straps"]);
 
 const checkoutRateLimit = {
-  limit: 20,
+  limit: 12,
   windowMs: 60 * 1000,
 };
+
+/** Abuse / DoS caps — real carts stay well under these. */
+const MAX_CHECKOUT_BODY_BYTES = 16_384;
+const MAX_CHECKOUT_LINE_ITEMS = 12;
+const MAX_QUANTITY_PER_LINE = 10;
 
 function normalizeSize(size: string | null | undefined) {
   return size?.trim().toUpperCase() ?? "";
@@ -62,9 +74,22 @@ function sizeFromItem(item: CheckoutItem) {
 async function normalizeCheckoutItem(
   item: CheckoutItem,
 ): Promise<NormalizedCheckoutItem> {
-  const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
-  const slug = typeof item.slug === "string" ? item.slug.trim().toLowerCase() : "";
-  const variantId = typeof item.variantId === "string" ? item.variantId : "";
+  const rawQuantity = Math.floor(Number(item.quantity) || 1);
+  if (!Number.isFinite(rawQuantity) || rawQuantity < 1) {
+    throw new Error("Invalid item quantity.");
+  }
+  if (rawQuantity > MAX_QUANTITY_PER_LINE) {
+    throw new Error(
+      `Quantity limited to ${MAX_QUANTITY_PER_LINE} per item.`,
+    );
+  }
+  const quantity = rawQuantity;
+  const slug =
+    typeof item.slug === "string"
+      ? item.slug.trim().toLowerCase().slice(0, 64)
+      : "";
+  const variantId =
+    typeof item.variantId === "string" ? item.variantId.slice(0, 128) : "";
 
   if (!slug) {
     throw new Error("Please re-add this item before checkout.");
@@ -209,7 +234,7 @@ function allowedCheckoutOrigin(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const rateLimit = checkRateLimit(
+    const rateLimit = await checkRateLimitAsync(
       `checkout:${clientIp(req.headers)}`,
       checkoutRateLimit,
     );
@@ -231,8 +256,30 @@ export async function POST(req: Request) {
       );
     }
 
-    const body: { items?: CheckoutItem[] } = await req.json();
+    assertContentLength(req.headers, MAX_CHECKOUT_BODY_BYTES);
+
+    let body: { items?: CheckoutItem[] };
+    try {
+      body = (await req.json()) as { items?: CheckoutItem[] };
+    } catch {
+      return NextResponse.json({ error: "Invalid checkout payload." }, { status: 400 });
+    }
+
     const items: CheckoutItem[] = Array.isArray(body?.items) ? body.items : [];
+
+    if (items.length === 0) {
+      return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
+    }
+
+    if (items.length > MAX_CHECKOUT_LINE_ITEMS) {
+      return NextResponse.json(
+        {
+          error: `Cart limited to ${MAX_CHECKOUT_LINE_ITEMS} line items.`,
+        },
+        { status: 400 },
+      );
+    }
+
     const normalizedItems = (
       await Promise.all(items.map((item) => normalizeCheckoutItem(item)))
     ).filter((item) => Number.isFinite(item.price) && item.price > 0);
@@ -244,6 +291,15 @@ export async function POST(req: Request) {
     const inventoryItems = normalizedItems
       .map((item) => item.inventoryLine)
       .filter((line): line is InventoryLine => Boolean(line));
+
+    // Stripe metadata value max is 500 chars — keep inventory payload tight.
+    const inventoryMetadata = JSON.stringify(inventoryItems);
+    if (inventoryMetadata.length > 450) {
+      return NextResponse.json(
+        { error: "Cart is too large for checkout. Remove an item and try again." },
+        { status: 400 },
+      );
+    }
 
     const origin = allowedCheckoutOrigin(req);
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -263,7 +319,7 @@ export async function POST(req: Request) {
       })),
       // Used by /api/webhooks/stripe to decrement live Supabase inventory.
       metadata: {
-        inventory_items: JSON.stringify(inventoryItems),
+        inventory_items: inventoryMetadata,
       },
       success_url: `${origin}/success`,
       cancel_url: `${origin}/cancel`,
@@ -271,21 +327,27 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    if (isRequestGuardError(err)) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+
     const message = err instanceof Error ? err.message : "Stripe failed";
-    const isInventoryError =
+    const isClientError =
       message.includes("out of stock") ||
       message.includes("left in stock") ||
       message.includes("re-add your belt size") ||
       message.includes("re-add this item") ||
-      message.includes("verify live inventory");
+      message.includes("verify live inventory") ||
+      message.includes("Invalid item quantity") ||
+      message.includes("Quantity limited");
 
-    if (!isInventoryError) {
+    if (!isClientError) {
       console.error("Checkout failed", message);
     }
 
     return NextResponse.json(
       { error: message },
-      { status: isInventoryError ? 400 : 500 },
+      { status: isClientError ? 400 : 500 },
     );
   }
 }

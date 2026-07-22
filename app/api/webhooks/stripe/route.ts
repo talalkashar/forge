@@ -8,6 +8,8 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const MAX_WEBHOOK_BODY_BYTES = 256_000;
+
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const stripeSecret = process.env.STRIPE_SECRET_KEY;
@@ -19,6 +21,11 @@ export async function POST(req: Request) {
     );
   }
 
+  const contentLength = Number(req.headers.get("content-length") ?? 0);
+  if (Number.isFinite(contentLength) && contentLength > MAX_WEBHOOK_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large." }, { status: 413 });
+  }
+
   const stripe = new Stripe(stripeSecret);
   const signature = req.headers.get("stripe-signature");
 
@@ -27,6 +34,9 @@ export async function POST(req: Request) {
   }
 
   const body = await req.text();
+  if (body.length > MAX_WEBHOOK_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large." }, { status: 413 });
+  }
 
   let event: Stripe.Event;
   try {
