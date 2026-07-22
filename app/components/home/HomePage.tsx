@@ -38,13 +38,13 @@ const products = [
     title: "Black Lever Belt",
     detail: "10mm · Lever · $79.97",
     href: "/product/belt?variant=black",
-    image: "/images/belts/listing/Black Lever Belt/main.jpg",
+    image: "/images/belts/listing/black/1.jpg",
   },
   {
     title: "Wrist Straps",
     detail: "Padded · Pair · $9.99",
     href: "/product/straps",
-    image: "/images/straps/listing/main.jpg",
+    image: "/images/straps/listing/gallery-v4-1.png",
   },
 ];
 

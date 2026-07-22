@@ -72,37 +72,47 @@ export type ProductPresentation = {
   buyNowUrl: string;
 };
 
-/* TikTok-style galleries: hero product shot + red/black branded listing images */
+/* gallery-v4: 1 = official product photo with transparent BG (like belt heroes);
+   2–6 = TikTok marketing pack (IMG_4041–4045). */
 const strapProductImages = [
-  "/images/straps/listing/gallery-v2-1.jpg",
-  "/images/straps/listing/gallery-v2-2.jpg",
-  "/images/straps/listing/gallery-v2-3.jpg",
-  "/images/straps/listing/gallery-v2-4.jpg",
-  "/images/straps/listing/gallery-v2-5.jpg",
-  "/images/straps/listing/gallery-v2-6.jpg",
+  "/images/straps/listing/gallery-v4-1.png",
+  "/images/straps/listing/gallery-v4-2.jpg",
+  "/images/straps/listing/gallery-v4-3.jpg",
+  "/images/straps/listing/gallery-v4-4.jpg",
+  "/images/straps/listing/gallery-v4-5.jpg",
+  "/images/straps/listing/gallery-v4-6.jpg",
 ];
 
 const strapProductImageAlts = [
-  "FORGE lifting straps lifestyle product view.",
-  "FORGE lifting straps perfect length and dimensions.",
-  "FORGE lifting straps grip without slip benefits.",
-  "FORGE lifting straps how-to wrap steps.",
-  "FORGE lifting straps enhance grip power feature callouts.",
-  "FORGE lifting straps in-use gym lifestyle shot.",
+  "FORGE lifting straps product cutout — padded wrist loops and long cotton straps on transparent background.",
+  "FORGE lifting straps perfect length for secure wrap — 20.8 in length, 1.6 in width.",
+  "FORGE lifting straps grip without slip benefits while holding a dumbbell.",
+  "FORGE lifting straps how-to wrap steps for any wrist size.",
+  "FORGE lifting straps enhance grip power — padding, non-slip silicone, high-density knit.",
+  "FORGE lifting straps train-smarter lifestyle shot in the gym.",
 ];
 
+// Same 7-frame structure as Berserk: product hero + red TikTok marketing pack,
+// with Zeus lightning design only (Berserk layout/theme matched).
+// gallery-v7-* = cache-busted pack; 3/6/7 fixed black liner + full Zeus wrap (not blue shell).
 const zeusBeltImages = [
-  "/images/belts/listing/zeus/gallery-v2-1.jpg",
-  "/images/belts/listing/zeus/gallery-v2-2.jpg",
-  "/images/belts/listing/zeus/gallery-v2-3.jpg",
-  "/images/belts/listing/zeus/gallery-v2-4.jpg",
+  "/images/belts/listing/zeus/gallery-v7-1.jpg",
+  "/images/belts/listing/zeus/gallery-v7-2.jpg",
+  "/images/belts/listing/zeus/gallery-v7-3.jpg",
+  "/images/belts/listing/zeus/gallery-v7-4.jpg",
+  "/images/belts/listing/zeus/gallery-v7-5.jpg",
+  "/images/belts/listing/zeus/gallery-v7-6.jpg",
+  "/images/belts/listing/zeus/gallery-v7-7.jpg",
 ];
 
 const zeusBeltImageAlts = [
-  "FORGE Zeus lever belt built for heavy lifting.",
-  "FORGE Zeus lever belt size chart — how to measure.",
+  "FORGE Zeus lever belt dual-angle product view on pure black background.",
+  "FORGE Zeus lever belt thickness and width specs.",
   "FORGE Zeus lever belt uncompromised strength feature callouts.",
+  "FORGE Zeus lever belt size chart — how to measure.",
   "FORGE Zeus lever belt multi-exercise compatibility.",
+  "FORGE Zeus lever belt built for heavy lifting.",
+  "FORGE Zeus lever belt secure locking how-to.",
 ];
 
 const berserkBeltImages = [
@@ -116,7 +126,7 @@ const berserkBeltImages = [
 ];
 
 const berserkBeltImageAlts = [
-  "FORGE Berserk lever belt dual-angle product view with red interior.",
+  "FORGE Berserk lever belt dual-angle product view on pure black background.",
   "FORGE Berserk lever belt thickness and width specs.",
   "FORGE Berserk lever belt uncompromised strength feature callouts.",
   "FORGE Berserk lever belt size chart — how to measure.",
@@ -125,38 +135,33 @@ const berserkBeltImageAlts = [
   "FORGE Berserk lever belt secure locking how-to.",
 ];
 
+// 1 = real dual-angle product hero (correct lever + emboss).
+// 2–4 = marketing frames that use the same belt design (no alternate buckle artwork).
 const blackBeltImages = [
-  "/images/belts/listing/Black Lever Belt/1.jpg",
-  "/images/belts/listing/Black Lever Belt/2.jpg",
-  "/images/belts/listing/Black Lever Belt/3.jpg",
-  "/images/belts/listing/Black Lever Belt/4.jpg",
-  "/images/belts/listing/Black Lever Belt/5.jpg",
-  "/images/belts/listing/Black Lever Belt/6.jpg",
-  "/images/belts/listing/Black Lever Belt/7.jpg",
+  "/images/belts/listing/black/1.jpg",
+  "/images/belts/listing/black/2.jpg",
+  "/images/belts/listing/black/3.jpg",
+  "/images/belts/listing/black/4.jpg",
 ];
 
 const blackBeltImageAlts = [
-  "FORGE black lever belt dual-angle product view — logo front and lever back.",
-  "FORGE black lever belt uncompromised strength feature callouts.",
-  "FORGE black lever belt size chart — how to measure your quick locking belt.",
-  "FORGE black lever belt 10mm thickness and 4 inch width specs.",
-  "FORGE black lever belt multi-exercise compatibility callouts.",
-  "FORGE black lever belt built for heavy lifting benefits.",
-  "FORGE black lever belt secure locking how-to — lift heavy, lock fast.",
+  "FORGE GYM black lever belt dual-angle product view — embossed logo and steel lever on pure black.",
+  "FORGE GYM black lever belt feature callouts on the same product design as the hero shot.",
+  "FORGE GYM black lever belt size chart — measure at the navel, not pant size.",
+  "FORGE GYM black lever belt specs — 10mm thickness, 4-inch width, same embossed design.",
 ];
 
 const blackBerserkDescriptionImages = [
-  "/images/belts/listing/berserk/1.jpg",
-  "/images/belts/listing/berserk/3.jpg",
-  "/images/belts/listing/Black Lever Belt/1.jpg",
-  "/images/belts/listing/Black Lever Belt/2.jpg",
+  "/images/belts/listing/black/1.jpg",
+  "/images/belts/listing/black/2.jpg",
+  "/images/belts/listing/black/4.jpg",
 ];
 
 const strapDescriptionGalleryImages = [
-  "/images/straps/listing/gallery-v2-1.jpg",
-  "/images/straps/listing/gallery-v2-2.jpg",
-  "/images/straps/listing/gallery-v2-5.jpg",
-  "/images/straps/listing/gallery-v2-6.jpg",
+  "/images/straps/listing/gallery-v4-1.png",
+  "/images/straps/listing/gallery-v4-2.jpg",
+  "/images/straps/listing/gallery-v4-5.jpg",
+  "/images/straps/listing/gallery-v4-6.jpg",
 ];
 
 const beltBaseSpecificationGroups: SpecificationGroup[] = [
@@ -249,7 +254,7 @@ const beltBasePresentation = {
   descriptionSections: [
     {
       title: "1. Locked-In Support:",
-      images: ["/images/belts/listing/zeus/gallery-v2-1.jpg"],
+      images: ["/images/belts/listing/zeus/gallery-v7-1.jpg"],
       text: "The FORGE lever system is built for fast setup and dependable bracing, giving you the stability needed for squats, deadlifts, and heavy compound work.",
     },
     {
@@ -259,7 +264,7 @@ const beltBasePresentation = {
     },
     {
       title: "3. Variant Flexibility:",
-      images: ["/images/belts/listing/Black Lever Belt/1.jpg"],
+      images: ["/images/belts/listing/black/1.jpg"],
       text: "Choose between Zeus, Berserk, and Black variants while staying within the same FORGE belt platform and product fit.",
     },
   ],
@@ -275,10 +280,10 @@ export const featuredProductOrder = ["berserk", "zeus", "straps"] as const;
 
 export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
   zeus: [
-    "/images/belts/listing/zeus/gallery-v2-1.jpg",
-    "/images/belts/listing/zeus/gallery-v2-2.jpg",
-    "/images/belts/listing/zeus/gallery-v2-3.jpg",
-    "/images/belts/listing/zeus/gallery-v2-4.jpg",
+    "/images/belts/listing/zeus/gallery-v7-1.jpg",
+    "/images/belts/listing/zeus/gallery-v7-2.jpg",
+    "/images/belts/listing/zeus/gallery-v7-3.jpg",
+    "/images/belts/listing/zeus/gallery-v7-6.jpg",
   ],
   berserk: [
     "/images/belts/listing/berserk/1.jpg",
@@ -287,10 +292,9 @@ export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
     "/images/belts/listing/berserk/6.jpg",
   ],
   black: [
-    "/images/belts/listing/Black Lever Belt/1.jpg",
-    "/images/belts/listing/Black Lever Belt/2.jpg",
-    "/images/belts/listing/Black Lever Belt/3.jpg",
-    "/images/belts/listing/Black Lever Belt/4.jpg",
+    "/images/belts/listing/black/1.jpg",
+    "/images/belts/listing/black/2.jpg",
+    "/images/belts/listing/black/4.jpg",
   ],
 };
 
@@ -358,29 +362,29 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     descriptionSections: [
       {
         title: "1. Unbreakable Strength:",
-        images: ["/images/straps/listing/gallery-v2-1.jpg"],
+        images: ["/images/straps/listing/gallery-v4-1.png"],
         text: "Push beyond limits with wrist straps built to endure your toughest sessions. Crafted from high-grade cotton and reinforced stitching, these straps support your grip so you can lift heavier and train harder without slipping or tearing.",
       },
       {
         title: "2. Superior Grip:",
-        images: ["/images/straps/listing/gallery-v2-5.jpg"],
+        images: ["/images/straps/listing/gallery-v4-5.jpg"],
         text: "Stay locked in even when the sweat hits. The non-slip textured surface ensures the bar stays secure in your hands, giving you full confidence in every rep. Designed to adjust smoothly for a secure and comfortable fit.",
       },
       {
         title: "3. Total Comfort:",
-        images: ["/images/straps/listing/gallery-v2-3.jpg"],
+        images: ["/images/straps/listing/gallery-v4-3.jpg"],
         text: "Soft padded neoprene hugs your wrist and eliminates friction or discomfort. Built for long lifting sessions so your focus stays on performance, not pain.",
       },
       {
         title: "4. Adjustable Fit:",
-        images: ["/images/straps/listing/gallery-v2-4.jpg"],
+        images: ["/images/straps/listing/gallery-v4-4.jpg"],
         text: "Designed to fit any wrist size or lifting style. Easy to wrap, quick to release, and always stable - comfort without compromise. Extended length and optimized width ensure secure grip performance.",
       },
       {
         title: "5. Trusted Support:",
         images: [
-          "/images/straps/listing/gallery-v2-6.jpg",
-          "/images/straps/listing/gallery-v2-2.jpg",
+          "/images/straps/listing/gallery-v4-6.jpg",
+          "/images/straps/listing/gallery-v4-2.jpg",
         ],
         text: "Forge Gym straps reduce strain and fatigue during heavy lifts, helping you train smarter and recover faster. Non-slip webbing locks your grip securely, giving full control even with maximum weight.",
       },

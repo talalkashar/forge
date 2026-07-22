@@ -17,9 +17,9 @@ export const BELT_SIZE_CHART_ROWS: readonly BeltSizeChartRow[] = [
 ] as const;
 
 export const BELT_SIZE_CHART_IMAGE_BY_SLUG: Record<string, string> = {
-  zeus: "/images/belts/listing/zeus/gallery-v2-2.jpg",
+  zeus: "/images/belts/listing/zeus/gallery-v7-4.jpg",
   berserk: "/images/belts/listing/berserk/4.jpg",
-  black: "/images/belts/listing/Black Lever Belt/3.jpg",
+  black: "/images/belts/listing/black/3.jpg",
 };
 
 export const BELT_SIZE_CHART_MEASURE_TIP =

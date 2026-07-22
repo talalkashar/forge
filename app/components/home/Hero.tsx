@@ -1,27 +1,117 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
-/** Static hero — no scroll-linked JS (keeps trackpads smooth). */
+const HERO_VIDEO_MP4 = "/videos/hero/forge-hero-berserk.mp4";
+const HERO_VIDEO_WEBM = "/videos/hero/forge-hero-berserk.webm";
+const HERO_POSTER = "/videos/posters/forge-hero-berserk.jpg";
+
+function subscribeReducedMotion(onChange: () => void) {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
+/**
+ * Full-viewport cinematic hero — muted looping product video with poster LCP fallback.
+ * Reduced-motion users get the static poster only.
+ */
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const preferStatic = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || videoFailed || preferStatic) return;
+
+    el.muted = true;
+    el.defaultMuted = true;
+    el.playsInline = true;
+
+    const tryPlay = () => {
+      const playPromise = el.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          // Autoplay blocked — poster / first frame still visible.
+        });
+      }
+    };
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        el.pause();
+      } else {
+        tryPlay();
+      }
+    };
+
+    el.addEventListener("loadeddata", tryPlay);
+    el.addEventListener("canplay", tryPlay);
+    document.addEventListener("visibilitychange", onVisibility);
+    tryPlay();
+
+    return () => {
+      el.removeEventListener("loadeddata", tryPlay);
+      el.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [videoFailed, preferStatic]);
+
+  const showVideo = !preferStatic && !videoFailed;
+
   return (
     <section
       className="relative isolate min-h-[100svh] overflow-hidden bg-black"
       aria-label="FORGE GYM hero"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 h-[120%] w-full -top-[10%]" data-speed="0.85">
-        <Image
-          src="/images/lifestyle/berserk-deadlift-lifestyle.jpg"
-          alt="Athlete deadlifting in a FORGE GYM lever belt"
-          fill
-          priority
-          sizes="100vw"
-          quality={80}
-          className="object-cover object-[center_28%]"
-        />
+        <div className="absolute inset-0 h-[120%] w-full -top-[10%]">
+          {showVideo ? (
+            <video
+              ref={videoRef}
+              className="absolute inset-0 h-full w-full object-cover object-[center_42%] bg-black"
+              poster={HERO_POSTER}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              onError={() => setVideoFailed(true)}
+            >
+              <source src={HERO_VIDEO_WEBM} type="video/webm" />
+              <source src={HERO_VIDEO_MP4} type="video/mp4" />
+            </video>
+          ) : (
+            <Image
+              src={HERO_POSTER}
+              alt="FORGE Berserk lever belt cinematic product showcase"
+              fill
+              priority
+              sizes="100vw"
+              quality={85}
+              className="object-cover object-[center_42%]"
+            />
+          )}
         </div>
+        {/* Readability scrims for lower-left copy + CTAs */}
         <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.72)_36%,rgba(0,0,0,0.25)_58%,rgba(0,0,0,0.55)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.72)_36%,rgba(0,0,0,0.28)_58%,rgba(0,0,0,0.55)_100%)]"
           aria-hidden="true"
         />
         <div
