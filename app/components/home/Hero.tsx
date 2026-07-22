@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
-const HERO_VIDEO_MP4 = "/videos/hero/forge-hero-berserk.mp4";
-const HERO_VIDEO_WEBM = "/videos/hero/forge-hero-berserk.webm";
+// Cache-bust video encodes when replaced. Poster path stays clean for next/image.
+const HERO_ASSET_V = "20260722a";
+const HERO_VIDEO_MP4 = `/videos/hero/forge-hero-berserk.mp4?v=${HERO_ASSET_V}`;
+const HERO_VIDEO_WEBM = `/videos/hero/forge-hero-berserk.webm?v=${HERO_ASSET_V}`;
 const HERO_POSTER = "/videos/posters/forge-hero-berserk.jpg";
 
 function subscribeReducedMotion(onChange: () => void) {
@@ -80,11 +82,16 @@ export default function Hero() {
       aria-label="FORGE GYM hero"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 h-[120%] w-full -top-[10%]">
+        {/*
+          Source is square (960×960). object-cover fills every viewport:
+          - mobile portrait crops left/right → keep subject centered
+          - desktop landscape crops top/bottom → bias slightly upper (face print / red eye)
+        */}
+        <div className="absolute inset-0">
           {showVideo ? (
             <video
               ref={videoRef}
-              className="absolute inset-0 h-full w-full object-cover object-[center_42%] bg-black"
+              className="absolute inset-0 h-full w-full bg-black object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%]"
               poster={HERO_POSTER}
               autoPlay
               muted
@@ -105,21 +112,21 @@ export default function Hero() {
               priority
               sizes="100vw"
               quality={85}
-              className="object-cover object-[center_42%]"
+              className="object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%]"
             />
           )}
         </div>
-        {/* Readability scrims for lower-left copy + CTAs */}
+        {/* Readability scrims: stronger left + bottom for copy/CTAs on mobile + desktop */}
         <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.72)_36%,rgba(0,0,0,0.28)_58%,rgba(0,0,0,0.55)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.94)_0%,rgba(0,0,0,0.78)_34%,rgba(0,0,0,0.28)_58%,rgba(0,0,0,0.52)_100%)] sm:bg-[linear-gradient(105deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.72)_36%,rgba(0,0,0,0.28)_58%,rgba(0,0,0,0.55)_100%)]"
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,transparent_30%,transparent_55%,rgba(0,0,0,0.9)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.5)_0%,transparent_28%,transparent_52%,rgba(0,0,0,0.92)_100%)]"
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_72%_38%,rgba(160,20,20,0.16),transparent_48%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_36%,rgba(160,20,20,0.18),transparent_48%)]"
           aria-hidden="true"
         />
       </div>
