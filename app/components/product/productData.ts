@@ -136,20 +136,20 @@ const berserkBeltImageAlts = [
   "FORGE Berserk lever belt secure locking how-to.",
 ];
 
-// 1 = real dual-angle product hero (correct lever + emboss).
-// 2 to 4 = marketing frames that use the same belt design (no alternate buckle artwork).
+// gallery-v6: 1 = dual-angle hero; 2 = specs; 3 = features; 4 = size chart.
+// 2/4 regenerated to match hero product identity (plain black lever + embossed body).
 const blackBeltImages = [
-  "/images/belts/listing/black/main.jpg",
-  "/images/belts/listing/black/2.jpg",
-  "/images/belts/listing/black/3.jpg",
-  "/images/belts/listing/black/4.jpg",
+  "/images/belts/listing/black/gallery-v6-1.jpg",
+  "/images/belts/listing/black/gallery-v6-2.jpg",
+  "/images/belts/listing/black/gallery-v6-3.jpg",
+  "/images/belts/listing/black/gallery-v6-4.jpg",
 ];
 
 const blackBeltImageAlts = [
-  "FORGE GYM black lever belt dual-angle product view with embossed logo and steel lever on pure black.",
+  "FORGE GYM black lever belt dual-angle product view with embossed logo and plain black steel lever.",
+  "FORGE GYM black lever belt specs: 10mm thickness, 4-inch width, same embossed design as the hero.",
   "FORGE GYM black lever belt feature callouts on the same product design as the hero shot.",
   "FORGE GYM black lever belt size chart. Measure at the navel, not pant size.",
-  "FORGE GYM black lever belt specs: 10mm thickness, 4-inch width, same embossed design.",
 ];
 
 const strapDescriptionGalleryImages = [
@@ -259,7 +259,7 @@ const beltBasePresentation = {
     },
     {
       title: "3. Variant Flexibility:",
-      images: ["/images/belts/listing/black/main.jpg"],
+      images: ["/images/belts/listing/black/gallery-v6-1.jpg"],
       text: "Choose between Zeus, Berserk, and Black variants while staying within the same FORGE belt platform and product fit.",
     },
   ],
@@ -287,9 +287,9 @@ export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
     "/images/belts/listing/berserk/6.jpg",
   ],
   black: [
-    "/images/belts/listing/black/main.jpg",
-    "/images/belts/listing/black/2.jpg",
-    "/images/belts/listing/black/4.jpg",
+    "/images/belts/listing/black/gallery-v6-1.jpg",
+    "/images/belts/listing/black/gallery-v6-2.jpg",
+    "/images/belts/listing/black/gallery-v6-4.jpg",
   ],
 };
 
