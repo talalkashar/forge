@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { FixedPortal } from "@/app/components/providers/FixedPortal";
@@ -28,9 +29,23 @@ export default function Navbar() {
   useEffect(() => {
     let frame = 0;
 
+    const readScrollY = () => {
+      // Desktop ScrollSmoother path
+      const smoother = ScrollSmoother.get();
+      if (smoother) return smoother.scrollTop();
+      // Native mobile path
+      return (
+        window.scrollY ||
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      );
+    };
+
     const syncScrolledState = () => {
       frame = 0;
-      const nextScrolled = window.scrollY > 24;
+      const nextScrolled = readScrollY() > 24;
       setIsScrolled((current) =>
         current === nextScrolled ? current : nextScrolled,
       );
@@ -43,9 +58,16 @@ export default function Navbar() {
 
     syncScrolledState();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    // Capture scroll on wrapper too (ScrollSmoother path)
+    document
+      .getElementById("smooth-wrapper")
+      ?.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document
+        .getElementById("smooth-wrapper")
+        ?.removeEventListener("scroll", handleScroll);
       window.cancelAnimationFrame(frame);
     };
   }, []);
@@ -77,9 +99,10 @@ export default function Navbar() {
   return (
     <FixedPortal>
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
+        className={`fixed left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300 ${
           isScrolled || isOpen
-            ? "border-white/10 bg-black/90 shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md"
+            ? // Solid fill on mobile (blur is expensive while video + scroll compete for GPU)
+              "border-white/10 bg-black/95 shadow-[0_8px_24px_rgba(0,0,0,0.4)] sm:bg-black/90 sm:backdrop-blur-md"
             : "border-transparent bg-transparent shadow-none"
         }`}
         id="navbar"

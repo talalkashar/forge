@@ -61,6 +61,18 @@ html {
   scroll-padding-top: 80px;
 }
 
+/* Native mobile path: avoid animated scroll + fixed GSAP shell jank */
+html[data-native-scroll="true"] {
+  scroll-behavior: auto;
+}
+
+/* Phones/tablets: prefer auto scroll-behavior even before JS hydrates */
+@media (pointer: coarse), (max-width: 1024px) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background: var(--forge-black, #000);
   color: var(--forge-text, #fff);
@@ -511,7 +523,7 @@ body.menu-open {
 
 
 
-/* GSAP ScrollSmoother shell */
+/* GSAP ScrollSmoother shell (desktop only — see SmoothScroll) */
 #smooth-wrapper {
   overflow: hidden;
   position: fixed;
@@ -532,6 +544,25 @@ body.menu-open {
 /* Fixed portal children need pointer events */
 #forge-fixed-layer > * {
   pointer-events: auto;
+}
+
+/*
+  Native scroll path: used on touch/narrow viewports and reduced-motion.
+  Before hydration we also force native shell on coarse/narrow to avoid a
+  fixed overflow:hidden trap if JS is slow.
+*/
+html[data-native-scroll="true"] #smooth-wrapper {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+
+@media (pointer: coarse), (max-width: 1024px) {
+  #smooth-wrapper {
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
