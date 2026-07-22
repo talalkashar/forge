@@ -6,7 +6,7 @@ import Navbar from "../components/home/Navbar";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "FORGE GYM makes lever belts and wrist straps for heavy strength training — simple gear, built with intention.",
+    "FORGE GYM makes lever belts and wrist straps that actually work — support for heavy sets, built to protect and push hard.",
 };
 
 export default function AboutPage() {
@@ -26,20 +26,20 @@ export default function AboutPage() {
 
             <div className="mt-10 space-y-6 text-base leading-8 text-white/55 sm:text-lg sm:leading-9">
               <p>
-                We started FORGE because a lot of lifting gear either feels
-                overbuilt for show or underbuilt for real work. We wanted the
-                opposite: simple tools that do one job well when the bar is
-                loaded.
+                We built FORGE because we wanted gym accessories that actually
+                work — gear with a clear purpose, not noise on a shelf. Lever
+                belts and wrist straps that help you brace, hold on, and train
+                with intent.
               </p>
               <p>
-                So we make lever belts and wrist straps — nothing else. No
-                filler products, no seasonal drops, no lifestyle theater. Just
-                equipment for heavy training, designed to be clear to size, hard
-                to break in use, and easy to buy.
+                The goal is simple: help lifters stay protected under heavy
+                loads and go as hard as possible on every set. Better support
+                means more confidence under the bar, cleaner reps, and fewer
+                sessions cut short by a weak brace or failing grip.
               </p>
               <p>
-                If you brace hard, pull heavy, and care more about sessions than
-                hype, you&apos;re who this brand is for.
+                That&apos;s why we stay focused on the essentials. No filler
+                products — just equipment made to serve the work.
               </p>
             </div>
 
