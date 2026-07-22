@@ -12,11 +12,8 @@ export default function CancelPage() {
       />
       <div className="relative w-full max-w-xl border border-white/[0.1] bg-black/80 p-8 text-center sm:p-12">
         <div className="mb-8 flex justify-center">
-          <ForgeLogo variant="mark" markClassName="h-12 sm:h-14" />
+          <ForgeLogo markClassName="text-[1.75rem] sm:text-[2rem]" />
         </div>
-        <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
-          FORGE GYM™
-        </p>
         <h1 className="text-3xl font-black tracking-[-0.03em] sm:text-4xl">
           Checkout paused
         </h1>

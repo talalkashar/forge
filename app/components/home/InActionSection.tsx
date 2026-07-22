@@ -47,29 +47,29 @@ const inActionImages = Object.freeze<InActionMedia[]>([
     position: "center 40%",
   },
   {
-    // Prefer full-res JPG sources — the old .webp exports were tiny (~9–26KB) and looked broken.
-    src: "/images/wrist strap in use images/IMG_2029-sharp.jpg",
+    // Midnight-graded lifestyle stills (matched to Training videos cooler grade).
+    src: "/images/straps/lifestyle/in-action/straps-deadlift-setup.jpg",
     alt: "FORGE wrist straps wrapped around a loaded barbell",
     className: "h-[22rem] sm:h-[24rem] md:col-span-4 md:h-full",
     imageClassName: "object-cover",
     position: "center 52%",
   },
   {
-    src: "/images/wrist strap in use images/IMG_2008-sharp.jpg",
+    src: "/images/straps/lifestyle/in-action/straps-deadlift-grip.jpg",
     alt: "FORGE wrist straps secured around a loaded barbell before a pull",
     className: "h-[22rem] sm:h-[24rem] md:col-span-4 md:h-full",
     imageClassName: "object-cover",
     position: "52% 56%",
   },
   {
-    src: "/images/wrist strap in use images/IMG_2009-sharp.jpg",
+    src: "/images/straps/lifestyle/in-action/straps-deadlift-stance.jpg",
     alt: "FORGE wrist straps on a lifter holding a loaded barbell",
     className: "h-[22rem] sm:h-[24rem] md:col-span-4 md:h-full",
     imageClassName: "object-cover",
     position: "center 50%",
   },
   {
-    src: "/images/wrist strap in use images/IMG_2033-sharp.jpg",
+    src: "/images/straps/lifestyle/in-action/straps-wrists-closeup.jpg",
     alt: "Close detail of FORGE wrist straps wrapped on both wrists",
     className: "h-[22rem] sm:h-[24rem] md:col-span-4 md:h-full",
     imageClassName: "object-cover",

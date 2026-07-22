@@ -25,11 +25,8 @@ export default function SuccessPage() {
 
       <div className="relative w-full max-w-xl border border-white/[0.1] bg-black/80 p-8 text-center sm:p-12">
         <div className="mb-8 flex justify-center">
-          <ForgeLogo variant="mark" markClassName="h-12 sm:h-14" />
+          <ForgeLogo markClassName="text-[1.75rem] sm:text-[2rem]" />
         </div>
-        <p className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-red-500">
-          FORGE GYM™
-        </p>
         <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-emerald-500/40 bg-emerald-500/10 text-2xl text-emerald-300">
           ✓
         </div>

@@ -84,10 +84,10 @@ export default function Footer() {
           <div className="lg:col-span-5">
             <ForgeLogo
               className="inline-flex items-center"
-              markClassName="h-9 w-9"
+              markClassName="text-[1.45rem] sm:text-[1.6rem]"
             />
             <p className="mt-6 max-w-sm text-sm leading-7 text-white/50">
-              FORGE GYM™ — lever belts and wrist straps built for heavy training.
+              Lever belts and wrist straps built for heavy training.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {socialLinks.map(({ href, label, icon: Icon }) => (
