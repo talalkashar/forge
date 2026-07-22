@@ -3,13 +3,16 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 
-const FixedPortalContext = createContext<HTMLElement | null>(null);
+const FixedPortalContext = createContext<string>("forge-fixed-layer");
+
+function subscribeNoop() {
+  return () => {};
+}
 
 /** Mount target for position:fixed UI that must live outside ScrollSmoother content. */
 export function FixedPortalProvider({
@@ -19,14 +22,8 @@ export function FixedPortalProvider({
   children: ReactNode;
   targetId?: string;
 }) {
-  const [target, setTarget] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setTarget(document.getElementById(targetId));
-  }, [targetId]);
-
   return (
-    <FixedPortalContext.Provider value={target}>
+    <FixedPortalContext.Provider value={targetId}>
       {children}
     </FixedPortalContext.Provider>
   );
@@ -38,12 +35,17 @@ export function FixedPortalProvider({
  * (avoids blank nav flash on SSR/hydration).
  */
 export function FixedPortal({ children }: { children: ReactNode }) {
-  const target = useContext(FixedPortalContext);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const targetId = useContext(FixedPortalContext);
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
+  const target = useSyncExternalStore(
+    subscribeNoop,
+    () => document.getElementById(targetId),
+    () => null,
+  );
 
   if (!mounted || !target) {
     return <>{children}</>;

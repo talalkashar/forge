@@ -57,14 +57,6 @@ export default function ProductCard({
     (variant) => (variant.inventory_quantity ?? 0) > 0,
   );
   const isOutOfStock = inStockVariants.length === 0;
-  const availableSizes = Array.from(
-    new Set(
-      sizedVariants
-        .filter((variant) => (variant.inventory_quantity ?? 0) > 0)
-        .map((variant) => formatSize(variant.size))
-        .filter((size): size is string => Boolean(size)),
-    ),
-  );
 
   return (
     <article

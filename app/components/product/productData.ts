@@ -151,12 +151,6 @@ const blackBeltImageAlts = [
   "FORGE GYM black lever belt specs — 10mm thickness, 4-inch width, same embossed design.",
 ];
 
-const blackBerserkDescriptionImages = [
-  "/images/belts/listing/black/1.jpg",
-  "/images/belts/listing/black/2.jpg",
-  "/images/belts/listing/black/4.jpg",
-];
-
 const strapDescriptionGalleryImages = [
   "/images/straps/listing/gallery-v4-1.png",
   "/images/straps/listing/gallery-v4-2.jpg",

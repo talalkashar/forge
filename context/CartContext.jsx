@@ -121,11 +121,13 @@ export function CartProvider({ children }) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    // Defer one frame so this is not a sync setState-in-effect, and keep any
+    // items the user already added before hydration finished.
     const frame = window.requestAnimationFrame(() => {
-      setCart(readStoredCart());
+      const stored = readStoredCart();
+      setCart((current) => (current.length > 0 ? current : stored));
       setIsHydrated(true);
     });
-
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
