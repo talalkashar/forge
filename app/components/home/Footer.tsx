@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowUp, Mail, Music2 } from "lucide-react";
-import ForgeLogo from "./ForgeLogo";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -79,17 +78,33 @@ export default function Footer() {
 
   return (
     <footer className="mt-0 w-full border-t border-white/[0.08] bg-black text-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 sm:px-8 sm:py-16">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <ForgeLogo
-              className="inline-flex items-center"
-              markClassName="text-[1.45rem] sm:text-[1.6rem]"
-            />
-            <p className="mt-6 max-w-sm text-sm leading-7 text-white/50">
-              Lever belts and wrist straps built for heavy training.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-14">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+          {navigation.map((section) => (
+            <div key={section.title}>
+              <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
+                {section.title}
+              </h3>
+              <ul className="flex flex-col gap-2.5" role="list">
+                {section.links.map((item) => (
+                  <li key={item.href + item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-white/60 transition-colors hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          <div>
+            <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
+              Connect
+            </h3>
+            <div className="flex flex-wrap items-center gap-3">
               {socialLinks.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={label}
@@ -104,31 +119,9 @@ export default function Footer() {
               ))}
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7 lg:justify-items-end">
-            {navigation.map((section) => (
-              <div key={section.title} className="lg:min-w-[8rem]">
-                <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
-                  {section.title}
-                </h3>
-                <ul className="flex flex-col gap-2.5" role="list">
-                  {section.links.map((item) => (
-                    <li key={item.href + item.label}>
-                      <Link
-                        href={item.href}
-                        className="text-sm text-white/60 transition-colors hover:text-white"
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-white/40">
             © {year} Capacity Gears LLC · forgegym.us
           </p>

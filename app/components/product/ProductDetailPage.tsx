@@ -309,8 +309,7 @@ export default function ProductDetailPage({
                     </button>
 
                     <div className="absolute bottom-3 left-3 border border-white/10 bg-black/55 px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.16em] text-white/75 backdrop-blur-sm sm:bottom-4 sm:left-4">
-                      {String(currentImageIndex + 1).padStart(2, "0")} /{" "}
-                      {String(product.images.length).padStart(2, "0")}
+                      {currentImageIndex + 1} of {product.images.length}
                     </div>
                   </div>
                 </div>
@@ -688,8 +687,7 @@ export default function ProductDetailPage({
               />
             </motion.div>
             <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/50">
-              {String(currentImageIndex + 1).padStart(2, "0")} /{" "}
-              {String(product.images.length).padStart(2, "0")} · FORGE GYM
+              {currentImageIndex + 1} of {product.images.length}
             </p>
           </motion.div>
         ) : null}

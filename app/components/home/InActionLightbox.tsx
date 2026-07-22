@@ -100,8 +100,7 @@ function InActionLightbox({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="absolute left-4 top-4 z-[102] text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/50">
-          FORGE GYM · {String(activeIndex + 1).padStart(2, "0")}/
-          {String(images.length).padStart(2, "0")}
+          {activeIndex + 1} of {images.length}
         </div>
         <button
           type="button"
