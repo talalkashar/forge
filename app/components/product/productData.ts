@@ -95,8 +95,9 @@ const strapProductImageAlts = [
 // Same 7-frame structure as Berserk: product hero + red TikTok marketing pack,
 // with Zeus lightning design only (Berserk layout/theme matched).
 // gallery-v7-* = cache-busted pack; 3/6/7 fixed black liner + full Zeus wrap (not blue shell).
+// images[0] is the single hero used on home, shop cards, and PDP first frame.
 const zeusBeltImages = [
-  "/images/belts/listing/zeus/gallery-v7-1.jpg",
+  "/images/belts/listing/zeus/main.jpg",
   "/images/belts/listing/zeus/gallery-v7-2.jpg",
   "/images/belts/listing/zeus/gallery-v7-3.jpg",
   "/images/belts/listing/zeus/gallery-v7-4.jpg",
@@ -116,7 +117,7 @@ const zeusBeltImageAlts = [
 ];
 
 const berserkBeltImages = [
-  "/images/belts/listing/berserk/1.jpg",
+  "/images/belts/listing/berserk/main.jpg",
   "/images/belts/listing/berserk/2.jpg",
   "/images/belts/listing/berserk/3.jpg",
   "/images/belts/listing/berserk/4.jpg",
@@ -138,7 +139,7 @@ const berserkBeltImageAlts = [
 // 1 = real dual-angle product hero (correct lever + emboss).
 // 2 to 4 = marketing frames that use the same belt design (no alternate buckle artwork).
 const blackBeltImages = [
-  "/images/belts/listing/black/1.jpg",
+  "/images/belts/listing/black/main.jpg",
   "/images/belts/listing/black/2.jpg",
   "/images/belts/listing/black/3.jpg",
   "/images/belts/listing/black/4.jpg",
@@ -248,17 +249,17 @@ const beltBasePresentation = {
   descriptionSections: [
     {
       title: "1. Locked-In Support:",
-      images: ["/images/belts/listing/zeus/gallery-v7-1.jpg"],
+      images: ["/images/belts/listing/zeus/main.jpg"],
       text: "The FORGE lever system is built for fast setup and dependable bracing, giving you the stability needed for squats, deadlifts, and heavy compound work.",
     },
     {
       title: "2. Premium Structure:",
-      images: ["/images/belts/listing/berserk/1.jpg"],
+      images: ["/images/belts/listing/berserk/main.jpg"],
       text: "A rigid belt profile creates a consistent, supportive feel around your core so every rep feels more secure under load.",
     },
     {
       title: "3. Variant Flexibility:",
-      images: ["/images/belts/listing/black/1.jpg"],
+      images: ["/images/belts/listing/black/main.jpg"],
       text: "Choose between Zeus, Berserk, and Black variants while staying within the same FORGE belt platform and product fit.",
     },
   ],
@@ -274,19 +275,19 @@ export const featuredProductOrder = ["berserk", "zeus", "straps"] as const;
 
 export const beltDescriptionGalleryBySlug: Record<BeltProductSlug, string[]> = {
   zeus: [
-    "/images/belts/listing/zeus/gallery-v7-1.jpg",
+    "/images/belts/listing/zeus/main.jpg",
     "/images/belts/listing/zeus/gallery-v7-2.jpg",
     "/images/belts/listing/zeus/gallery-v7-3.jpg",
     "/images/belts/listing/zeus/gallery-v7-6.jpg",
   ],
   berserk: [
-    "/images/belts/listing/berserk/1.jpg",
+    "/images/belts/listing/berserk/main.jpg",
     "/images/belts/listing/berserk/2.jpg",
     "/images/belts/listing/berserk/3.jpg",
     "/images/belts/listing/berserk/6.jpg",
   ],
   black: [
-    "/images/belts/listing/black/1.jpg",
+    "/images/belts/listing/black/main.jpg",
     "/images/belts/listing/black/2.jpg",
     "/images/belts/listing/black/4.jpg",
   ],

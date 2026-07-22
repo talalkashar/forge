@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { productPresentationBySlug } from "../product/productData";
 import Footer from "./Footer";
 import HeroSlot from "./HeroSlot";
 import Navbar from "./Navbar";
@@ -21,30 +22,31 @@ const trustPoints = [
   { label: "Ships US", detail: "Tracked fulfillment" },
 ];
 
+// Heroes always come from productPresentationBySlug.images[0] (same as shop + PDP).
 const products = [
   {
     title: "Berserk Lever Belt",
     detail: "10mm · Lever · $79.97",
-    href: "/product/belt?variant=berserk",
-    image: "/images/belts/listing/berserk/main.jpg",
+    href: productPresentationBySlug.berserk.href,
+    image: productPresentationBySlug.berserk.images[0],
   },
   {
     title: "Zeus Lever Belt",
     detail: "10mm · Lever · $79.97",
-    href: "/product/belt?variant=zeus",
-    image: "/images/belts/listing/zeus/main.jpg",
+    href: productPresentationBySlug.zeus.href,
+    image: productPresentationBySlug.zeus.images[0],
   },
   {
     title: "Black Lever Belt",
     detail: "10mm · Lever · $79.97",
-    href: "/product/belt?variant=black",
-    image: "/images/belts/listing/black/1.jpg",
+    href: productPresentationBySlug.black.href,
+    image: productPresentationBySlug.black.images[0],
   },
   {
     title: "Wrist Straps",
     detail: "Padded · Pair · $9.99",
-    href: "/product/straps",
-    image: "/images/straps/listing/gallery-v4-1.png",
+    href: productPresentationBySlug.straps.href,
+    image: productPresentationBySlug.straps.images[0],
   },
 ];
 

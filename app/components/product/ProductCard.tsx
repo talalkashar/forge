@@ -14,32 +14,18 @@ function formatSize(size: string | null) {
 }
 
 function galleryShots(product: StorefrontProduct) {
+  // Always use the curated gallery order from product data (images[0] hero).
+  // Never rewrite to main.jpg/card.jpg, or shop/home/PDP can disagree.
   const productShots = product.images.filter(
     (src) => !src.includes("/lifestyle/"),
   );
   const pool = productShots.length > 0 ? productShots : product.images;
-  // Prefer curated main.jpg (then card.jpg) in listing folders for consistent cards
-  const primary = pool[0];
-  let hero: string | null = null;
-  if (primary && primary.includes("/listing/")) {
-    const mainGuess = primary.replace(/\/[^/]+$/, "/main.jpg");
-    const cardGuess = primary.replace(/\/[^/]+$/, "/card.jpg");
-    hero = mainGuess || cardGuess;
-    // prefer main path string; file existence is guaranteed by asset pipeline
-    if (primary.includes("/main.jpg") || primary.includes("/card.jpg")) {
-      hero = primary.includes("/main.jpg") ? primary : primary.replace(/card\.jpg$/, "main.jpg");
-    } else {
-      hero = mainGuess;
-    }
-  }
-  const primaryOut = hero ?? primary;
-  return {
-    primary: primaryOut,
-    secondary:
-      pool.find((src) => src !== primaryOut && src !== primary) ??
-      product.images.find((src) => src !== primaryOut) ??
-      null,
-  };
+  const primary = pool[0] ?? null;
+  const secondary =
+    pool.find((src) => src !== primary) ??
+    product.images.find((src) => src !== primary) ??
+    null;
+  return { primary, secondary };
 }
 
 export default function ProductCard({
