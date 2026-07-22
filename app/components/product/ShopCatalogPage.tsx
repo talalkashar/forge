@@ -88,23 +88,33 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
           />
           <div className="relative mx-auto max-w-7xl">
             <Breadcrumb className="mb-8">
-              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/40">
+              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/70">
                 <BreadcrumbItem>
-                  <BreadcrumbLink className="hover:text-white" href="/">
+                  <BreadcrumbLink
+                    className="text-white transition-opacity hover:opacity-80"
+                    href="/"
+                  >
                     Home
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-white/20" />
+                <BreadcrumbSeparator className="text-white/40" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-white">{breadcrumbPage}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
 
-            <h1 className="max-w-3xl text-4xl font-black tracking-[-0.035em] text-white sm:text-6xl">
+            <div className="mb-4 flex items-center gap-3">
+              <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-red-500">
+                Shop
+              </p>
+              <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+            </div>
+            <h1 className="max-w-3xl text-4xl font-black leading-[0.92] tracking-[-0.04em] text-white sm:text-6xl">
               {heroTitle}
             </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-white/50">
+            <p className="mt-4 max-w-xl text-base leading-7 text-white/90">
               {heroDescription}
             </p>
 
@@ -118,7 +128,7 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
                 </Link>
                 <Link
                   href="/shop/wrist-straps"
-                  className="rounded-full border border-white/15 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/35"
+                  className="rounded-full border border-white/25 px-6 py-3 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors hover:border-white/50"
                 >
                   Straps
                 </Link>
@@ -127,7 +137,7 @@ export default async function ShopCatalogPage({ category }: ShopCatalogPageProps
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/shop"
-                  className="text-xs font-bold uppercase tracking-[0.14em] text-white/40 transition-colors hover:text-white"
+                  className="text-xs font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
                 >
                   ← All gear
                 </Link>

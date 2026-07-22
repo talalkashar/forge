@@ -18,7 +18,7 @@ const InActionSection = dynamic(
 const trustPoints = [
   { label: "10mm core", detail: "Rigid bracing under load" },
   { label: "Lever lock", detail: "Fast, repeatable setup" },
-  { label: "Stripe checkout", detail: "Secure card payments" },
+  { label: "Secure checkout", detail: "Protected card payments" },
   { label: "Ships US", detail: "Tracked fulfillment" },
 ];
 
@@ -76,7 +76,7 @@ export default function HomePage() {
                 <p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-red-400">
                   {item.label}
                 </p>
-                <p className="mt-2.5 text-sm leading-snug text-white/60 sm:text-[0.95rem]">
+                <p className="mt-2.5 text-sm leading-snug text-white/90 sm:text-[0.95rem]">
                   {item.detail}
                 </p>
               </div>
@@ -106,6 +106,7 @@ export default function HomePage() {
                   <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-red-500">
                     Shop
                   </p>
+                  <span className="h-px w-10 bg-red-500" aria-hidden="true" />
                 </div>
                 <h2 className="text-4xl font-black leading-[0.9] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
                   Gear
@@ -113,7 +114,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/shop"
-                className="mb-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/45 transition-colors hover:text-white"
+                className="mb-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-80"
               >
                 View all →
               </Link>
@@ -149,12 +150,12 @@ export default function HomePage() {
                       <h3 className="text-[1.05rem] font-bold tracking-tight text-white">
                         {product.title}
                       </h3>
-                      <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-white/40 transition-colors group-hover:text-white/55">
+                      <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-white/80 transition-opacity group-hover:opacity-100">
                         {product.detail}
                       </p>
                     </div>
                     <span
-                      className="mt-0.5 text-lg text-white/25 transition-colors group-hover:text-red-400"
+                      className="mt-0.5 text-lg text-white/70 transition-opacity group-hover:opacity-100"
                       aria-hidden="true"
                     >
                       →
@@ -167,6 +168,50 @@ export default function HomePage() {
         </section>
 
         <InActionSection />
+
+        {/* Final buy moment after proof */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] bg-[#050505] px-6 py-16 sm:px-8 sm:py-20">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(140,18,18,0.12),transparent_60%)]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent"
+            aria-hidden="true"
+          />
+          <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+            <div className="max-w-xl">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-red-500">
+                  Shop
+                </p>
+                <span className="h-px w-10 bg-red-500" aria-hidden="true" />
+              </div>
+              <h2 className="text-3xl font-black leading-[0.95] tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">
+                Ready for the next session?
+              </h2>
+              <p className="mt-4 max-w-md text-base leading-7 text-white/90">
+                Lever belts and wrist straps. Pick your gear and check out
+                securely.
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+              <Link
+                href="/shop/belts"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-red-600 px-9 py-3.5 text-[0.7rem] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/80"
+              >
+                Shop Belts
+              </Link>
+              <Link
+                href="/shop/wrist-straps"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 bg-white/[0.03] px-9 py-3.5 text-[0.7rem] font-black uppercase tracking-[0.2em] text-white transition-colors hover:border-white/50 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+              >
+                Shop Straps
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

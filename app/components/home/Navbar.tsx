@@ -77,18 +77,25 @@ export default function Navbar() {
   return (
     <FixedPortal>
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-200 ${
-          isScrolled
-            ? "border-white/10 bg-black shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-            : "border-white/[0.06] bg-black/90"
+        className={`fixed left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
+          isScrolled || isOpen
+            ? "border-white/10 bg-black/90 shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md"
+            : "border-transparent bg-transparent shadow-none"
         }`}
         id="navbar"
       >
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 py-3 sm:h-20 sm:px-6">
+        {/* Soft top read scrim on mobile when nav is clear over hero video */}
+        {!isScrolled && !isOpen ? (
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 via-black/20 to-transparent sm:h-28 sm:from-black/40"
+            aria-hidden="true"
+          />
+        ) : null}
+        <div className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 py-3 sm:h-20 sm:px-6">
           <div className="flex flex-1 items-center">
             <button
               type="button"
-              className="inline-flex min-h-10 items-center gap-2 border border-white/12 bg-white/[0.03] px-3 py-2 text-[0.7rem] font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-white/30 hover:bg-white/[0.06] lg:hidden"
+              className="inline-flex min-h-11 min-w-11 items-center gap-2 px-2 py-2 text-[0.7rem] font-black uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 [text-shadow:0_1px_10px_rgba(0,0,0,0.75)] lg:hidden"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
               onClick={() => setIsOpen((current) => !current)}
@@ -106,7 +113,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/55 transition-colors hover:text-white"
+                  className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]"
                 >
                   {link.label}
                 </Link>
@@ -114,28 +121,28 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-1 items-center justify-center drop-shadow-[0_1px_10px_rgba(0,0,0,0.7)]">
             <ForgeLogo markClassName="text-[1.35rem] sm:text-[1.55rem] md:text-[1.7rem]" />
           </div>
 
-          <div className="flex flex-1 items-center justify-end gap-1">
+          <div className="flex flex-1 items-center justify-end gap-0.5 sm:gap-1">
             <div className="mr-1 hidden items-center gap-1 lg:flex">
               <Link
                 href="/about"
-                className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/55 transition-colors hover:text-white"
+                className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]"
               >
                 About
               </Link>
               <Link
                 href="/contact"
-                className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/55 transition-colors hover:text-white"
+                className="px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]"
               >
                 Contact
               </Link>
             </div>
             <button
               type="button"
-              className="p-2 text-white transition-colors hover:text-red-300"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center p-2 text-white transition-opacity hover:opacity-80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.7)]"
               aria-label="Search products"
               onClick={openSearch}
             >
@@ -143,7 +150,7 @@ export default function Navbar() {
             </button>
             <Link
               href="/cart"
-              className="relative p-2 text-white transition-colors hover:text-red-300"
+              className="relative inline-flex min-h-11 min-w-11 items-center justify-center p-2 text-white transition-opacity hover:opacity-80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.7)]"
               aria-label="Shopping cart"
             >
               <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />

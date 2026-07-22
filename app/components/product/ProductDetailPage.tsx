@@ -226,19 +226,25 @@ export default function ProductDetailPage({
 
           <div className="relative mx-auto max-w-7xl">
             <Breadcrumb className="mb-6 sm:mb-8">
-              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/40">
+              <BreadcrumbList className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-white/70">
                 <BreadcrumbItem>
-                  <BreadcrumbLink className="hover:text-white" href="/">
+                  <BreadcrumbLink
+                    className="text-white transition-opacity hover:opacity-80"
+                    href="/"
+                  >
                     Home
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-white/20" />
+                <BreadcrumbSeparator className="text-white/40" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink className="hover:text-white" href={categoryHref}>
+                  <BreadcrumbLink
+                    className="text-white transition-opacity hover:opacity-80"
+                    href={categoryHref}
+                  >
                     {categoryLabel}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-white/20" />
+                <BreadcrumbSeparator className="text-white/40" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-white">{product.name}</BreadcrumbPage>
                 </BreadcrumbItem>
@@ -248,7 +254,7 @@ export default function ProductDetailPage({
             <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14">
               {/* Gallery */}
               <div className="lg:col-span-7">
-                <div className="group relative overflow-hidden border border-white/[0.08] bg-black">
+                <div className="group relative overflow-hidden border border-white/[0.1] bg-[#080808]">
                   <div className="relative aspect-square">
                     <div
                       className="absolute inset-0 bg-black"
@@ -283,14 +289,14 @@ export default function ProductDetailPage({
                       />
                     </button>
 
-                    <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 border border-white/10 bg-black/55 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white/55 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 sm:bottom-4">
+                    <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 border border-white/20 bg-black/60 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 sm:bottom-4">
                       Click to expand
                     </div>
 
                     <button
                       type="button"
                       aria-label="Previous image"
-                      className="absolute left-3 top-1/2 z-10 -translate-y-1/2 border border-white/15 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:left-4"
+                      className="absolute left-3 top-1/2 z-10 -translate-y-1/2 border border-white/25 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:left-4"
                       onClick={() => updateImage(currentImageIndex - 1)}
                     >
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,7 +306,7 @@ export default function ProductDetailPage({
                     <button
                       type="button"
                       aria-label="Next image"
-                      className="absolute right-3 top-1/2 z-10 -translate-y-1/2 border border-white/15 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:right-4"
+                      className="absolute right-3 top-1/2 z-10 -translate-y-1/2 border border-white/25 bg-black/70 p-2.5 text-white transition-colors hover:bg-black/90 sm:right-4"
                       onClick={() => updateImage(currentImageIndex + 1)}
                     >
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,7 +314,7 @@ export default function ProductDetailPage({
                       </svg>
                     </button>
 
-                    <div className="absolute bottom-3 left-3 border border-white/10 bg-black/55 px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.16em] text-white/75 backdrop-blur-sm sm:bottom-4 sm:left-4">
+                    <div className="absolute bottom-3 left-3 border border-white/20 bg-black/60 px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.16em] text-white backdrop-blur-sm sm:bottom-4 sm:left-4">
                       {currentImageIndex + 1} of {product.images.length}
                     </div>
                   </div>
@@ -326,8 +332,8 @@ export default function ProductDetailPage({
                         onClick={() => setCurrentImageIndex(index)}
                         className={`relative aspect-square h-[4.25rem] w-[4.25rem] shrink-0 overflow-hidden border bg-black transition-[border-color] duration-200 sm:h-auto sm:w-auto ${
                           selected
-                            ? "border-white/60"
-                            : "border-white/[0.08] hover:border-white/30"
+                            ? "border-red-500/60"
+                            : "border-white/[0.12] hover:border-white/40"
                         }`}
                       >
                         <Image
@@ -353,7 +359,7 @@ export default function ProductDetailPage({
 
               {/* Buy panel */}
               <div className="lg:col-span-5">
-                <div className="border border-white/[0.08] bg-black p-5 sm:p-7 lg:sticky lg:top-24">
+                <div className="border border-white/[0.1] bg-[#080808] p-5 sm:p-7 lg:sticky lg:top-24">
                   <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-red-400">
                     {product.kicker}
                   </p>
@@ -361,7 +367,7 @@ export default function ProductDetailPage({
                     {product.name}
                   </h1>
                   {product.reviewCount > 0 ? (
-                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/80">
                       {Number(product.rating).toFixed(1)} ★ · {product.reviewCount} reviews
                     </p>
                   ) : null}
@@ -371,18 +377,18 @@ export default function ProductDetailPage({
                       ${product.price.toFixed(2)}
                     </p>
                     {product.originalPrice ? (
-                      <p className="text-base text-white/30 line-through">
+                      <p className="text-base text-white/50 line-through">
                         {product.originalPrice}
                       </p>
                     ) : null}
                   </div>
 
-                  <p className="mt-4 max-w-md text-sm leading-6 text-white/55">
+                  <p className="mt-4 max-w-md text-sm leading-6 text-white/90">
                     {product.intro}
                   </p>
 
                   {product.featureList?.length ? (
-                    <ul className="mt-4 space-y-1.5 text-sm text-white/50">
+                    <ul className="mt-4 space-y-1.5 text-sm text-white/90">
                       {product.featureList.slice(0, 4).map((f) => (
                         <li key={f} className="flex gap-2">
                           <span className="text-red-500" aria-hidden="true">
@@ -394,10 +400,10 @@ export default function ProductDetailPage({
                     </ul>
                   ) : null}
 
-                  <dl className="mt-6 grid grid-cols-3 gap-2 border-y border-white/[0.08] py-4">
+                  <dl className="mt-6 grid grid-cols-3 gap-2 border-y border-white/[0.1] py-4">
                     {coreSpecs.map(([label, value]) => (
                       <div key={label}>
-                        <dt className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white/35">
+                        <dt className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white/75">
                           {label}
                         </dt>
                         <dd className="mt-1 text-sm font-semibold text-white">
@@ -407,17 +413,17 @@ export default function ProductDetailPage({
                     ))}
                   </dl>
 
-                  <ul className="mt-4 grid grid-cols-2 gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-white/45">
-                    <li className="border border-white/[0.07] px-3 py-2">Secure Stripe checkout</li>
-                    <li className="border border-white/[0.07] px-3 py-2">Tracked US shipping</li>
-                    <li className="border border-white/[0.07] px-3 py-2">Size guide below</li>
-                    <li className="border border-white/[0.07] px-3 py-2">30-day returns policy</li>
+                  <ul className="mt-4 grid grid-cols-2 gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-white/90">
+                    <li className="border border-white/[0.12] px-3 py-2">Secure checkout</li>
+                    <li className="border border-white/[0.12] px-3 py-2">Tracked US shipping</li>
+                    <li className="border border-white/[0.12] px-3 py-2">Size guide below</li>
+                    <li className="border border-white/[0.12] px-3 py-2">30-day returns policy</li>
                   </ul>
 
                   {extraPanel ? <div className="mt-6">{extraPanel}</div> : null}
 
                   <div className="mt-6 flex items-center gap-3">
-                    <div className="flex items-center border border-white/12">
+                    <div className="flex items-center border border-white/25">
                       <button
                         type="button"
                         className="flex h-11 w-11 items-center justify-center text-lg text-white transition-colors hover:bg-white/5"
@@ -460,8 +466,8 @@ export default function ProductDetailPage({
                       disabled={addToCartDisabled}
                       className={`w-full rounded-full border px-6 py-3.5 text-sm font-black uppercase tracking-[0.16em] transition-colors ${
                         addToCartDisabled
-                          ? "cursor-not-allowed border-white/[0.08] text-white/25"
-                          : "border-white/20 text-white hover:border-white/40 hover:bg-white/[0.04]"
+                          ? "cursor-not-allowed border-white/[0.1] text-white/40"
+                          : "border-white/30 text-white hover:border-white/50 hover:bg-white/[0.04]"
                       }`}
                     >
                       Buy now

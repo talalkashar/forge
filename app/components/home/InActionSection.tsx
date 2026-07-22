@@ -233,7 +233,7 @@ function InActionSection() {
                     />
                   )}
                   {image.media === "video" ? (
-                    <span className="pointer-events-none absolute bottom-3 left-3 z-[1] border border-white/15 bg-black/65 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.16em] text-white/80">
+                    <span className="pointer-events-none absolute bottom-3 left-3 z-[1] border border-white/25 bg-black/65 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.16em] text-white">
                       Video
                     </span>
                   ) : null}

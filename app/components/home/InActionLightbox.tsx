@@ -99,7 +99,7 @@ function InActionLightbox({
         className="relative z-[101] max-h-[92vh] w-full max-w-5xl overflow-hidden border border-white/10 bg-black"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="absolute left-4 top-4 z-[102] text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/50">
+        <div className="absolute left-4 top-4 z-[102] text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white">
           {activeIndex + 1} of {images.length}
         </div>
         <button

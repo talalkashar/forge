@@ -15,7 +15,7 @@ export default function TikTokShopLink({
       rel="noreferrer"
       className={
         className ||
-        "inline-flex text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white/35 transition-colors hover:text-white/70"
+        "inline-flex text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
       }
     >
       Inventory / buy on TikTok Shop →
@@ -35,7 +35,7 @@ export function TikTokStoreLink({
       rel="noreferrer"
       className={
         className ||
-        "inline-flex text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white/35 transition-colors hover:text-white/70"
+        "inline-flex text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
       }
     >
       Shop FORGE on TikTok →

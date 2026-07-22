@@ -82,7 +82,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
           {navigation.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
+              <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white">
                 {section.title}
               </h3>
               <ul className="flex flex-col gap-2.5" role="list">
@@ -90,7 +90,7 @@ export default function Footer() {
                   <li key={item.href + item.label}>
                     <Link
                       href={item.href}
-                      className="text-sm text-white/60 transition-colors hover:text-white"
+                      className="text-sm text-white transition-opacity hover:opacity-80"
                     >
                       {item.label}
                     </Link>
@@ -101,7 +101,7 @@ export default function Footer() {
           ))}
 
           <div>
-            <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white/35">
+            <h3 className="mb-4 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-white">
               Connect
             </h3>
             <div className="flex flex-wrap items-center gap-3">
@@ -112,7 +112,7 @@ export default function Footer() {
                   href={href}
                   rel={href.startsWith("http") ? "noreferrer" : undefined}
                   target={href.startsWith("http") ? "_blank" : undefined}
-                  className="rounded-full border border-white/12 bg-white/[0.03] p-3 text-white/70 transition-[border-color,color,background-color,transform] hover:-translate-y-0.5 hover:border-red-600/50 hover:bg-red-600/10 hover:text-white"
+                  className="rounded-full border border-white/25 bg-white/[0.04] p-3 text-white transition-opacity hover:opacity-80"
                 >
                   <Icon className="h-4 w-4" strokeWidth={1.5} />
                 </Link>
@@ -122,13 +122,13 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-white/40">
-            © {year} Capacity Gears LLC · forgegym.us
+          <p className="text-xs text-white/80">
+            © {year} Capacity Gears LLC
           </p>
           <button
             type="button"
             onClick={handleScrollTop}
-            className="inline-flex w-fit items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-white"
+            className="inline-flex w-fit items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-80"
           >
             Back to top
             <ArrowUp className="h-3.5 w-3.5" strokeWidth={1.8} />

@@ -21,7 +21,7 @@ function SectionHeader({
       <h2 className="text-3xl font-black leading-[0.95] tracking-[-0.05em] text-white sm:text-4xl md:text-5xl">
         {title}
       </h2>
-      <p className="mt-4 max-w-[500px] text-base leading-7 tracking-[0.01em] text-white/50 sm:text-lg">
+      <p className="mt-4 max-w-[500px] text-base leading-7 tracking-[0.01em] text-white/90 sm:text-lg">
         {description}
       </p>
     </Reveal>

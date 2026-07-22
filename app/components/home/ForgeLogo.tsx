@@ -27,12 +27,12 @@ export default function ForgeLogo({
       aria-label="FORGE GYM home"
     >
       <span
-        className={`flex flex-col items-center leading-none text-white transition-[transform,opacity] duration-300 group-hover:-translate-y-px group-hover:opacity-95 ${markClassName}`}
+        className={`flex flex-col items-center leading-none text-white transition-opacity duration-200 group-hover:opacity-80 ${markClassName}`}
       >
         <span className="text-[1.05em] font-black uppercase tracking-[0.22em]">
           FORGE
         </span>
-        <span className="mt-[0.22em] flex items-center gap-[0.35em] text-[0.38em] font-bold uppercase tracking-[0.32em] text-white/90">
+        <span className="mt-[0.22em] flex items-center gap-[0.35em] text-[0.38em] font-bold uppercase tracking-[0.32em]">
           <span
             className="h-px w-[1.15em] bg-current opacity-75"
             aria-hidden="true"

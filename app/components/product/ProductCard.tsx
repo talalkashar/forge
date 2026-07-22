@@ -46,19 +46,23 @@ export default function ProductCard({
 
   return (
     <article
-      className="group flex h-full flex-col overflow-hidden border border-white/[0.08] bg-black transition-colors duration-150 hover:border-white/25"
+      className="group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)]"
       onMouseEnter={() => {
         if (secondary) setShowSecondary(true);
       }}
       onMouseLeave={() => setShowSecondary(false)}
     >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-200 group-hover:via-red-500/70"
+        aria-hidden="true"
+      />
       <Link
         href={product.href}
         className="flex flex-1 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
       >
         <div className="relative aspect-square overflow-hidden bg-black">
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(90,12,12,0.2),transparent_58%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(110,14,14,0.28),transparent_58%)]"
             aria-hidden="true"
           />
           {primary ? (
@@ -67,8 +71,8 @@ export default function ProductCard({
               alt={product.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
-              quality={86}
-              className={`object-contain p-1.5 transition-opacity duration-200 sm:p-2 ${
+              quality={90}
+              className={`object-contain p-2 transition-opacity duration-200 sm:p-2.5 ${
                 showSecondary && secondary ? "opacity-0" : "opacity-100"
               }`}
             />
@@ -80,9 +84,9 @@ export default function ProductCard({
               alt=""
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
-              quality={86}
+              quality={90}
               loading="lazy"
-              className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.03] sm:p-2"
+              className="object-contain p-2 transition-transform duration-300 group-hover:scale-[1.05] sm:p-2.5"
               aria-hidden="true"
             />
           ) : null}
@@ -92,20 +96,20 @@ export default function ProductCard({
               Sold out
             </span>
           ) : (
-            <span className="absolute left-3 top-3 border border-emerald-400/25 bg-black/80 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-emerald-300/90">
+            <span className="absolute left-3 top-3 border border-emerald-400/30 bg-black/80 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-emerald-200">
               In stock
             </span>
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <p className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.2em] text-white/40">
+        <div className="flex flex-1 flex-col border-t border-white/[0.06] p-5 sm:p-6">
+          <p className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.2em] text-white/80">
             {product.category}
           </p>
           <h2 className="text-lg font-black tracking-tight text-white sm:text-xl">
             {product.name}
           </h2>
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/45">
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/85">
             {product.description}
           </p>
 
@@ -120,8 +124,8 @@ export default function ProductCard({
                     key={variant.id}
                     className={`border px-2 py-0.5 text-[0.62rem] font-semibold tracking-wide ${
                       hasStock
-                        ? "border-white/15 text-white/75"
-                        : "border-white/8 text-white/25 line-through"
+                        ? "border-white/25 text-white"
+                        : "border-white/10 text-white/40 line-through"
                     }`}
                   >
                     {size}
@@ -132,7 +136,7 @@ export default function ProductCard({
           ) : (
             <p
               className={`mt-4 text-[0.62rem] font-semibold uppercase tracking-[0.14em] ${
-                isOutOfStock ? "text-amber-300/90" : "text-white/40"
+                isOutOfStock ? "text-amber-300" : "text-white/80"
               }`}
             >
               {isOutOfStock ? "Out of stock" : "In stock"}
@@ -145,12 +149,12 @@ export default function ProductCard({
                 ${Number(product.price).toFixed(2)}
               </span>
               {product.originalPrice ? (
-                <span className="text-sm text-white/30 line-through">
+                <span className="text-sm text-white/50 line-through">
                   {product.originalPrice}
                 </span>
               ) : null}
             </div>
-            <span className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/45 transition-colors group-hover:text-white">
+            <span className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white transition-opacity group-hover:opacity-80">
               Shop →
             </span>
           </div>

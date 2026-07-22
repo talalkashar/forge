@@ -325,10 +325,10 @@ export default function ShopCatalogResults({
       className={`mx-auto max-w-7xl ${showFilterBar ? "space-y-10" : "space-y-0"}`}
     >
       {showFilterBar ? (
-        <div className="sticky top-20 z-20 grid gap-5 border border-white/[0.08] bg-black p-4 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:p-5 lg:top-24 lg:grid-cols-[minmax(0,1.2fr)_auto_auto_auto] lg:items-end">
+        <div className="sticky top-20 z-20 grid gap-5 border border-white/[0.1] bg-[#080808] p-4 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:p-5 lg:top-24 lg:grid-cols-[minmax(0,1.2fr)_auto_auto_auto] lg:items-end">
           {enableSearch ? (
             <div className="min-w-0">
-              <label className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
+              <label className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
                 Search
               </label>
               <ForgeSearchBar
@@ -343,7 +343,7 @@ export default function ShopCatalogResults({
 
           {enableSizeFilters ? (
             <div>
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
                 Size
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -353,10 +353,10 @@ export default function ShopCatalogResults({
                     type="button"
                     onClick={() => toggleSize(size)}
                     aria-pressed={selectedSizes.includes(size)}
-                    className={`h-10 min-w-10 border px-3 text-xs font-black tracking-[0.1em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                    className={`h-11 min-w-11 border px-3 text-xs font-black tracking-[0.1em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
                       selectedSizes.includes(size)
                         ? "border-red-600 bg-red-600"
-                        : "border-white/12 bg-black hover:border-white/30"
+                        : "border-white/25 bg-black hover:border-white/50"
                     }`}
                   >
                     {size}
@@ -368,17 +368,17 @@ export default function ShopCatalogResults({
 
           {enableStockFilter ? (
             <div>
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
                 Stock
               </span>
               <button
                 type="button"
                 onClick={updateInStock}
                 aria-pressed={inStockOnly}
-                className={`h-10 border px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                className={`h-11 border px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
                   inStockOnly
                     ? "border-red-600 bg-red-600"
-                    : "border-white/12 bg-black hover:border-white/30"
+                    : "border-white/25 bg-black hover:border-white/50"
                 }`}
               >
                 In stock
@@ -388,13 +388,13 @@ export default function ShopCatalogResults({
 
           {enablePriceFilter ? (
             <label className="block">
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
                 Price
               </span>
               <select
                 value={priceMode}
                 onChange={(event) => updatePrice(event.target.value)}
-                className="h-10 w-full border border-white/12 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/35"
+                className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/50"
               >
                 <option value="all">All</option>
                 <option value="under-25">Under $25</option>
@@ -406,13 +406,13 @@ export default function ShopCatalogResults({
 
           {enableSort ? (
             <label className="block">
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/40">
+              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
                 Sort
               </span>
               <select
                 value={sortMode}
                 onChange={(event) => updateSort(event.target.value)}
-                className="h-10 w-full border border-white/12 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/35"
+                className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/50"
               >
                 <option value="featured">Featured</option>
                 <option value="price-low">Price ↑</option>
@@ -426,7 +426,7 @@ export default function ShopCatalogResults({
             <button
               type="button"
               onClick={clearFilters}
-              className="h-10 border border-white/12 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white/55 transition-colors hover:border-white/30 hover:text-white"
+              className="h-11 border border-white/25 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-80"
             >
               Clear
             </button>
@@ -449,16 +449,16 @@ export default function ShopCatalogResults({
             return (
             <section key={section.id} id={section.id} className="scroll-mt-28">
               {showSectionHeader ? (
-                <div className="mb-7 flex flex-col gap-2 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
+                <div className="mb-7 flex flex-col gap-2 border-b border-white/[0.08] pb-5 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <h2 className="text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
                       {section.title}
                     </h2>
-                    <p className="mt-2 max-w-xl text-sm leading-6 text-white/45">
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-white/90">
                       {section.description}
                     </p>
                   </div>
-                  <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/35">
+                  <span className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/80">
                     {section.products.length}{" "}
                     {section.products.length === 1 ? "product" : "products"}
                   </span>
