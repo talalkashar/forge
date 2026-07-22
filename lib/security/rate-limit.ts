@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createHash } from "crypto";
 import { hasSupabaseServiceRoleEnv } from "@/lib/supabase/service-env";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 
@@ -21,6 +22,7 @@ type RateLimitEntry = {
 
 const store = new Map<string, RateLimitEntry>();
 const MAX_MEMORY_KEYS = 5_000;
+const STORAGE_BUCKET = "forge-rate-limits";
 
 /** Best-effort client IP (Vercel / CF / reverse proxies). */
 export function clientIp(headers: Pick<Headers, "get">) {
@@ -94,8 +96,7 @@ function checkMemoryRateLimit(
 }
 
 /**
- * Optional durable counter via Upstash Redis REST.
- * Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN (or KV_REST_API_*).
+ * Optional durable counter via Upstash Redis REST / Vercel KV.
  */
 async function checkUpstashRateLimit(
   key: string,
@@ -168,11 +169,105 @@ async function checkUpstashRateLimit(
   }
 }
 
+function storageObjectPath(key: string) {
+  const hash = createHash("sha256").update(key).digest("hex");
+  return `rl/${hash}.json`;
+}
+
 /**
- * Durable counter shared across serverless instances via Supabase service role.
- * Requires public.rate_limit_buckets (see supabase/migrations/20260722_rate_limit_buckets.sql).
+ * Durable shared counters via a private Supabase Storage bucket.
+ * Created automatically with the service role (no SQL required).
+ * Slight race under extreme concurrency is acceptable for storefront abuse control.
  */
-async function checkSupabaseRateLimit(
+async function checkStorageRateLimit(
+  key: string,
+  options: RateLimitOptions,
+): Promise<RateLimitResult | null> {
+  if (!hasSupabaseServiceRoleEnv()) {
+    return null;
+  }
+
+  try {
+    const supabase = createSupabaseServiceRoleClient();
+    const path = storageObjectPath(key);
+    const now = Date.now();
+    const resetAt = now + options.windowMs;
+
+    // Ensure private bucket exists (idempotent).
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const hasBucket = (buckets ?? []).some((b) => b.name === STORAGE_BUCKET);
+    if (!hasBucket) {
+      const { error: createError } = await supabase.storage.createBucket(
+        STORAGE_BUCKET,
+        { public: false, fileSizeLimit: 2048 },
+      );
+      if (createError && !/already exists/i.test(createError.message)) {
+        return null;
+      }
+    }
+
+    let count = 0;
+    let windowResetAt = resetAt;
+
+    const { data: blob, error: downloadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .download(path);
+
+    if (!downloadError && blob) {
+      try {
+        const parsed = JSON.parse(await blob.text()) as {
+          count?: number;
+          resetAt?: number;
+        };
+        if (
+          typeof parsed.resetAt === "number" &&
+          parsed.resetAt > now &&
+          typeof parsed.count === "number"
+        ) {
+          count = parsed.count;
+          windowResetAt = parsed.resetAt;
+        }
+      } catch {
+        // Corrupt payload — start a fresh window.
+      }
+    }
+
+    count += 1;
+
+    const payload = JSON.stringify({ count, resetAt: windowResetAt });
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, payload, {
+        contentType: "application/json",
+        upsert: true,
+      });
+
+    if (uploadError) {
+      return null;
+    }
+
+    if (count > options.limit) {
+      return {
+        limited: true,
+        remaining: 0,
+        retryAfter: Math.max(1, Math.ceil((windowResetAt - now) / 1000)),
+      };
+    }
+
+    return {
+      limited: false,
+      remaining: Math.max(0, options.limit - count),
+      retryAfter: 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Optional SQL table path (if migration was applied).
+ */
+async function checkSupabaseTableRateLimit(
   key: string,
   options: RateLimitOptions,
 ): Promise<RateLimitResult | null> {
@@ -193,7 +288,6 @@ async function checkSupabaseRateLimit(
       .maybeSingle();
 
     if (readError) {
-      // Table missing or RLS/permissions issue — fall through.
       return null;
     }
 
@@ -242,10 +336,7 @@ async function checkSupabaseRateLimit(
       return {
         limited: true,
         remaining: 0,
-        retryAfter: Math.max(
-          1,
-          Math.ceil((existingResetMs - now) / 1000),
-        ),
+        retryAfter: Math.max(1, Math.ceil((existingResetMs - now) / 1000)),
       };
     }
 
@@ -259,33 +350,29 @@ async function checkSupabaseRateLimit(
   }
 }
 
-/**
- * Sync in-memory limiter (fast path / local dev).
- * Prefer `checkRateLimitAsync` on public APIs in production.
- */
 export function checkRateLimit(key: string, options: RateLimitOptions) {
   return checkMemoryRateLimit(key, options);
 }
 
 /**
  * Async limiter priority:
- * 1) Upstash / Vercel KV REST (if configured)
- * 2) Supabase rate_limit_buckets (service role)
- * 3) In-memory per instance
+ * 1) Upstash / Vercel KV REST
+ * 2) Supabase Storage (auto-provisioned private bucket — no SQL needed)
+ * 3) Supabase rate_limit_buckets table (optional migration)
+ * 4) In-memory per instance
  */
 export async function checkRateLimitAsync(
   key: string,
   options: RateLimitOptions,
 ): Promise<RateLimitResult> {
   const upstash = await checkUpstashRateLimit(key, options);
-  if (upstash) {
-    return upstash;
-  }
+  if (upstash) return upstash;
 
-  const supabase = await checkSupabaseRateLimit(key, options);
-  if (supabase) {
-    return supabase;
-  }
+  const storage = await checkStorageRateLimit(key, options);
+  if (storage) return storage;
+
+  const table = await checkSupabaseTableRateLimit(key, options);
+  if (table) return table;
 
   return checkMemoryRateLimit(key, options);
 }
