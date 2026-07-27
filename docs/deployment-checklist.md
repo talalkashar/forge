@@ -19,15 +19,26 @@ Add these in Vercel Project Settings:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `ADMIN_DASHBOARD_PASSWORD`
 
-### Stripe webhook (live inventory decrement)
+### Stripe webhook (live inventory + order emails)
 
 - Endpoint route: `POST /api/webhooks/stripe`
 - Production URL: `https://forgegym.us/api/webhooks/stripe`
-- Required event: `checkout.session.completed`
+- Required events:
+  - `payment_intent.succeeded` (on-site Payment Element checkout — primary)
+  - `checkout.session.completed` (legacy hosted Checkout, if any)
 - On paid checkout, the webhook decrements Supabase `product_variants.inventory_quantity` and writes `inventory_movements`.
+- When `RESEND_API_KEY` is set, it also sends a customer order confirmation (+ owner notify).
 - Create the endpoint in Stripe Dashboard (or API) for the **same mode** as `STRIPE_SECRET_KEY` (test vs live).
 - Put the endpoint signing secret in `STRIPE_WEBHOOK_SECRET` locally and in Vercel.
-- After deploy, send a test `checkout.session.completed` event and confirm stock drops in `/admin/inventory`.
+- After deploy, send a test `payment_intent.succeeded` (or paid test checkout) and confirm stock drops in `/admin/inventory`.
+
+### Resend (order confirmation emails)
+
+- `RESEND_API_KEY` — from https://resend.com (API Keys)
+- `RESEND_FROM_EMAIL` — e.g. `FORGE GYM <orders@forgegym.us>` (domain must be verified in Resend)
+- `ORDER_NOTIFY_EMAIL` — optional; defaults to `contact@forgegym.us`
+- Without `RESEND_API_KEY`, checkout still works; only branded emails are skipped.
+- Verify domain DNS for `forgegym.us` in Resend before production sends (or test with `onboarding@resend.dev` → your own inbox only).
 
 Do not commit `.env.local`.
 

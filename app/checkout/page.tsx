@@ -32,10 +32,17 @@ function ForgePaymentForm({ amountCents }: { amountCents: number }) {
   const elements = useElements();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!stripe || !elements || isSubmitting) {
+      return;
+    }
+
+    const receiptEmail = email.trim().toLowerCase();
+    if (!receiptEmail || !receiptEmail.includes("@")) {
+      setErrorMessage("Enter a valid email for your order confirmation.");
       return;
     }
 
@@ -46,6 +53,13 @@ function ForgePaymentForm({ amountCents }: { amountCents: number }) {
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/success`,
+        // Used by Stripe + our webhook → Resend order confirmation.
+        receipt_email: receiptEmail,
+        payment_method_data: {
+          billing_details: {
+            email: receiptEmail,
+          },
+        },
       },
     });
 
@@ -58,6 +72,26 @@ function ForgePaymentForm({ amountCents }: { amountCents: number }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label
+          htmlFor="forge-checkout-email"
+          className="mb-2 block text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-white/55"
+        >
+          Email for order confirmation
+        </label>
+        <input
+          id="forge-checkout-email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@email.com"
+          className="w-full border border-white/12 bg-[#0c0c0c] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-red-600/70 focus:ring-1 focus:ring-red-600/35"
+        />
+      </div>
+
       <PaymentElement
         options={{
           layout: "tabs",
