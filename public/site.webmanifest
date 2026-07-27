@@ -1,10 +1,11 @@
 {
   "name": "FORGE GYM",
   "short_name": "FORGE",
-  "description": "Premium lever belts and wrist straps",
+  "description": "FORGE GYM 10mm lever belts and heavy-duty wrist straps for heavy training.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#dc2626",
-  "lang": "en"
+  "lang": "en",
+  "categories": ["shopping", "fitness", "sports"]
 }

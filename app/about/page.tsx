@@ -3,11 +3,14 @@ import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "About",
   description:
-    "FORGE GYM makes lever belts and wrist straps that actually work, built to protect and push hard on heavy sets.",
-};
+    "Why FORGE GYM exists: lever belts and wrist straps built for real heavy training — not shelf noise. Purpose-built strength gear.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (
@@ -21,15 +24,15 @@ export default function AboutPage() {
               About
             </p>
             <h1 className="text-4xl font-black tracking-[-0.03em] text-white sm:text-5xl">
-              Why FORGE exists.
+              Why FORGE GYM exists.
             </h1>
 
             <div className="mt-10 space-y-6 text-base leading-8 text-white/55 sm:text-lg sm:leading-9">
               <p>
-                We built FORGE because we wanted gym accessories that actually
-                work: gear with a clear purpose, not noise on a shelf. Lever
-                belts and wrist straps that help you brace, hold on, and train
-                with intent.
+                FORGE GYM is a strength-gear brand — not a membership gym. We
+                build lever belts and wrist straps that actually work: gear with
+                a clear purpose, not noise on a shelf. Support that helps you
+                brace, hold on, and train with intent.
               </p>
               <p>
                 The goal is simple: help lifters stay protected under heavy
@@ -39,7 +42,8 @@ export default function AboutPage() {
               </p>
               <p>
                 That&apos;s why we stay focused on the essentials. No filler
-                products. Just equipment made to serve the work.
+                products. Just equipment made to serve the work — sold at{" "}
+                forgegym.us.
               </p>
             </div>
 

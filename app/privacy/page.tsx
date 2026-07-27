@@ -3,10 +3,14 @@ import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "Privacy",
-  description: "Privacy practices for FORGE GYM.",
-};
+  description:
+    "Privacy practices for FORGE GYM and capacitygears.com customers. How we handle contact and order information.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

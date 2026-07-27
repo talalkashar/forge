@@ -228,7 +228,7 @@ export default function Hero() {
             <div className="mb-5 flex items-center gap-3 sm:mb-6 sm:gap-4">
               <span className="h-px w-8 bg-red-500 sm:w-12" aria-hidden="true" />
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-red-400">
-                Premium gear
+                FORGE GYM
               </p>
               <span className="h-px w-8 bg-red-500 sm:w-12" aria-hidden="true" />
             </div>
@@ -239,8 +239,8 @@ export default function Hero() {
             </h1>
 
             <p className="mt-5 max-w-md text-[0.98rem] leading-7 text-white/90 sm:mt-7 sm:text-lg sm:leading-8">
-              Lever belts and wrist straps for serious training: rigid support,
-              clean hardware, zero soft branding.
+              FORGE GYM lever belts and wrist straps for serious training: rigid
+              support, clean hardware, zero soft branding.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">

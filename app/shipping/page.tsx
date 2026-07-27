@@ -3,10 +3,14 @@ import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "Shipping",
-  description: "Shipping information for FORGE GYM orders.",
-};
+  description:
+    "Shipping information for FORGE GYM lever belts and wrist straps. How orders ship after secure Stripe checkout.",
+  path: "/shipping",
+});
 
 export default function ShippingPage() {
   return (

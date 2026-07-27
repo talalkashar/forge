@@ -3,10 +3,14 @@ import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "Returns",
-  description: "Returns policy for FORGE GYM gear.",
-};
+  description:
+    "Returns policy for FORGE GYM lever belts, wrist straps, and strength gear. How to request support after purchase.",
+  path: "/returns",
+});
 
 export default function ReturnsPage() {
   return (

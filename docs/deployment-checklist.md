@@ -33,6 +33,9 @@ Do not commit `.env.local`.
 
 For production, set `NEXT_PUBLIC_BASE_URL` to `https://forgegym.us`.
 
+After deploy, verify SEO + Search Console: see `docs/google-search-console.md`
+(sitemap must list `forgegym.us` only; never capacitygears in public SEO signals).
+
 Scope env vars for **Production**, **Preview**, and **Development** where the app needs them (Stripe, Supabase, base URL, admin password). Production secrets must not be overwritten casually when expanding Preview/Dev.
 
 Optional read-only marketplace connector variables can be added later. They are not required for storefront build or checkout:

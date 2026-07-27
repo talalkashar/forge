@@ -2,11 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "../components/home/Footer";
 import Navbar from "../components/home/Navbar";
+import JsonLd from "../components/site/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "FAQ",
-  description: "Sizing, shipping, returns, and product questions for FORGE GYM.",
-};
+  description:
+    "FORGE GYM FAQ: belt sizing, 10mm thickness, Zeus vs Berserk vs Black, wrist straps, Stripe checkout, shipping, and returns.",
+  path: "/faq",
+  keywords: [
+    "lever belt sizing",
+    "10mm powerlifting belt",
+    "FORGE GYM FAQ",
+    "lifting straps FAQ",
+  ],
+});
 
 const faqs = [
   {
@@ -35,9 +46,24 @@ const faqs = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+  url: `${site.url}/faq`,
+};
+
 export default function FaqPage() {
   return (
     <>
+      <JsonLd data={faqJsonLd} />
       <Navbar />
       <div className="h-16 sm:h-20" />
       <main className="bg-black">
@@ -58,7 +84,9 @@ export default function FaqPage() {
                 <summary className="cursor-pointer list-none px-5 py-4 text-sm font-bold text-white marker:content-none">
                   <span className="flex items-center justify-between gap-4">
                     {item.q}
-                    <span className="text-white/35 transition group-open:rotate-45">+</span>
+                    <span className="text-white/35 transition group-open:rotate-45">
+                      +
+                    </span>
                   </span>
                 </summary>
                 <p className="border-t border-white/[0.06] px-5 py-4 text-sm leading-6 text-white/55">
