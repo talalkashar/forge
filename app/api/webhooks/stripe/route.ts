@@ -116,6 +116,7 @@ export async function POST(req: Request) {
       lineSummary: "FORGE GYM order",
       amountCents: session.amount_total ?? 0,
       currency: session.currency ?? "usd",
+      orderNumber: session.metadata?.order_number?.trim() || undefined,
     });
   }
 

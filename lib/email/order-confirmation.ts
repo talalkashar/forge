@@ -1,10 +1,11 @@
 import "server-only";
 
+import { randomBytes } from "crypto";
 import { Resend } from "resend";
 import { site } from "@/lib/site";
 
 export type OrderEmailInput = {
-  /** Stripe PaymentIntent id or Checkout Session id */
+  /** Stripe PaymentIntent id or Checkout Session id (internal) */
   orderId: string;
   customerEmail: string;
   /** Human-readable line summary (from Stripe description or built list) */
@@ -12,7 +13,49 @@ export type OrderEmailInput = {
   /** Amount in cents */
   amountCents: number;
   currency?: string;
+  /**
+   * Customer-facing order number (e.g. FORGE-K7M2P9).
+   * Prefer metadata.order_number from Stripe when present.
+   */
+  orderNumber?: string;
 };
+
+/** Alphabet without ambiguous 0/O/1/I for customer-facing codes. */
+const ORDER_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+/**
+ * Customer-facing order number for emails / support.
+ * Prefers Stripe metadata `order_number`, else formats a short FORGE- code from the Stripe id.
+ */
+export function formatOrderNumber(
+  orderId: string,
+  explicit?: string | null,
+): string {
+  const trimmed = explicit?.trim();
+  if (trimmed && /^FORGE-[A-Z0-9]{4,12}$/i.test(trimmed)) {
+    return trimmed.toUpperCase();
+  }
+  if (trimmed && trimmed.length >= 4 && trimmed.length <= 24) {
+    // Already a custom short code from metadata
+    return trimmed.toUpperCase().startsWith("FORGE-")
+      ? trimmed.toUpperCase()
+      : `FORGE-${trimmed.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8)}`;
+  }
+
+  const seed = orderId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  const chunk = (seed.slice(-8) || "ORDER").padStart(6, "X").slice(-8);
+  return `FORGE-${chunk}`;
+}
+
+/** Mint a new FORGE-XXXXXX code at PaymentIntent create time. */
+export function createOrderNumber(): string {
+  const bytes = randomBytes(6);
+  let code = "";
+  for (let i = 0; i < bytes.length; i++) {
+    code += ORDER_CODE_ALPHABET[bytes[i]! % ORDER_CODE_ALPHABET.length];
+  }
+  return `FORGE-${code}`;
+}
 
 function formatUsd(cents: number, currency = "usd") {
   try {
@@ -23,6 +66,10 @@ function formatUsd(cents: number, currency = "usd") {
   } catch {
     return `$${(cents / 100).toFixed(2)}`;
   }
+}
+
+function displayOrderNumber(input: OrderEmailInput) {
+  return formatOrderNumber(input.orderId, input.orderNumber);
 }
 
 function resendClient() {
@@ -53,7 +100,7 @@ function customerSubject(input: OrderEmailInput) {
 
 function customerText(input: OrderEmailInput) {
   const total = formatUsd(input.amountCents, input.currency);
-  const shortId = input.orderId.slice(0, 24);
+  const orderNumber = displayOrderNumber(input);
   return [
     "FORGE GYM — ORDER CONFIRMED",
     "",
@@ -61,7 +108,7 @@ function customerText(input: OrderEmailInput) {
     "",
     `Items: ${input.lineSummary}`,
     `Total paid: ${total}`,
-    `Order ref: ${shortId}`,
+    `Order number: ${orderNumber}`,
     "",
     "What happens next:",
     "1. We pack your order",
@@ -77,12 +124,10 @@ function customerText(input: OrderEmailInput) {
 
 function customerHtml(input: OrderEmailInput) {
   const total = formatUsd(input.amountCents, input.currency);
-  const shortId = input.orderId.slice(0, 24);
+  const orderNumber = displayOrderNumber(input);
   const shopUrl = site.url;
-  const preheader = `Payment cleared · ${total} · ${input.lineSummary}`.slice(
-    0,
-    140,
-  );
+  const preheader =
+    `Order ${orderNumber} · ${total} · ${input.lineSummary}`.slice(0, 140);
 
   // Table-based layout for Gmail. Light shell + bold FORGE block so it pops in inbox preview + open.
   return `<!DOCTYPE html>
@@ -141,8 +186,9 @@ function customerHtml(input: OrderEmailInput) {
                   <td style="padding:18px 20px;">
                     <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Items</p>
                     <p style="margin:0 0 16px;font-size:16px;line-height:1.5;font-weight:600;color:#ffffff;">${escapeHtml(input.lineSummary)}</p>
-                    <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Order reference</p>
-                    <p style="margin:0;font-size:13px;color:#d4d4d4;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(shortId)}</p>
+                    <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Order number</p>
+                    <p style="margin:0;font-size:18px;line-height:1.2;font-weight:800;letter-spacing:0.06em;color:#ffffff;">${escapeHtml(orderNumber)}</p>
+                    <p style="margin:8px 0 0;font-size:12px;line-height:1.4;color:#737373;">Save this for support — it&apos;s your order ID.</p>
                   </td>
                 </tr>
               </table>
@@ -191,10 +237,12 @@ function customerHtml(input: OrderEmailInput) {
 
 function ownerHtml(input: OrderEmailInput) {
   const total = formatUsd(input.amountCents, input.currency);
+  const orderNumber = displayOrderNumber(input);
   return `<!DOCTYPE html>
 <html>
 <body style="font-family:system-ui,sans-serif;background:#111;color:#eee;padding:24px;">
   <h2 style="margin:0 0 12px;">New FORGE order</h2>
+  <p><strong>Order number:</strong> ${escapeHtml(orderNumber)}</p>
   <p><strong>Total:</strong> ${total}</p>
   <p><strong>Customer:</strong> ${escapeHtml(input.customerEmail)}</p>
   <p><strong>Items:</strong> ${escapeHtml(input.lineSummary)}</p>
@@ -255,11 +303,12 @@ export async function sendOrderConfirmationEmails(
 
     const notify = notifyAddress();
     if (notify && notify.toLowerCase() !== email) {
+      const orderNumber = displayOrderNumber(input);
       const ownerResult = await resend.emails.send(
         {
           from,
           to: notify,
-          subject: `New order ${total} · FORGE GYM`,
+          subject: `New order ${orderNumber} · ${total} · FORGE GYM`,
           html: ownerHtml(input),
           tags: [
             { name: "type", value: "order_notify" },

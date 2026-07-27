@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createOrderNumber } from "@/lib/email/order-confirmation";
 import type { InventoryLine } from "@/lib/inventory/stock";
 import { getProductBySlug } from "@/lib/products/marketplace";
 import {
@@ -318,15 +319,17 @@ export async function POST(req: Request) {
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const orderNumber = createOrderNumber();
 
     // On-site Payment Element (dark FORGE checkout) — not hosted Checkout redirect.
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: "usd",
       automatic_payment_methods: { enabled: true },
-      // Used by /api/webhooks/stripe to decrement live Supabase inventory.
+      // Used by /api/webhooks/stripe to decrement live Supabase inventory + emails.
       metadata: {
         inventory_items: inventoryMetadata,
+        order_number: orderNumber,
       },
       description: normalizedItems
         .map((item) => `${item.quantity}× ${item.name}`)
@@ -345,6 +348,7 @@ export async function POST(req: Request) {
       clientSecret: paymentIntent.client_secret,
       amount,
       currency: "usd",
+      orderNumber,
       lineItems: normalizedItems.map((item) => ({
         name: item.name,
         price: item.price,

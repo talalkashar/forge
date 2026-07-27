@@ -44,6 +44,7 @@ export async function sendEmailsForPaymentIntent(
   }
 
   const lineSummary = full.description?.trim() || "FORGE GYM order";
+  const orderNumber = full.metadata?.order_number?.trim() || undefined;
 
   return sendOrderConfirmationEmails({
     orderId: full.id,
@@ -51,5 +52,6 @@ export async function sendEmailsForPaymentIntent(
     lineSummary,
     amountCents: full.amount_received || full.amount,
     currency: full.currency,
+    orderNumber,
   });
 }
