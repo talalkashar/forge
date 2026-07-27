@@ -46,35 +46,145 @@ function notifyAddress() {
   );
 }
 
+function customerSubject(input: OrderEmailInput) {
+  const total = formatUsd(input.amountCents, input.currency);
+  return `You're locked in — FORGE order confirmed (${total})`;
+}
+
+function customerText(input: OrderEmailInput) {
+  const total = formatUsd(input.amountCents, input.currency);
+  const shortId = input.orderId.slice(0, 24);
+  return [
+    "FORGE GYM — ORDER CONFIRMED",
+    "",
+    "Payment cleared. Your gear is locked in and we're getting it ready to ship.",
+    "",
+    `Items: ${input.lineSummary}`,
+    `Total paid: ${total}`,
+    `Order ref: ${shortId}`,
+    "",
+    "What happens next:",
+    "1. We pack your order",
+    "2. You get shipping updates by email when available",
+    "3. Train hard when it lands",
+    "",
+    `Shop: ${site.url}`,
+    `Help: ${site.email}`,
+    "",
+    "Train hard. Recover. Repeat.",
+  ].join("\n");
+}
+
 function customerHtml(input: OrderEmailInput) {
   const total = formatUsd(input.amountCents, input.currency);
-  const shortId = input.orderId.slice(0, 20);
+  const shortId = input.orderId.slice(0, 24);
+  const shopUrl = site.url;
+  const preheader = `Payment cleared · ${total} · ${input.lineSummary}`.slice(
+    0,
+    140,
+  );
 
+  // Table-based layout for Gmail. Light shell + bold FORGE block so it pops in inbox preview + open.
   return `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#000;color:#f5f5f5;font-family:system-ui,-apple-system,Segoe UI,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
-    <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#dc2626;font-weight:700;">FORGE GYM</p>
-    <h1 style="margin:0 0 16px;font-size:28px;line-height:1.1;font-weight:900;color:#fff;">Order confirmed</h1>
-    <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:rgba(255,255,255,0.65);">
-      Payment cleared. We&apos;re getting your gear ready to ship.
-    </p>
-    <div style="border:1px solid rgba(255,255,255,0.12);padding:16px 18px;margin:0 0 20px;background:#0a0a0a;">
-      <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Items</p>
-      <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#fff;">${escapeHtml(input.lineSummary)}</p>
-      <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Total</p>
-      <p style="margin:6px 0 0;font-size:20px;font-weight:800;color:#fff;">${total}</p>
-    </div>
-    <p style="margin:0 0 8px;font-size:12px;color:rgba(255,255,255,0.4);">Reference: ${escapeHtml(shortId)}</p>
-    <p style="margin:0 0 24px;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.5);">
-      Questions? Reply to this email or write
-      <a href="mailto:${site.email}" style="color:#f87171;">${site.email}</a>.
-    </p>
-    <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.3);">
-      <a href="${site.url}" style="color:rgba(255,255,255,0.55);text-decoration:none;">forgegym.us</a>
-      · Train hard. Recover. Repeat.
-    </p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>FORGE order confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f3f3;color:#111;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+  <!-- Preheader (inbox preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;">
+    ${escapeHtml(preheader)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f3f3;padding:24px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#0a0a0a;border:1px solid #222;">
+          <!-- Red brand bar -->
+          <tr>
+            <td style="background:#dc2626;padding:14px 24px;">
+              <p style="margin:0;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:800;color:#fff;">FORGE GYM</p>
+            </td>
+          </tr>
+          <!-- Hero -->
+          <tr>
+            <td style="padding:28px 24px 8px 24px;">
+              <p style="margin:0 0 10px;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;color:#f87171;">Order confirmed</p>
+              <h1 style="margin:0 0 12px;font-size:30px;line-height:1.15;font-weight:900;color:#ffffff;letter-spacing:-0.02em;">
+                You&apos;re locked in.
+              </h1>
+              <p style="margin:0;font-size:16px;line-height:1.55;color:#d4d4d4;">
+                Payment cleared. We&apos;re packing your gear and getting it ready to ship.
+              </p>
+            </td>
+          </tr>
+          <!-- Total callout -->
+          <tr>
+            <td style="padding:20px 24px 8px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#141414;border:1px solid #2a2a2a;">
+                <tr>
+                  <td style="padding:18px 20px;">
+                    <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Total paid</p>
+                    <p style="margin:0;font-size:32px;line-height:1;font-weight:900;color:#ffffff;">${total}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Items -->
+          <tr>
+            <td style="padding:16px 24px 8px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#141414;border:1px solid #2a2a2a;">
+                <tr>
+                  <td style="padding:18px 20px;">
+                    <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Items</p>
+                    <p style="margin:0 0 16px;font-size:16px;line-height:1.5;font-weight:600;color:#ffffff;">${escapeHtml(input.lineSummary)}</p>
+                    <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">Order reference</p>
+                    <p style="margin:0;font-size:13px;color:#d4d4d4;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(shortId)}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Next steps -->
+          <tr>
+            <td style="padding:16px 24px 8px 24px;">
+              <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#a3a3a3;font-weight:700;">What happens next</p>
+              <p style="margin:0 0 6px;font-size:14px;line-height:1.5;color:#e5e5e5;">1. We pack your order</p>
+              <p style="margin:0 0 6px;font-size:14px;line-height:1.5;color:#e5e5e5;">2. Shipping updates by email when available</p>
+              <p style="margin:0;font-size:14px;line-height:1.5;color:#e5e5e5;">3. Train hard when it lands</p>
+            </td>
+          </tr>
+          <!-- CTA -->
+          <tr>
+            <td style="padding:24px 24px 8px 24px;" align="center">
+              <a href="${shopUrl}/shop" style="display:inline-block;background:#dc2626;color:#ffffff;text-decoration:none;font-size:13px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;padding:16px 28px;border-radius:999px;">
+                Keep shopping
+              </a>
+            </td>
+          </tr>
+          <!-- Support -->
+          <tr>
+            <td style="padding:20px 24px 28px 24px;">
+              <p style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#a3a3a3;">
+                Questions? Reply to this email or write
+                <a href="mailto:${site.email}" style="color:#f87171;font-weight:600;">${site.email}</a>.
+              </p>
+              <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#737373;">
+                <a href="${shopUrl}" style="color:#a3a3a3;text-decoration:none;">forgegym.us</a>
+                · Train hard. Recover. Repeat.
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:16px 0 0;font-size:11px;color:#737373;text-align:center;">
+          CAPACITY GEARS LLC · FORGE GYM
+        </p>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
 }
@@ -127,8 +237,9 @@ export async function sendOrderConfirmationEmails(
         from,
         to: email,
         replyTo: site.email,
-        subject: `Order confirmed · FORGE GYM · ${total}`,
+        subject: customerSubject(input),
         html: customerHtml(input),
+        text: customerText(input),
         tags: [
           { name: "type", value: "order_confirmation" },
           { name: "order_id", value: input.orderId.slice(0, 48) },
