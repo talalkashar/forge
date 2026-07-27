@@ -27,7 +27,13 @@ function formatUsdFromCents(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-function ForgePaymentForm({ amountCents }: { amountCents: number }) {
+function ForgePaymentForm({
+  amountCents,
+  clientSecret,
+}: {
+  amountCents: number;
+  clientSecret: string;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,17 +55,31 @@ function ForgePaymentForm({ amountCents }: { amountCents: number }) {
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    // Attach email on the PaymentIntent before confirm (webhook + Resend need it).
+    if (clientSecret) {
+      try {
+        await fetch("/api/checkout/attach-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clientSecret, email: receiptEmail }),
+        });
+      } catch {
+        // Continue payment; success page can still send confirmation.
+      }
+    }
+
+    // Keep email for success-page fallback (same browser session).
+    try {
+      sessionStorage.setItem("forge_order_email", receiptEmail);
+    } catch {
+      // ignore
+    }
+
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/success`,
-        // Used by Stripe + our webhook → Resend order confirmation.
         receipt_email: receiptEmail,
-        payment_method_data: {
-          billing_details: {
-            email: receiptEmail,
-          },
-        },
       },
     });
 
@@ -335,7 +355,10 @@ export default function CheckoutPage() {
                     </div>
                   ) : clientSecret && elementsOptions ? (
                     <Elements stripe={stripePromise} options={elementsOptions}>
-                      <ForgePaymentForm amountCents={amountCents} />
+                      <ForgePaymentForm
+                        amountCents={amountCents}
+                        clientSecret={clientSecret}
+                      />
                     </Elements>
                   ) : (
                     <div className="border border-white/10 bg-white/[0.03] px-4 py-8 text-sm text-white/45">

@@ -176,6 +176,7 @@ export function emailFromPaymentIntent(
   paymentIntent: {
     receipt_email?: string | null;
     latest_charge?: unknown;
+    metadata?: { customer_email?: string | null } | null;
   },
   charge?: {
     billing_details?: { email?: string | null } | null;
@@ -184,6 +185,9 @@ export function emailFromPaymentIntent(
 ): string {
   const fromPi = paymentIntent.receipt_email?.trim();
   if (fromPi) return fromPi;
+
+  const fromMeta = paymentIntent.metadata?.customer_email?.trim();
+  if (fromMeta) return fromMeta;
 
   const latest = paymentIntent.latest_charge;
   const chargeObj =

@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import {
-  emailFromPaymentIntent,
-  sendOrderConfirmationEmails,
-} from "@/lib/email/order-confirmation";
+import { sendOrderConfirmationEmails } from "@/lib/email/order-confirmation";
+import { sendEmailsForPaymentIntent } from "@/lib/email/send-for-payment-intent";
 import {
   decrementInventoryForOrder,
   parseInventoryMetadata,
@@ -13,42 +11,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_WEBHOOK_BODY_BYTES = 256_000;
-
-async function emailAfterPaymentIntent(
-  stripe: Stripe,
-  paymentIntent: Stripe.PaymentIntent,
-) {
-  let email = emailFromPaymentIntent(paymentIntent);
-  let lineSummary =
-    paymentIntent.description?.trim() || "FORGE GYM order";
-
-  // Expand charge when webhook payload lacks billing email.
-  if (!email) {
-    try {
-      const full = await stripe.paymentIntents.retrieve(paymentIntent.id, {
-        expand: ["latest_charge"],
-      });
-      email = emailFromPaymentIntent(full, full.latest_charge as Stripe.Charge);
-      if (!lineSummary || lineSummary === "FORGE GYM order") {
-        lineSummary = full.description?.trim() || lineSummary;
-      }
-    } catch (error) {
-      console.error("[stripe webhook] payment_intent retrieve failed:", error);
-    }
-  }
-
-  const result = await sendOrderConfirmationEmails({
-    orderId: paymentIntent.id,
-    customerEmail: email,
-    lineSummary,
-    amountCents: paymentIntent.amount_received || paymentIntent.amount,
-    currency: paymentIntent.currency,
-  });
-
-  if (!result.sent && result.skipped !== "resend_not_configured") {
-    console.warn("[stripe webhook] order email not sent:", result);
-  }
-}
 
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -108,7 +70,20 @@ export async function POST(req: Request) {
     }
 
     // Email failures must not fail the webhook (inventory already applied).
-    await emailAfterPaymentIntent(stripe, paymentIntent);
+    try {
+      const emailResult = await sendEmailsForPaymentIntent(
+        stripe,
+        paymentIntent.id,
+      );
+      if (!emailResult.sent) {
+        console.warn(
+          "[stripe webhook] order email not sent:",
+          emailResult.skipped || emailResult.error,
+        );
+      }
+    } catch (error) {
+      console.error("[stripe webhook] order email error:", error);
+    }
   }
 
   // Legacy hosted Checkout sessions (if any still complete).

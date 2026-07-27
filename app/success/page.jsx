@@ -1,16 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import ForgeLogo from "../components/home/ForgeLogo";
 
 export default function SuccessPage() {
   const { clearCart } = useCart();
+  const [emailStatus, setEmailStatus] = useState("pending");
 
   useEffect(() => {
     clearCart();
   }, [clearCart]);
+
+  // Fallback confirmation email if Stripe webhook missed payment_intent.succeeded.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const paymentIntentId = params.get("payment_intent");
+    const clientSecret = params.get("payment_intent_client_secret");
+    if (!paymentIntentId || !clientSecret) {
+      setEmailStatus("unknown");
+      return;
+    }
+
+    let email = "";
+    try {
+      email = sessionStorage.getItem("forge_order_email") || "";
+    } catch {
+      // ignore
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/checkout/send-confirmation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentIntentId,
+            clientSecret,
+            email: email || undefined,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (cancelled) return;
+        if (res.ok && data.ok) {
+          setEmailStatus("sent");
+          try {
+            sessionStorage.removeItem("forge_order_email");
+          } catch {
+            // ignore
+          }
+        } else {
+          setEmailStatus("failed");
+          console.warn("[success] confirmation email:", data);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setEmailStatus("failed");
+          console.warn("[success] confirmation email error:", error);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6 py-16 text-white">
@@ -35,7 +94,12 @@ export default function SuccessPage() {
         </h1>
         <p className="mt-4 text-sm leading-6 text-white/50 sm:text-base">
           Payment cleared through Stripe. Your cart is empty. Gear is on the
-          way. Check your email for confirmation when it lands.
+          way.
+          {emailStatus === "sent"
+            ? " Confirmation email is on the way."
+            : emailStatus === "failed"
+              ? " If you do not see a confirmation email soon, check spam or contact contact@forgegym.us."
+              : " Check your email for confirmation when it lands."}
         </p>
         <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/30">
           Train hard. Recover. Repeat.
