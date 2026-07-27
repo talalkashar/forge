@@ -301,31 +301,56 @@ export async function POST(req: Request) {
       );
     }
 
-    const origin = allowedCheckoutOrigin(req);
+    // Origin allowlist still guards the request; return_url is set client-side
+    // after Payment Element confirmation (see /checkout).
+    allowedCheckoutOrigin(req);
+
+    const amount = normalizedItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
+
+    if (!Number.isFinite(amount) || amount < 50) {
+      return NextResponse.json(
+        { error: "Order total is too low for checkout." },
+        { status: 400 },
+      );
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      line_items: normalizedItems.map((item) => ({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: item.name,
-          },
-          unit_amount: item.price,
-        },
-        quantity: item.quantity,
-      })),
+    // On-site Payment Element (dark FORGE checkout) — not hosted Checkout redirect.
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "usd",
+      automatic_payment_methods: { enabled: true },
       // Used by /api/webhooks/stripe to decrement live Supabase inventory.
       metadata: {
         inventory_items: inventoryMetadata,
       },
-      success_url: `${origin}/success`,
-      cancel_url: `${origin}/cancel`,
+      description: normalizedItems
+        .map((item) => `${item.quantity}× ${item.name}`)
+        .join(", ")
+        .slice(0, 900),
     });
 
-    return NextResponse.json({ url: session.url });
+    if (!paymentIntent.client_secret) {
+      return NextResponse.json(
+        { error: "Unable to start payment. Please try again." },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({
+      clientSecret: paymentIntent.client_secret,
+      amount,
+      currency: "usd",
+      lineItems: normalizedItems.map((item) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    });
   } catch (err) {
     if (isRequestGuardError(err)) {
       return NextResponse.json({ error: err.message }, { status: err.status });

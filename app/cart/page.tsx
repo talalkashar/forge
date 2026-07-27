@@ -154,13 +154,13 @@ export default function CartPage() {
                   </span>
                 </div>
                 <p className="mt-4 text-xs leading-5 text-white/35">
-                  Shipping and taxes calculated at Stripe checkout.
+                  Next step: pay on FORGE with secure Stripe — no separate checkout page.
                 </p>
                 <p className="mt-2 text-[0.65rem] uppercase tracking-[0.12em] text-white/30">
                   Questions before you pay? See FAQ or contact.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/40">
-                  <li>· Encrypted Stripe payment</li>
+                  <li>· On-site encrypted payment</li>
                   <li>· Order email when available</li>
                   <li>· Returns per policy</li>
                 </ul>

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 /**
  * Baseline security headers for the storefront.
- * CSP is intentionally moderate so Stripe Checkout redirects + Next assets work.
+ * CSP is intentionally moderate so Stripe Elements (on-site checkout) + Next assets work.
  */
 const securityHeaders = [
   {
@@ -34,7 +34,7 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       "base-uri 'self'",
-      "form-action 'self' https://checkout.stripe.com",
+      "form-action 'self' https://checkout.stripe.com https://hooks.stripe.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "img-src 'self' data: blob: https:",
@@ -42,8 +42,8 @@ const securityHeaders = [
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
-      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://checkout.stripe.com",
-      "frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
+      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.stripe.com https://checkout.stripe.com",
+      "frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://*.stripe.com",
       "upgrade-insecure-requests",
     ].join("; "),
   },

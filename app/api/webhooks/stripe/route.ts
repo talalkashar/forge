@@ -46,6 +46,29 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
+  // On-site Payment Element flow.
+  if (event.type === "payment_intent.succeeded") {
+    const paymentIntent = event.data.object as Stripe.PaymentIntent;
+    const lines = parseInventoryMetadata(
+      paymentIntent.metadata?.inventory_items,
+    );
+
+    if (lines.length > 0) {
+      const result = await decrementInventoryForOrder({
+        externalOrderId: paymentIntent.id,
+        lines,
+        channel: "stripe",
+        reason: "stripe_payment_intent_succeeded",
+      });
+
+      if (!result.ok) {
+        console.error("[stripe webhook] inventory decrement failed:", result.error);
+        return NextResponse.json({ error: result.error }, { status: 500 });
+      }
+    }
+  }
+
+  // Legacy hosted Checkout sessions (if any still complete).
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const lines = parseInventoryMetadata(session.metadata?.inventory_items);
