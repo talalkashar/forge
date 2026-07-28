@@ -129,20 +129,25 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
-        {/* Warm hero encodes early — correct file per viewport */}
+        {/* Warm hero encodes before React hydrates — split by viewport */}
         <link
           rel="preload"
-          as="video"
-          href="/videos/hero/forge-hero-berserk-mobile.mp4?v=20260722c"
-          type="video/mp4"
-          media="(max-width: 1024px)"
+          as="image"
+          href="/videos/posters/forge-hero-berserk.jpg"
         />
         <link
           rel="preload"
           as="video"
-          href="/videos/hero/forge-hero-berserk.mp4?v=20260722c"
+          href="/videos/hero/forge-hero-berserk-mobile.mp4?v=20260722d"
           type="video/mp4"
-          media="(min-width: 1025px)"
+          media="(max-width: 1024px), (pointer: coarse)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/videos/hero/forge-hero-berserk.mp4?v=20260722d"
+          type="video/mp4"
+          media="(min-width: 1025px) and (pointer: fine)"
         />
       </head>
       <body className="flex min-h-full flex-col bg-black text-white">
