@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /**
- * Hero media — prefer the light encode for everyone so the loop starts ASAP.
- * Desktop 4MB file was the main delay on first paint.
+ * Hero media — light encode first for fast start.
+ * Must work as a non-interactive background in TikTok / IG in-app browsers
+ * (no native fullscreen video takeover on tap).
  */
-const HERO_ASSET_V = "20260728a";
+const HERO_ASSET_V = "20260728b";
 const HERO_VIDEO_MP4 = `/videos/hero/forge-hero-berserk-mobile.mp4?v=${HERO_ASSET_V}`;
 const HERO_VIDEO_WEBM = `/videos/hero/forge-hero-berserk-mobile.webm?v=${HERO_ASSET_V}`;
-/** Optional hi-res for large fine-pointer screens after first paint (progressive). */
+/** Optional hi-res for large fine-pointer desktops after first paint. */
 const HERO_VIDEO_HIRES_MP4 = `/videos/hero/forge-hero-berserk.mp4?v=${HERO_ASSET_V}`;
 const HERO_POSTER = "/videos/posters/forge-hero-berserk.jpg";
 
@@ -29,7 +30,6 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
-/** True only after client hydration (avoids SSR source mismatches). */
 function useIsClient() {
   return useSyncExternalStore(
     () => () => {},
@@ -39,6 +39,9 @@ function useIsClient() {
 }
 
 function wantsHiResUpgrade() {
+  if (typeof navigator === "undefined") return false;
+  // Never upgrade inside social in-app browsers (reload = jank / native player risk).
+  if (isInAppBrowser()) return false;
   return (
     window.matchMedia("(min-width: 1280px)").matches &&
     window.matchMedia("(pointer: fine)").matches &&
@@ -46,9 +49,20 @@ function wantsHiResUpgrade() {
   );
 }
 
+/** TikTok / IG / FB webviews treat <video> specially unless locked down. */
+function isInAppBrowser() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  return /TikTok|BytedanceWebview|musical_ly|Instagram|FBAN|FBAV|FB_IAB|Line\//i.test(
+    ua,
+  );
+}
+
 /**
- * Full-viewport cinematic hero.
- * Fast path: light MP4 mounts on first client render → play ASAP → short crossfade from poster.
+ * Full-viewport cinematic hero as a pure background layer.
+ * - Not clickable (pointer-events none + no controls)
+ * - Inline-only (never jumps to native video player)
+ * - Autoplay retries for in-app browsers
  */
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -65,25 +79,36 @@ export default function Hero() {
 
   const showVideo = isClient && !preferStatic && !videoFailed;
 
-  // Autoplay + reveal as soon as the first frames are ready.
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !showVideo) return;
 
     let cancelled = false;
     let live = false;
+    const inApp = isInAppBrowser();
 
+    // Hard lock: decorative background media only.
     el.muted = true;
     el.defaultMuted = true;
     el.volume = 0;
     el.playsInline = true;
     el.autoplay = true;
     el.loop = true;
+    el.controls = false;
+    el.disablePictureInPicture = true;
     el.preload = "auto";
     el.setAttribute("muted", "");
     el.setAttribute("playsinline", "");
-    el.setAttribute("webkit-playsinline", "");
+    el.setAttribute("webkit-playsinline", "true");
+    el.setAttribute("x5-playsinline", "true");
+    el.setAttribute("x5-video-player-type", "h5");
+    el.setAttribute("x5-video-player-fullscreen", "false");
+    el.setAttribute("x5-video-orientation", "portraint");
     el.setAttribute("autoplay", "");
+    el.setAttribute("disablepictureinpicture", "");
+    el.setAttribute("controlslist", "nodownload nofullscreen noremoteplayback");
+    el.removeAttribute("controls");
+    el.tabIndex = -1;
 
     const goLive = () => {
       if (cancelled || live) return;
@@ -92,13 +117,17 @@ export default function Hero() {
     };
 
     const tryPlay = () => {
-      if (cancelled || document.hidden) return;
+      if (cancelled) return;
+      // Keep muted every attempt — WebViews re-enable sound flags sometimes.
+      el.muted = true;
+      el.defaultMuted = true;
+      el.volume = 0;
       const p = el.play();
       if (p !== undefined) {
         p.then(() => {
           if (!cancelled) goLive();
         }).catch(() => {
-          // Retry on next canplay / gesture.
+          // In-app browsers often need a later gesture; keep poster until then.
         });
       }
     };
@@ -110,8 +139,8 @@ export default function Hero() {
         // ignore
       }
       tryPlay();
-      // If we already have data, reveal quickly even if play() is slightly deferred.
       if (el.readyState >= 2) {
+        // Show poster→video once we have frames even if play is deferred a tick.
         goLive();
         tryPlay();
       }
@@ -120,12 +149,17 @@ export default function Hero() {
     const onPlaying = () => goLive();
 
     const onVisibility = () => {
-      if (document.hidden) el.pause();
-      else tryPlay();
+      if (document.hidden) {
+        // In-app: don't pause — TikTok often flickers visibility and kills the loop.
+        if (!inApp) el.pause();
+      } else {
+        tryPlay();
+      }
     };
 
+    // Desktop: pause when scrolled away. In-app: never pause via IO (unreliable).
     const io =
-      typeof IntersectionObserver !== "undefined"
+      !inApp && typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver(
             ([entry]) => {
               if (!entry) return;
@@ -142,7 +176,6 @@ export default function Hero() {
     el.addEventListener("playing", onPlaying);
     document.addEventListener("visibilitychange", onVisibility);
 
-    // Kick immediately — light file should buffer fast on localhost/prod.
     if (el.readyState >= 2) onReady();
     else {
       try {
@@ -153,28 +186,36 @@ export default function Hero() {
       tryPlay();
     }
 
-    const t1 = window.setTimeout(tryPlay, 50);
-    const t2 = window.setTimeout(tryPlay, 200);
+    // Aggressive retries — TikTok WebView often accepts play a few hundred ms later.
+    const timers = [50, 150, 400, 800, 1600, 3000].map((ms) =>
+      window.setTimeout(tryPlay, ms),
+    );
 
+    // Any user interaction on the page should unlock autoplay without opening a player.
+    // (Video itself has pointer-events: none so taps hit CTAs / this document handler.)
     const unlock = () => tryPlay();
-    window.addEventListener("touchstart", unlock, { passive: true, once: true });
-    window.addEventListener("pointerdown", unlock, { passive: true, once: true });
+    const unlockOpts: AddEventListenerOptions = { passive: true, capture: true };
+    window.addEventListener("touchstart", unlock, unlockOpts);
+    window.addEventListener("touchend", unlock, unlockOpts);
+    window.addEventListener("pointerdown", unlock, unlockOpts);
+    window.addEventListener("scroll", unlock, unlockOpts);
 
     return () => {
       cancelled = true;
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      timers.forEach((id) => window.clearTimeout(id));
       el.removeEventListener("loadeddata", onReady);
       el.removeEventListener("canplay", onReady);
       el.removeEventListener("playing", onPlaying);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("touchstart", unlock);
-      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("touchstart", unlock, true);
+      window.removeEventListener("touchend", unlock, true);
+      window.removeEventListener("pointerdown", unlock, true);
+      window.removeEventListener("scroll", unlock, true);
       io?.disconnect();
     };
   }, [showVideo]);
 
-  // Optional: after the light loop is live, quietly upgrade large desktops to hi-res.
+  // Optional desktop hi-res upgrade (skipped in social webviews).
   useEffect(() => {
     if (!videoLive || upgradedRef.current || preferStatic || videoFailed) return;
     if (!wantsHiResUpgrade()) return;
@@ -182,13 +223,11 @@ export default function Hero() {
     const el = videoRef.current;
     if (!el) return;
 
-    // Don't interrupt if network is slow — only upgrade after a short idle.
     const timer = window.setTimeout(() => {
       if (upgradedRef.current || document.hidden) return;
       upgradedRef.current = true;
       const t = el.currentTime;
       const wasPaused = el.paused;
-      // Swap to hi-res mp4 only (same loop content).
       while (el.firstChild) el.removeChild(el.firstChild);
       const src = document.createElement("source");
       src.src = HERO_VIDEO_HIRES_MP4;
@@ -205,7 +244,7 @@ export default function Hero() {
         el.removeEventListener("loadeddata", resume);
       };
       el.addEventListener("loadeddata", resume);
-    }, 1800);
+    }, 2200);
 
     return () => window.clearTimeout(timer);
   }, [videoLive, preferStatic, videoFailed]);
@@ -215,7 +254,11 @@ export default function Hero() {
       className="relative isolate min-h-[100svh] overflow-hidden bg-black"
       aria-label="FORGE GYM hero"
     >
-      <div className="absolute inset-0 overflow-hidden">
+      {/* MEDIA STACK — fully non-interactive background */}
+      <div
+        className="pointer-events-none absolute inset-0 overflow-hidden select-none"
+        aria-hidden="true"
+      >
         <div className="absolute inset-0">
           <Image
             src={HERO_POSTER}
@@ -225,25 +268,28 @@ export default function Hero() {
             fetchPriority="high"
             sizes="100vw"
             quality={82}
-            className="object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%]"
-            aria-hidden="true"
+            draggable={false}
+            className="pointer-events-none object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%]"
           />
 
           {showVideo ? (
             <video
               ref={videoRef}
-              className={`absolute inset-0 h-full w-full object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%] ${
+              className={`pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%] ${
                 videoLive
                   ? "opacity-100 transition-opacity duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                   : "opacity-0"
               }`}
+              // Decorative background only — never a player chrome surface
               autoPlay
               muted
               loop
               playsInline
               preload="auto"
-              aria-hidden="true"
+              controls={false}
+              disablePictureInPicture
               disableRemotePlayback
+              tabIndex={-1}
               onError={() => {
                 setVideoFailed(true);
                 setVideoLive(false);
@@ -261,18 +307,10 @@ export default function Hero() {
           ) : null}
         </div>
 
-        <div
-          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.82)_0%,rgba(0,0,0,0.55)_34%,rgba(0,0,0,0.16)_58%,rgba(0,0,0,0.4)_100%)] sm:bg-[linear-gradient(105deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.45)_36%,rgba(0,0,0,0.12)_58%,rgba(0,0,0,0.4)_100%)]"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.45)_0%,transparent_28%,transparent_52%,rgba(0,0,0,0.82)_100%)] sm:bg-[linear-gradient(180deg,rgba(0,0,0,0.28)_0%,transparent_30%,transparent_55%,rgba(0,0,0,0.78)_100%)]"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_36%,rgba(160,20,20,0.12),transparent_48%)]"
-          aria-hidden="true"
-        />
+        {/* Scrims also non-interactive so only CTAs receive taps */}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.82)_0%,rgba(0,0,0,0.55)_34%,rgba(0,0,0,0.16)_58%,rgba(0,0,0,0.4)_100%)] sm:bg-[linear-gradient(105deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.45)_36%,rgba(0,0,0,0.12)_58%,rgba(0,0,0,0.4)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.45)_0%,transparent_28%,transparent_52%,rgba(0,0,0,0.82)_100%)] sm:bg-[linear-gradient(180deg,rgba(0,0,0,0.28)_0%,transparent_30%,transparent_55%,rgba(0,0,0,0.78)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_36%,rgba(160,20,20,0.12),transparent_48%)]" />
       </div>
 
       <div
@@ -280,6 +318,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
+      {/* CONTENT — only interactive layer */}
       <div className="relative z-10 flex min-h-[100svh] flex-col justify-end">
         <div className="mx-auto w-full max-w-7xl px-5 pb-[max(5.5rem,env(safe-area-inset-bottom))] pt-24 sm:px-8 sm:pb-32 lg:pb-36">
           <div className="max-w-2xl">
