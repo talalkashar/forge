@@ -122,7 +122,7 @@ export default function ProductSearchModal({
 
   return (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 px-4 py-5 sm:px-6 sm:py-10"
+          className="pointer-events-auto fixed inset-0 z-[150] overflow-y-auto overscroll-contain bg-black/92 px-3 py-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-10"
           role="dialog"
           aria-modal="true"
           aria-labelledby="forge-search-title"
@@ -155,7 +155,7 @@ export default function ProductSearchModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="border border-white/12 p-2 text-white/70 transition-colors hover:border-white/30 hover:text-white"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center border border-white/12 p-2 text-white/70 transition-colors duration-300 ease-out hover:border-white/30 hover:text-white"
                     aria-label="Close search"
                   >
                     <X className="h-5 w-5" aria-hidden="true" />

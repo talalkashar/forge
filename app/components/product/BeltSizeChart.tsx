@@ -158,7 +158,7 @@ export function BeltSizeChartModal({
   return (
     <FixedPortal>
     <div
-      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/80 p-3 backdrop-blur-sm sm:items-center sm:p-6"
+      className="pointer-events-auto fixed inset-0 z-[130] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm sm:items-center sm:p-6"
       role="presentation"
       onClick={onClose}
     >
@@ -166,11 +166,11 @@ export function BeltSizeChartModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="max-h-[min(92vh,920px)] w-full max-w-3xl overflow-y-auto rounded-none border border-white/12 bg-[#080808] shadow-2xl shadow-black/80"
+        className="flex max-h-[min(92dvh,920px)] w-full max-w-3xl flex-col overflow-hidden rounded-none border border-white/12 bg-[#080808] shadow-2xl shadow-black/80 sm:max-h-[min(90vh,920px)]"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-black/85 px-5 py-4 backdrop-blur-md sm:px-6">
-          <div>
+        <div className="sticky top-0 z-10 flex shrink-0 items-start justify-between gap-4 border-b border-white/10 bg-black/95 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:px-6 sm:py-4 sm:pt-4">
+          <div className="min-w-0">
             <p className="text-[0.68rem] font-bold uppercase tracking-[0.22em] text-red-500/90">
               Size Chart
             </p>
@@ -185,13 +185,14 @@ export function BeltSizeChartModal({
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-red-500/50 hover:bg-red-600/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+            className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition-colors duration-300 ease-out hover:border-red-500/50 hover:bg-red-600/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
           >
             Close
           </button>
         </div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
 
-        <div className="space-y-5 p-5 sm:p-6">
+        <div className="space-y-5 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6">
           <div className="relative aspect-square overflow-hidden rounded-none border border-white/10 bg-neutral-950 sm:aspect-[5/4]">
             <Image
               src={imageSrc}
@@ -216,6 +217,7 @@ export function BeltSizeChartModal({
               {BELT_SIZE_CHART_BETWEEN_SIZES}
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

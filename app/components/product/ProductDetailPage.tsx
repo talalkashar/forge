@@ -117,8 +117,13 @@ export default function ProductDetailPage({
     if (!isZoomed) return undefined;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsZoomed(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
     };
   }, [isZoomed]);
 
@@ -451,8 +456,13 @@ export default function ProductDetailPage({
                       type="button"
                       onClick={() => addSelectedItemToCart()}
                       disabled={addToCartDisabled}
-                      whileTap={addToCartDisabled || prefersReducedMotion ? undefined : { scale: 0.98 }}
-                      className={`w-full rounded-full px-6 py-4 text-sm font-black uppercase tracking-[0.16em] transition-colors ${
+                      whileTap={
+                        addToCartDisabled || prefersReducedMotion
+                          ? undefined
+                          : { scale: 0.985 }
+                      }
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className={`w-full rounded-full px-6 py-4 text-sm font-black uppercase tracking-[0.16em] transition-colors duration-300 ease-out ${
                         addToCartDisabled
                           ? "cursor-not-allowed border border-white/10 bg-white/[0.04] text-white/35"
                           : "bg-red-600 text-white hover:bg-red-500"
@@ -552,7 +562,7 @@ export default function ProductDetailPage({
                     initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                    transition={{ duration: 0.28 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
                     <div className="border border-t-0 border-white/[0.08] bg-black p-5 sm:p-6">
@@ -611,12 +621,25 @@ export default function ProductDetailPage({
       <AnimatePresence>
         {notification ? (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            className="fixed bottom-24 right-4 z-50 border border-white/10 bg-red-600 px-5 py-3 text-sm font-bold text-white shadow-2xl sm:bottom-8"
+            exit={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-auto fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-4 right-4 z-[130] flex items-center justify-between gap-3 border border-white/10 bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-2xl sm:bottom-8 sm:left-auto sm:right-6 sm:max-w-sm"
+            role="status"
           >
-            {notification}
+            <span className="min-w-0">{notification}</span>
+            <button
+              type="button"
+              onClick={() => {
+                clearNotification();
+                setNotification("");
+              }}
+              className="shrink-0 border border-white/25 px-2 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em]"
+              aria-label="Dismiss"
+            >
+              Close
+            </button>
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -625,25 +648,29 @@ export default function ProductDetailPage({
       <AnimatePresence>
         {isZoomed ? (
           <motion.div
-            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 p-4"
+            className="pointer-events-auto fixed inset-0 z-[140] flex items-center justify-center bg-black/96 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Fullscreen product image"
-            initial={{ opacity: 0 }}
+            initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => setIsZoomed(false)}
           >
             <button
               type="button"
-              className="absolute right-4 top-4 z-[112] border border-white/15 bg-black/60 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white"
-              onClick={() => setIsZoomed(false)}
+              className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-[142] min-h-11 min-w-11 border border-white/20 bg-black/80 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-white sm:right-4 sm:top-4"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsZoomed(false);
+              }}
             >
               Close
             </button>
             <button
               type="button"
-              className="absolute left-3 top-1/2 z-[112] -translate-y-1/2 border border-white/15 bg-black/60 p-3 text-white sm:left-6"
+              className="absolute left-2 top-1/2 z-[142] min-h-11 min-w-11 -translate-y-1/2 border border-white/15 bg-black/70 p-3 text-white sm:left-6"
               aria-label="Previous image"
               onClick={(event) => {
                 event.stopPropagation();
@@ -656,7 +683,7 @@ export default function ProductDetailPage({
             </button>
             <button
               type="button"
-              className="absolute right-3 top-1/2 z-[112] -translate-y-1/2 border border-white/15 bg-black/60 p-3 text-white sm:right-6"
+              className="absolute right-2 top-1/2 z-[142] min-h-11 min-w-11 -translate-y-1/2 border border-white/15 bg-black/70 p-3 text-white sm:right-6"
               aria-label="Next image"
               onClick={(event) => {
                 event.stopPropagation();
@@ -668,10 +695,11 @@ export default function ProductDetailPage({
               </svg>
             </button>
             <motion.div
-              className="relative h-[min(88vh,900px)] w-full max-w-5xl"
-              initial={prefersReducedMotion ? false : { scale: 0.96, opacity: 0 }}
+              className="relative h-[min(82vh,900px)] w-full max-w-5xl"
+              initial={prefersReducedMotion ? false : { scale: 0.97, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.98, opacity: 0 }}
+              exit={prefersReducedMotion ? undefined : { scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
               <Image
@@ -692,7 +720,7 @@ export default function ProductDetailPage({
                 }
               />
             </motion.div>
-            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/50">
+            <p className="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/50">
               {currentImageIndex + 1} of {product.images.length}
             </p>
           </motion.div>
@@ -701,7 +729,7 @@ export default function ProductDetailPage({
 
       {(product.catalogCategory === "belts" ||
         product.catalogCategory === "straps") && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black px-4 py-3 lg:hidden">
+        <div className="pointer-events-auto fixed inset-x-0 bottom-0 z-[90] border-t border-white/10 bg-black/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-black text-white">{product.name}</p>
@@ -713,10 +741,10 @@ export default function ProductDetailPage({
               type="button"
               onClick={() => addSelectedItemToCart()}
               disabled={addToCartDisabled}
-              className={`shrink-0 rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.12em] ${
+              className={`shrink-0 rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.12em] transition-colors duration-300 ease-out ${
                 addToCartDisabled
                   ? "border border-white/10 text-white/35"
-                  : "bg-red-600 text-white"
+                  : "bg-red-600 text-white hover:bg-red-500"
               }`}
             >
               {addToCartDisabled ? disabledPurchaseLabel : "Add"}

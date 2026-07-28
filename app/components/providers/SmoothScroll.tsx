@@ -54,7 +54,8 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     const smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 0.72,
+      // Creamier desktop catch-up (was 0.72 — felt snappy/jittery)
+      smooth: 1.05,
       // Never smooth touch here — mobile uses native path above
       smoothTouch: 0,
       effects: false,

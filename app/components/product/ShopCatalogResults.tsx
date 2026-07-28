@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 import ForgeSearchBar from "@/components/ui/forge-search-bar";
+import { FixedPortal } from "@/app/components/providers/FixedPortal";
 import { searchProducts, toProductSearchItem } from "@/lib/product-search";
 import type { StorefrontProduct } from "@/lib/products";
 import type { ProductVariantRow } from "@/lib/products/types";
@@ -320,118 +322,198 @@ export default function ShopCatalogResults({
     [updateUrl],
   );
 
-  return (
-    <div
-      className={`mx-auto max-w-7xl ${showFilterBar ? "space-y-10" : "space-y-0"}`}
-    >
-      {showFilterBar ? (
-        <div className="sticky top-20 z-20 grid gap-5 border border-white/[0.1] bg-[#080808] p-4 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:p-5 lg:top-24 lg:grid-cols-[minmax(0,1.2fr)_auto_auto_auto] lg:items-end">
-          {enableSearch ? (
-            <div className="min-w-0">
-              <label className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
-                Search
-              </label>
-              <ForgeSearchBar
-                value={query}
-                onChange={updateQuery}
-                placeholder="Belt, Zeus, Berserk, straps..."
-              />
-            </div>
-          ) : (
-            <div className="hidden md:block" />
-          )}
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-          {enableSizeFilters ? (
-            <div>
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
-                Size
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {sizeOptions.map(([size]) => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => toggleSize(size)}
-                    aria-pressed={selectedSizes.includes(size)}
-                    className={`h-11 min-w-11 border px-3 text-xs font-black tracking-[0.1em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
-                      selectedSizes.includes(size)
-                        ? "border-red-600 bg-red-600"
-                        : "border-white/25 bg-black hover:border-white/50"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
+  useEffect(() => {
+    if (!mobileFiltersOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileFiltersOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileFiltersOpen]);
 
-          {enableStockFilter ? (
-            <div>
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
-                Stock
-              </span>
+  const filterControls = (
+    <>
+      {enableSearch ? (
+        <div className="min-w-0">
+          <label className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
+            Search
+          </label>
+          <ForgeSearchBar
+            value={query}
+            onChange={updateQuery}
+            placeholder="Belt, Zeus, Berserk, straps..."
+          />
+        </div>
+      ) : (
+        <div className="hidden md:block" />
+      )}
+
+      {enableSizeFilters ? (
+        <div>
+          <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
+            Size
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {sizeOptions.map(([size]) => (
               <button
+                key={size}
                 type="button"
-                onClick={updateInStock}
-                aria-pressed={inStockOnly}
-                className={`h-11 border px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
-                  inStockOnly
+                onClick={() => toggleSize(size)}
+                aria-pressed={selectedSizes.includes(size)}
+                className={`h-11 min-w-11 border px-3 text-xs font-black tracking-[0.1em] text-white transition-colors duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+                  selectedSizes.includes(size)
                     ? "border-red-600 bg-red-600"
                     : "border-white/25 bg-black hover:border-white/50"
                 }`}
               >
-                In stock
+                {size}
               </button>
-            </div>
-          ) : null}
+            ))}
+          </div>
+        </div>
+      ) : null}
 
-          {enablePriceFilter ? (
-            <label className="block">
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
-                Price
-              </span>
-              <select
-                value={priceMode}
-                onChange={(event) => updatePrice(event.target.value)}
-                className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/50"
-              >
-                <option value="all">All</option>
-                <option value="under-25">Under $25</option>
-                <option value="25-100">$25 to $100</option>
-                <option value="over-100">Over $100</option>
-              </select>
-            </label>
-          ) : null}
+      {enableStockFilter ? (
+        <div>
+          <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
+            Stock
+          </span>
+          <button
+            type="button"
+            onClick={updateInStock}
+            aria-pressed={inStockOnly}
+            className={`h-11 border px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-colors duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 ${
+              inStockOnly
+                ? "border-red-600 bg-red-600"
+                : "border-white/25 bg-black hover:border-white/50"
+            }`}
+          >
+            In stock
+          </button>
+        </div>
+      ) : null}
 
-          {enableSort ? (
-            <label className="block">
-              <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
-                Sort
-              </span>
-              <select
-                value={sortMode}
-                onChange={(event) => updateSort(event.target.value)}
-                className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors focus:border-white/50"
-              >
-                <option value="featured">Featured</option>
-                <option value="price-low">Price ↑</option>
-                <option value="price-high">Price ↓</option>
-                <option value="name">Name</option>
-              </select>
-            </label>
-          ) : null}
+      {enablePriceFilter ? (
+        <label className="block">
+          <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
+            Price
+          </span>
+          <select
+            value={priceMode}
+            onChange={(event) => updatePrice(event.target.value)}
+            className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors duration-300 ease-out focus:border-white/50"
+          >
+            <option value="all">All</option>
+            <option value="under-25">Under $25</option>
+            <option value="25-100">$25 to $100</option>
+            <option value="over-100">Over $100</option>
+          </select>
+        </label>
+      ) : null}
 
-          {hasFilters ? (
+      {enableSort ? (
+        <label className="block">
+          <span className="mb-2 block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white">
+            Sort
+          </span>
+          <select
+            value={sortMode}
+            onChange={(event) => updateSort(event.target.value)}
+            className="h-11 w-full border border-white/25 bg-black px-3 text-xs font-semibold text-white outline-none transition-colors duration-300 ease-out focus:border-white/50"
+          >
+            <option value="featured">Featured</option>
+            <option value="price-low">Price ↑</option>
+            <option value="price-high">Price ↓</option>
+            <option value="name">Name</option>
+          </select>
+        </label>
+      ) : null}
+
+      {hasFilters ? (
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="h-11 border border-white/25 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-opacity duration-300 ease-out hover:opacity-80"
+        >
+          Clear
+        </button>
+      ) : null}
+    </>
+  );
+
+  return (
+    <div
+      className={`mx-auto max-w-7xl ${showFilterBar ? "space-y-8 sm:space-y-10" : "space-y-0"}`}
+    >
+      {showFilterBar ? (
+        <>
+          {/* Mobile: compact bar — no sticky full filter stack covering the catalog */}
+          <div className="flex items-center gap-3 lg:hidden">
             <button
               type="button"
-              onClick={clearFilters}
-              className="h-11 border border-white/25 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-80"
+              onClick={() => setMobileFiltersOpen(true)}
+              className="inline-flex h-12 flex-1 items-center justify-center gap-2 border border-white/15 bg-[#080808] px-4 text-[0.7rem] font-black uppercase tracking-[0.16em] text-white transition-colors duration-300 ease-out hover:border-white/35"
             >
-              Clear
+              Filters{hasFilters ? " · On" : ""}
             </button>
+            {hasFilters ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="h-12 shrink-0 border border-white/15 px-4 text-[0.65rem] font-black uppercase tracking-[0.12em] text-white/70 transition-colors duration-300 ease-out hover:text-white"
+              >
+                Clear
+              </button>
+            ) : null}
+          </div>
+
+          {/* Desktop: sticky filter row under nav */}
+          <div className="relative z-20 hidden gap-5 border border-white/[0.1] bg-[#080808] p-4 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:p-5 lg:sticky lg:top-24 lg:grid lg:grid-cols-[minmax(0,1.2fr)_auto_auto_auto] lg:items-end">
+            {filterControls}
+          </div>
+
+          {mobileFiltersOpen ? (
+            <FixedPortal>
+              <div
+                className="fixed inset-0 z-[120] flex flex-col bg-black/90 pt-[max(0.75rem,env(safe-area-inset-top))] lg:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Shop filters"
+              >
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                  <p className="text-[0.7rem] font-black uppercase tracking-[0.18em] text-white">
+                    Filters
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center border border-white/15 text-white"
+                    aria-label="Close filters"
+                  >
+                    <X className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 py-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                  {filterControls}
+                  <button
+                    type="button"
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="h-12 w-full bg-red-600 text-[0.7rem] font-black uppercase tracking-[0.16em] text-white transition-colors duration-300 ease-out hover:bg-red-500"
+                  >
+                    Show results
+                  </button>
+                </div>
+              </div>
+            </FixedPortal>
           ) : null}
-        </div>
+        </>
       ) : null}
 
       {!showSearch && showFilterBar && query ? (

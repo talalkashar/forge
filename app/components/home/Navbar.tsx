@@ -190,31 +190,46 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen ? (
           <motion.div
-            className="fixed inset-0 z-40 bg-black lg:hidden"
+            className="pointer-events-auto fixed inset-0 z-[60] bg-black lg:hidden"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex h-full flex-col px-6 pb-10 pt-24">
-              <p className="mb-8 text-[0.65rem] font-bold uppercase tracking-[0.28em] text-red-500">
-                FORGE GYM™
-              </p>
-              <nav className="flex flex-1 flex-col gap-1" aria-label="Mobile">
+            <div className="flex h-full flex-col px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-24">
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-red-500">
+                  FORGE GYM™
+                </p>
+                <button
+                  type="button"
+                  onClick={closeMenu}
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center border border-white/15 text-white"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overscroll-contain" aria-label="Mobile">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.href}
                     initial={
                       prefersReducedMotion
                         ? false
-                        : { opacity: 0, x: -16 }
+                        : { opacity: 0, y: 10 }
                     }
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.04, duration: 0.3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: prefersReducedMotion ? 0 : index * 0.05,
+                      duration: 0.45,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className="block border-b border-white/[0.06] py-4 text-2xl font-black tracking-tight text-white transition-colors hover:text-red-400"
+                      className="block border-b border-white/[0.06] py-4 text-2xl font-black tracking-tight text-white transition-colors duration-300 ease-out hover:text-red-400"
                     >
                       {link.label}
                     </Link>
@@ -224,7 +239,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={openSearch}
-                className="mt-6 w-full border border-white/15 py-4 text-xs font-black uppercase tracking-[0.16em] text-white"
+                className="mt-6 w-full border border-white/15 py-4 text-xs font-black uppercase tracking-[0.16em] text-white transition-colors duration-300 ease-out hover:border-white/35"
               >
                 Search gear
               </button>
