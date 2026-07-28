@@ -42,7 +42,6 @@ export default function RelatedProducts({
                       fill
                       sizes="96px"
                       quality={70}
-                      sizes="96px"
                       className="object-contain p-1.5"
                     />
                   ) : null}
