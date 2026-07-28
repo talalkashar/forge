@@ -210,7 +210,7 @@ export default function Hero() {
   // Desktop hi-res upgrade only (never in TikTok).
   useEffect(() => {
     if (!videoLive || upgradedRef.current || preferStatic || videoFailed) return;
-    if (blockVideoElement || !wantsHiResUpgrade()) return;
+    if (!allowVideoElement || !wantsHiResUpgrade()) return;
 
     const el = videoRef.current;
     if (!el) return;
