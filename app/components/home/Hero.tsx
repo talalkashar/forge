@@ -234,7 +234,7 @@ export default function Hero() {
               ref={videoRef}
               className={`absolute inset-0 h-full w-full object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%] ${
                 videoLive
-                  ? "opacity-100 transition-opacity duration-200 ease-out"
+                  ? "opacity-100 transition-opacity duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                   : "opacity-0"
               }`}
               autoPlay

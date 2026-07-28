@@ -20,6 +20,13 @@
   --forge-tracking-micro: 0.16em;
   --forge-radius-btn: 9999px;
   --forge-radius-panel: 0;
+  /* Motion — quick + soft settle (matches lib/motion.ts) */
+  --forge-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --forge-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --forge-duration-instant: 160ms;
+  --forge-duration-fast: 280ms;
+  --forge-duration-base: 400ms;
+  --forge-duration-slow: 550ms;
 }
 
 /* Unified page shell helpers */
@@ -102,14 +109,86 @@ body {
   animation: forgeMarquee 32s linear infinite;
 }
 
-/* Page enter disabled — avoid paint on every navigation */
+/* Soft page enter — short, GPU-friendly, no layout thrash */
+@keyframes forgePageEnter {
+  from {
+    opacity: 0.001;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .page-enter {
-  animation: none;
+  animation: forgePageEnter var(--forge-duration-base) var(--forge-ease) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .forge-marquee {
     animation: none !important;
+  }
+
+  .page-enter {
+    animation: none !important;
+  }
+}
+
+/* Interactive chrome — default smooth feel site-wide */
+a,
+button,
+[role="button"],
+summary {
+  transition-property: color, background-color, border-color, opacity, transform,
+    box-shadow, filter;
+  transition-duration: var(--forge-duration-fast);
+  transition-timing-function: var(--forge-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a,
+  button,
+  [role="button"],
+  summary {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Product / shop cards */
+.forge-card {
+  transition:
+    border-color var(--forge-duration-fast) var(--forge-ease),
+    box-shadow var(--forge-duration-base) var(--forge-ease),
+    transform var(--forge-duration-fast) var(--forge-ease);
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .forge-card:hover {
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+.forge-card-img {
+  transition: transform var(--forge-duration-base) var(--forge-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .forge-card:hover .forge-card-img {
+    transform: scale(1.04);
+  }
+}
+
+/* Touch: no hover lift (avoids sticky hover on mobile) */
+@media (pointer: coarse) {
+  .forge-card {
+    will-change: auto;
+  }
+
+  .forge-card:active {
+    transform: scale(0.99);
+    transition-duration: var(--forge-duration-instant);
   }
 }
 
@@ -582,8 +661,13 @@ body.menu-open {
 }
 
 .forge-ease {
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  transition-duration: 400ms;
+  transition-timing-function: var(--forge-ease);
+  transition-duration: var(--forge-duration-base);
+}
+
+.forge-ease-fast {
+  transition-timing-function: var(--forge-ease-out);
+  transition-duration: var(--forge-duration-fast);
 }
 
 /*

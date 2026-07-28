@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import type { StorefrontProduct } from "@/lib/products";
+import { forgeTransition, forgeTransitionFast } from "@/lib/motion";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -461,8 +462,8 @@ export default function ProductDetailPage({
                           ? undefined
                           : { scale: 0.985 }
                       }
-                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                      className={`w-full rounded-full px-6 py-4 text-sm font-black uppercase tracking-[0.16em] transition-colors duration-300 ease-out ${
+                      transition={forgeTransitionFast}
+                      className={`w-full rounded-full px-6 py-4 text-sm font-black uppercase tracking-[0.16em] ${
                         addToCartDisabled
                           ? "cursor-not-allowed border border-white/10 bg-white/[0.04] text-white/35"
                           : "bg-red-600 text-white hover:bg-red-500"
@@ -562,7 +563,7 @@ export default function ProductDetailPage({
                     initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    transition={forgeTransition}
                     className="overflow-hidden"
                   >
                     <div className="border border-t-0 border-white/[0.08] bg-black p-5 sm:p-6">
@@ -624,7 +625,7 @@ export default function ProductDetailPage({
             initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            transition={forgeTransitionFast}
             className="pointer-events-auto fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-4 right-4 z-[130] flex items-center justify-between gap-3 border border-white/10 bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-2xl sm:bottom-8 sm:left-auto sm:right-6 sm:max-w-sm"
             role="status"
           >
@@ -655,7 +656,7 @@ export default function ProductDetailPage({
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={forgeTransition}
             onClick={() => setIsZoomed(false)}
           >
             <button
@@ -699,7 +700,7 @@ export default function ProductDetailPage({
               initial={prefersReducedMotion ? false : { scale: 0.97, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={prefersReducedMotion ? undefined : { scale: 0.98, opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={forgeTransition}
               onClick={(event) => event.stopPropagation()}
             >
               <Image

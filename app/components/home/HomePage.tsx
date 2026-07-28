@@ -125,15 +125,15 @@ export default function HomePage() {
                 <Link
                   key={product.title}
                   href={product.href}
-                  className="group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] transition-[border-color,box-shadow,transform] duration-200 hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 sm:hover:-translate-y-0.5 active:border-red-500/40"
+                  className="forge-card group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/70 active:border-red-500/40"
                 >
                   <div
-                    className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-200 group-hover:via-red-500/70"
+                    className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-[var(--forge-duration-fast)] group-hover:via-red-500/70"
                     aria-hidden="true"
                   />
                   <div className="relative aspect-square overflow-hidden bg-black">
                     <div
-                      className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(110,14,14,0.28),transparent_58%)] transition-opacity duration-200 group-hover:opacity-100"
+                      className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(110,14,14,0.28),transparent_58%)] transition-opacity duration-[var(--forge-duration-fast)] group-hover:opacity-100"
                       aria-hidden="true"
                     />
                     <Image
@@ -142,7 +142,7 @@ export default function HomePage() {
                       fill
                       sizes="(max-width: 640px) 100vw, 25vw"
                       quality={90}
-                      className="object-contain p-2 transition-transform duration-300 sm:p-2.5 sm:group-hover:scale-[1.05]"
+                      className="forge-card-img object-contain p-2 sm:p-2.5"
                     />
                   </div>
                   <div className="flex items-start justify-between gap-3 border-t border-white/[0.06] p-5 sm:p-5">

@@ -46,14 +46,14 @@ export default function ProductCard({
 
   return (
     <article
-      className="group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)]"
+      className="forge-card group relative flex h-full flex-col overflow-hidden border border-white/[0.1] bg-[#080808] hover:border-red-500/45 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.18),0_18px_50px_rgba(0,0,0,0.55)]"
       onMouseEnter={() => {
         if (secondary) setShowSecondary(true);
       }}
       onMouseLeave={() => setShowSecondary(false)}
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-200 group-hover:via-red-500/70"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent transition-opacity duration-[var(--forge-duration-fast)] group-hover:via-red-500/70"
         aria-hidden="true"
       />
       <Link
@@ -72,7 +72,7 @@ export default function ProductCard({
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
               quality={90}
-              className={`object-contain p-2 transition-opacity duration-200 sm:p-2.5 ${
+              className={`forge-card-img object-contain p-2 transition-opacity duration-[var(--forge-duration-fast)] ease-[var(--forge-ease)] sm:p-2.5 ${
                 showSecondary && secondary ? "opacity-0" : "opacity-100"
               }`}
             />
@@ -86,7 +86,7 @@ export default function ProductCard({
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
               quality={90}
               loading="lazy"
-              className="object-contain p-2 transition-transform duration-300 group-hover:scale-[1.05] sm:p-2.5"
+              className="forge-card-img object-contain p-2 sm:p-2.5"
               aria-hidden="true"
             />
           ) : null}

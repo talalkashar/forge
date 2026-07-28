@@ -7,6 +7,7 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { FixedPortal } from "@/app/components/providers/FixedPortal";
 import { useCart } from "@/context/CartContext";
+import { forgeEase, forgeTransition } from "@/lib/motion";
 import ProductSearchModal from "../product/ProductSearchModal";
 import ForgeLogo from "./ForgeLogo";
 
@@ -194,7 +195,11 @@ export default function Navbar() {
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : { ...forgeTransition, duration: 0.32 }
+            }
           >
             <div className="flex h-full flex-col px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-24">
               <div className="mb-6 flex items-center justify-between gap-3">
@@ -221,15 +226,15 @@ export default function Navbar() {
                     }
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
-                      delay: prefersReducedMotion ? 0 : index * 0.05,
-                      duration: 0.45,
-                      ease: [0.22, 1, 0.36, 1],
+                      delay: prefersReducedMotion ? 0 : index * 0.035,
+                      duration: 0.32,
+                      ease: forgeEase,
                     }}
                   >
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className="block border-b border-white/[0.06] py-4 text-2xl font-black tracking-tight text-white transition-colors duration-300 ease-out hover:text-red-400"
+                      className="block border-b border-white/[0.06] py-4 text-2xl font-black tracking-tight text-white hover:text-red-400"
                     >
                       {link.label}
                     </Link>
