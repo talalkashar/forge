@@ -75,7 +75,7 @@ export type ProductPresentation = {
 /* gallery-v4: 1 = official product photo with transparent BG (like belt heroes);
    2 to 6 = TikTok marketing pack (IMG_4041 to 4045). */
 const strapProductImages = [
-  "/images/straps/listing/gallery-v4-1.png",
+  "/images/straps/listing/gallery-v4-1.webp",
   "/images/straps/listing/gallery-v4-2.jpg",
   "/images/straps/listing/gallery-v4-3.jpg",
   "/images/straps/listing/gallery-v4-4.jpg",
@@ -153,7 +153,7 @@ const blackBeltImageAlts = [
 ];
 
 const strapDescriptionGalleryImages = [
-  "/images/straps/listing/gallery-v4-1.png",
+  "/images/straps/listing/gallery-v4-1.webp",
   "/images/straps/listing/gallery-v4-2.jpg",
   "/images/straps/listing/gallery-v4-5.jpg",
   "/images/straps/listing/gallery-v4-6.jpg",
@@ -357,7 +357,7 @@ export const productPresentationBySlug: Record<string, ProductPresentation> = {
     descriptionSections: [
       {
         title: "1. Unbreakable Strength:",
-        images: ["/images/straps/listing/gallery-v4-1.png"],
+        images: ["/images/straps/listing/gallery-v4-1.webp"],
         text: "Push beyond limits with wrist straps built to endure your toughest sessions. Crafted from high-grade cotton and reinforced stitching, these straps support your grip so you can lift heavier and train harder without slipping or tearing.",
       },
       {

@@ -60,10 +60,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 768, 1024, 1280, 1536],
-    imageSizes: [96, 160, 256, 384, 512],
-    qualities: [70, 74, 75, 80, 82, 85, 86, 90, 92],
-    minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Tighter set → fewer oversized derivatives for product cards / PDP
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600],
+    imageSizes: [64, 96, 128, 256, 384],
+    qualities: [60, 65, 70, 72, 74, 75, 78, 80, 82, 85, 86, 90],
+    // Long cache for optimized product assets (immutable paths + versioned content)
+    minimumCacheTTL: 60 * 60 * 24 * 60,
   },
 };
 

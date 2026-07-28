@@ -140,8 +140,8 @@ export default function HomePage() {
                       src={product.image}
                       alt={product.title}
                       fill
-                      sizes="(max-width: 640px) 100vw, 25vw"
-                      quality={90}
+                      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 280px"
+                      quality={72}
                       className="forge-card-img object-contain p-2 sm:p-2.5"
                     />
                   </div>

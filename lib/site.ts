@@ -54,7 +54,7 @@ export const site = {
     "/images/belts/listing/berserk/main.jpg",
     "/images/belts/listing/zeus/main.jpg",
     "/images/belts/listing/black/gallery-v7-1.jpg",
-    "/images/straps/listing/gallery-v4-1.png",
+    "/images/straps/listing/gallery-v4-1.webp",
   ],
   email: "contact@forgegym.us",
   instagram: "https://www.instagram.com/forgegym.us/",

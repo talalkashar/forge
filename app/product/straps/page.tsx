@@ -23,7 +23,7 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "FORGE GYM heavy-duty lifting straps with padded wrist support and non-slip grip. Built for deadlifts, rows, and high-volume pull sessions.",
   path: "/product/straps",
-  ogImage: "/images/straps/listing/gallery-v4-1.png",
+  ogImage: "/images/straps/listing/gallery-v4-1.webp",
   ogImageAlt: "FORGE GYM heavy-duty lifting wrist straps",
   keywords: [
     "lifting straps",

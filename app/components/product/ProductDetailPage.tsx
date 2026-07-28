@@ -75,11 +75,38 @@ export default function ProductDetailPage({
   const [isZoomed, setIsZoomed] = useState(false);
   const [notification, setNotification] = useState("");
   const notificationTimeoutRef = useRef<number | null>(null);
+  /** Keep previous frame visible until the next gallery image is decoded (feels instant). */
+  const [displayedImage, setDisplayedImage] = useState(
+    () => product.images[0] ?? "",
+  );
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
 
   const currentImage = useMemo(
     () => product.images[currentImageIndex] ?? product.images[0],
     [currentImageIndex, product.images],
   );
+
+  useEffect(() => {
+    if (!currentImage || currentImage === displayedImage) {
+      setPendingImage(null);
+      return;
+    }
+    setPendingImage(currentImage);
+  }, [currentImage, displayedImage]);
+
+  // Warm the next 1–2 gallery frames in the background.
+  useEffect(() => {
+    if (product.images.length < 2) return;
+    const warm = [
+      product.images[(currentImageIndex + 1) % product.images.length],
+      product.images[(currentImageIndex + 2) % product.images.length],
+    ].filter(Boolean) as string[];
+    for (const src of warm) {
+      const img = new window.Image();
+      img.decoding = "async";
+      img.src = src;
+    }
+  }, [currentImageIndex, product.images]);
   const currentImageLabel =
     product.imageAlts?.[currentImageIndex] ??
     `${product.name} image ${currentImageIndex + 1}`;
@@ -273,26 +300,56 @@ export default function ProductDetailPage({
                       onClick={() => setIsZoomed(true)}
                       aria-label="Open fullscreen image"
                     >
-                      <Image
-                        key={currentImage}
-                        src={currentImage}
-                        alt={currentImageLabel}
-                        fill
-                        priority
-                        sizes="(max-width: 1024px) 100vw, 58vw"
-                        quality={86}
-                        style={{
-                          objectPosition: currentImageIsEditorial
-                            ? galleryImagePosition(currentImage)
-                            : "center",
-                        }}
-                        className={
-                          currentImageIsEditorial
-                            ? "object-cover"
-                            : "object-contain p-5 sm:p-8"
-                        }
-                        draggable={false}
-                      />
+                      {/* Stable layer — never blanks while swapping slides */}
+                      {displayedImage ? (
+                        <Image
+                          src={displayedImage}
+                          alt={currentImageLabel}
+                          fill
+                          priority
+                          fetchPriority="high"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 640px"
+                          quality={74}
+                          style={{
+                            objectPosition: isEditorialGalleryImage(displayedImage)
+                              ? galleryImagePosition(displayedImage)
+                              : "center",
+                          }}
+                          className={
+                            isEditorialGalleryImage(displayedImage)
+                              ? "object-cover"
+                              : "object-contain p-5 sm:p-8"
+                          }
+                          draggable={false}
+                        />
+                      ) : null}
+                      {/* Pending layer fades in when decoded, then becomes stable */}
+                      {pendingImage ? (
+                        <Image
+                          key={pendingImage}
+                          src={pendingImage}
+                          alt=""
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 640px"
+                          quality={74}
+                          style={{
+                            objectPosition: isEditorialGalleryImage(pendingImage)
+                              ? galleryImagePosition(pendingImage)
+                              : "center",
+                          }}
+                          className={
+                            // Invisible decode layer — browser caches the bytes for instant swap
+                            isEditorialGalleryImage(pendingImage)
+                              ? "pointer-events-none object-cover opacity-0"
+                              : "pointer-events-none object-contain p-5 opacity-0 sm:p-8"
+                          }
+                          draggable={false}
+                          onLoadingComplete={() => {
+                            setDisplayedImage(pendingImage);
+                            setPendingImage(null);
+                          }}
+                        />
+                      ) : null}
                     </button>
 
                     <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 border border-white/20 bg-black/60 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 sm:bottom-4">
@@ -347,7 +404,8 @@ export default function ProductDetailPage({
                           alt=""
                           fill
                           sizes="72px"
-                          quality={86}
+                          quality={60}
+                          loading={index < 4 ? "eager" : "lazy"}
                           style={{
                             objectPosition: editorial
                               ? galleryImagePosition(image)
@@ -707,8 +765,9 @@ export default function ProductDetailPage({
                 src={currentImage}
                 alt={currentImageLabel}
                 fill
-                sizes="100vw"
-                quality={86}
+                sizes="(max-width: 1024px) 100vw, 1100px"
+                quality={78}
+                priority={false}
                 style={{
                   objectPosition: currentImageIsEditorial
                     ? galleryImagePosition(currentImage)

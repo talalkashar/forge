@@ -70,8 +70,8 @@ export default function ProductCard({
               src={primary}
               alt={product.name}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
-              quality={90}
+              quality={72}
+              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 320px"
               className={`forge-card-img object-contain p-2 transition-opacity duration-[var(--forge-duration-fast)] ease-[var(--forge-ease)] sm:p-2.5 ${
                 showSecondary && secondary ? "opacity-0" : "opacity-100"
               }`}
@@ -83,8 +83,8 @@ export default function ProductCard({
               src={secondary}
               alt=""
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 360px"
-              quality={90}
+              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 320px"
+              quality={70}
               loading="lazy"
               className="forge-card-img object-contain p-2 sm:p-2.5"
               aria-hidden="true"
