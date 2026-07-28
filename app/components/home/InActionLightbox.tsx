@@ -142,7 +142,7 @@ function InActionLightbox({
                 width={1600}
                 height={1200}
                 sizes="100vw"
-                quality={86}
+                quality={74}
                 className="max-h-[92vh] w-full object-contain"
               />
             )}

@@ -199,7 +199,7 @@ export function BeltSizeChartModal({
               alt={`${productName} size chart with waist measurements for S through XXL`}
               fill
               sizes="(max-width: 768px) 100vw, 720px"
-              quality={86}
+              quality={72}
               className="object-contain"
               priority
             />

@@ -41,7 +41,8 @@ export default function RelatedProducts({
                       alt={product.name}
                       fill
                       sizes="96px"
-                      quality={82}
+                      quality={70}
+                      sizes="96px"
                       className="object-contain p-1.5"
                     />
                   ) : null}

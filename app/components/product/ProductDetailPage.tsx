@@ -595,7 +595,8 @@ export default function ProductDetailPage({
                       alt={`${product.name} size chart`}
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      quality={86}
+                      quality={74}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-contain p-4"
                     />
                   </div>
