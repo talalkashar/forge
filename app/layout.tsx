@@ -129,17 +129,11 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
-        {/* Light hero loop (~1.2MB) — preloaded for all viewports for fastest start */}
+        {/* Poster only — never preload as=video (TikTok treats that as a playable movie). */}
         <link
           rel="preload"
           as="image"
           href="/videos/posters/forge-hero-berserk.jpg"
-        />
-        <link
-          rel="preload"
-          as="video"
-          href="/videos/hero/forge-hero-berserk-mobile.mp4?v=20260728a"
-          type="video/mp4"
         />
       </head>
       <body className="flex min-h-full flex-col bg-black text-white">
