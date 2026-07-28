@@ -2,22 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
-// Cache-bust video encodes when replaced. Poster path stays clean for next/image.
-const HERO_ASSET_V = "20260722d";
-const HERO_VIDEO_MP4 = `/videos/hero/forge-hero-berserk.mp4?v=${HERO_ASSET_V}`;
-const HERO_VIDEO_WEBM = `/videos/hero/forge-hero-berserk.webm?v=${HERO_ASSET_V}`;
-const HERO_VIDEO_MOBILE_MP4 = `/videos/hero/forge-hero-berserk-mobile.mp4?v=${HERO_ASSET_V}`;
-const HERO_VIDEO_MOBILE_WEBM = `/videos/hero/forge-hero-berserk-mobile.webm?v=${HERO_ASSET_V}`;
+/**
+ * Hero media — prefer the light encode for everyone so the loop starts ASAP.
+ * Desktop 4MB file was the main delay on first paint.
+ */
+const HERO_ASSET_V = "20260728a";
+const HERO_VIDEO_MP4 = `/videos/hero/forge-hero-berserk-mobile.mp4?v=${HERO_ASSET_V}`;
+const HERO_VIDEO_WEBM = `/videos/hero/forge-hero-berserk-mobile.webm?v=${HERO_ASSET_V}`;
+/** Optional hi-res for large fine-pointer screens after first paint (progressive). */
+const HERO_VIDEO_HIRES_MP4 = `/videos/hero/forge-hero-berserk.mp4?v=${HERO_ASSET_V}`;
 const HERO_POSTER = "/videos/posters/forge-hero-berserk.jpg";
-
-type HeroSources = { mp4: string; webm: string; mode: "mobile" | "desktop" };
 
 function subscribeReducedMotion(onChange: () => void) {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -33,78 +29,49 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
-function isMobileViewport() {
-  return (
-    window.matchMedia("(max-width: 1024px)").matches ||
-    window.matchMedia("(pointer: coarse)").matches
+/** True only after client hydration (avoids SSR source mismatches). */
+function useIsClient() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
   );
 }
 
-function pickSources(): HeroSources {
-  if (isMobileViewport()) {
-    return {
-      mp4: HERO_VIDEO_MOBILE_MP4,
-      webm: HERO_VIDEO_MOBILE_WEBM,
-      mode: "mobile",
-    };
-  }
-  return {
-    mp4: HERO_VIDEO_MP4,
-    webm: HERO_VIDEO_WEBM,
-    mode: "desktop",
-  };
+function wantsHiResUpgrade() {
+  return (
+    window.matchMedia("(min-width: 1280px)").matches &&
+    window.matchMedia("(pointer: fine)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 }
 
 /**
  * Full-viewport cinematic hero.
- * - Poster = instant first paint (LCP)
- * - Correct encode mounts once (no mobile→desktop remount hitch on desktop)
- * - Video stays under the poster until frame 0 is actually playing, then a short crossfade
+ * Fast path: light MP4 mounts on first client render → play ASAP → short crossfade from poster.
  */
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoLive, setVideoLive] = useState(false);
-  /** null until layout effect — avoids SSR/client source mismatch remounts */
-  const [sources, setSources] = useState<HeroSources | null>(null);
+  const upgradedRef = useRef(false);
 
+  const isClient = useIsClient();
   const preferStatic = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
     getReducedMotionServerSnapshot,
   );
 
-  // Before paint: pick the right file once so desktop never loads mobile then swaps.
-  useLayoutEffect(() => {
-    if (preferStatic) return;
-    setSources(pickSources());
-  }, [preferStatic]);
+  const showVideo = isClient && !preferStatic && !videoFailed;
 
-  // Warm cache as soon as we know the path.
-  useLayoutEffect(() => {
-    if (!sources || preferStatic || videoFailed) return;
-    const id = "forge-hero-video-preload";
-    let link = document.getElementById(id) as HTMLLinkElement | null;
-    if (!link) {
-      link = document.createElement("link");
-      link.id = id;
-      link.rel = "preload";
-      link.as = "video";
-      link.type = "video/mp4";
-      document.head.appendChild(link);
-    }
-    if (link.href !== new URL(sources.mp4, window.location.origin).href) {
-      link.href = sources.mp4;
-    }
-  }, [sources, preferStatic, videoFailed]);
-
-  // Drive autoplay + seamless reveal.
-  useLayoutEffect(() => {
+  // Autoplay + reveal as soon as the first frames are ready.
+  useEffect(() => {
     const el = videoRef.current;
-    if (!el || !sources || preferStatic || videoFailed) return;
+    if (!el || !showVideo) return;
 
     let cancelled = false;
-    let revealed = false;
+    let live = false;
 
     el.muted = true;
     el.defaultMuted = true;
@@ -112,92 +79,72 @@ export default function Hero() {
     el.playsInline = true;
     el.autoplay = true;
     el.loop = true;
+    el.preload = "auto";
     el.setAttribute("muted", "");
     el.setAttribute("playsinline", "");
     el.setAttribute("webkit-playsinline", "");
     el.setAttribute("autoplay", "");
 
-    const markLive = () => {
-      if (cancelled || revealed) return;
-      // Only show video once we're actually at the start of the loop.
-      if (el.currentTime > 0.25) {
-        try {
-          el.currentTime = 0;
-        } catch {
-          // keep going
-        }
-      }
-      const paint = () => {
-        if (cancelled || revealed) return;
-        revealed = true;
-        setVideoLive(true);
-      };
-      const v = el as HTMLVideoElement & {
-        requestVideoFrameCallback?: (cb: () => void) => number;
-      };
-      if (typeof v.requestVideoFrameCallback === "function") {
-        v.requestVideoFrameCallback(() => paint());
-      } else {
-        requestAnimationFrame(() => requestAnimationFrame(paint));
-      }
+    const goLive = () => {
+      if (cancelled || live) return;
+      live = true;
+      setVideoLive(true);
     };
 
     const tryPlay = () => {
       if (cancelled || document.hidden) return;
       const p = el.play();
       if (p !== undefined) {
-        p.then(() => markLive()).catch(() => {
-          // Will retry on canplay / gesture.
+        p.then(() => {
+          if (!cancelled) goLive();
+        }).catch(() => {
+          // Retry on next canplay / gesture.
         });
       }
     };
 
-    const onMeta = () => {
+    const onReady = () => {
       try {
-        if (el.currentTime !== 0) el.currentTime = 0;
+        if (el.currentTime > 0.05) el.currentTime = 0;
       } catch {
         // ignore
       }
       tryPlay();
-    };
-
-    const onPlaying = () => markLive();
-
-    const onVisibility = () => {
-      if (document.hidden) {
-        el.pause();
-      } else {
+      // If we already have data, reveal quickly even if play() is slightly deferred.
+      if (el.readyState >= 2) {
+        goLive();
         tryPlay();
       }
     };
 
-    // Only pause when hero leaves view after it has already started (avoid IO fighting first paint).
+    const onPlaying = () => goLive();
+
+    const onVisibility = () => {
+      if (document.hidden) el.pause();
+      else tryPlay();
+    };
+
     const io =
       typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver(
             ([entry]) => {
-              if (!entry || !revealed) return;
-              if (entry.isIntersecting && entry.intersectionRatio > 0.12) {
-                tryPlay();
-              } else if (!entry.isIntersecting) {
-                el.pause();
-              }
+              if (!entry) return;
+              if (entry.isIntersecting) tryPlay();
+              else if (live) el.pause();
             },
-            { threshold: [0, 0.12, 0.5] },
+            { threshold: [0, 0.1] },
           )
         : null;
     io?.observe(el);
 
-    el.addEventListener("loadedmetadata", onMeta);
-    el.addEventListener("loadeddata", tryPlay);
-    el.addEventListener("canplay", tryPlay);
+    el.addEventListener("loadeddata", onReady);
+    el.addEventListener("canplay", onReady);
     el.addEventListener("playing", onPlaying);
     document.addEventListener("visibilitychange", onVisibility);
 
-    // Immediate kicks — desktop local should hit canplay almost instantly.
-    if (el.readyState >= 2) {
-      onMeta();
-    } else {
+    // Kick immediately — light file should buffer fast on localhost/prod.
+    if (el.readyState >= 2) onReady();
+    else {
       try {
         el.load();
       } catch {
@@ -206,8 +153,8 @@ export default function Hero() {
       tryPlay();
     }
 
-    const t1 = window.setTimeout(tryPlay, 120);
-    const t2 = window.setTimeout(tryPlay, 400);
+    const t1 = window.setTimeout(tryPlay, 50);
+    const t2 = window.setTimeout(tryPlay, 200);
 
     const unlock = () => tryPlay();
     window.addEventListener("touchstart", unlock, { passive: true, once: true });
@@ -217,18 +164,51 @@ export default function Hero() {
       cancelled = true;
       window.clearTimeout(t1);
       window.clearTimeout(t2);
-      el.removeEventListener("loadedmetadata", onMeta);
-      el.removeEventListener("loadeddata", tryPlay);
-      el.removeEventListener("canplay", tryPlay);
+      el.removeEventListener("loadeddata", onReady);
+      el.removeEventListener("canplay", onReady);
       el.removeEventListener("playing", onPlaying);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("touchstart", unlock);
       window.removeEventListener("pointerdown", unlock);
       io?.disconnect();
     };
-  }, [sources, preferStatic, videoFailed]);
+  }, [showVideo]);
 
-  const showVideo = Boolean(sources) && !preferStatic && !videoFailed;
+  // Optional: after the light loop is live, quietly upgrade large desktops to hi-res.
+  useEffect(() => {
+    if (!videoLive || upgradedRef.current || preferStatic || videoFailed) return;
+    if (!wantsHiResUpgrade()) return;
+
+    const el = videoRef.current;
+    if (!el) return;
+
+    // Don't interrupt if network is slow — only upgrade after a short idle.
+    const timer = window.setTimeout(() => {
+      if (upgradedRef.current || document.hidden) return;
+      upgradedRef.current = true;
+      const t = el.currentTime;
+      const wasPaused = el.paused;
+      // Swap to hi-res mp4 only (same loop content).
+      while (el.firstChild) el.removeChild(el.firstChild);
+      const src = document.createElement("source");
+      src.src = HERO_VIDEO_HIRES_MP4;
+      src.type = "video/mp4";
+      el.appendChild(src);
+      el.load();
+      const resume = () => {
+        try {
+          el.currentTime = t;
+        } catch {
+          // ignore
+        }
+        if (!wasPaused) void el.play().catch(() => {});
+        el.removeEventListener("loadeddata", resume);
+      };
+      el.addEventListener("loadeddata", resume);
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [videoLive, preferStatic, videoFailed]);
 
   return (
     <section
@@ -237,7 +217,6 @@ export default function Hero() {
     >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0">
-          {/* Always-visible base — matches product framing so the handoff feels intentional */}
           <Image
             src={HERO_POSTER}
             alt=""
@@ -245,20 +224,19 @@ export default function Hero() {
             priority
             fetchPriority="high"
             sizes="100vw"
-            quality={88}
+            quality={82}
             className="object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%]"
             aria-hidden="true"
           />
 
-          {showVideo && sources ? (
+          {showVideo ? (
             <video
               ref={videoRef}
               className={`absolute inset-0 h-full w-full object-cover object-[center_36%] sm:object-[center_40%] lg:object-[center_42%] ${
                 videoLive
-                  ? "opacity-100 transition-opacity duration-500 ease-out"
+                  ? "opacity-100 transition-opacity duration-200 ease-out"
                   : "opacity-0"
               }`}
-              // No poster attr — we own the poster Image under the video to avoid double flash.
               autoPlay
               muted
               loop
@@ -271,8 +249,8 @@ export default function Hero() {
                 setVideoLive(false);
               }}
             >
-              <source src={sources.mp4} type="video/mp4" />
-              <source src={sources.webm} type="video/webm" />
+              <source src={HERO_VIDEO_MP4} type="video/mp4" />
+              <source src={HERO_VIDEO_WEBM} type="video/webm" />
             </video>
           ) : null}
 
