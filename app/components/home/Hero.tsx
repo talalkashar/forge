@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { isHostileVideoWebview } from "@/lib/in-app-browser";
 
 /**
  * Hero belt loop.
@@ -37,16 +38,6 @@ function useIsClient() {
     () => () => {},
     () => true,
     () => false,
-  );
-}
-
-/** Webviews that promote or intercept HTML5 video into a native player UI. */
-function isHostileVideoWebview() {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || "";
-  // TikTok is the main offender; cast a wide net for ByteDance + other in-app browsers.
-  return /TikTok|Bytedance|ByteLocale|musical_ly|Aweme|ultralite|Webcast|Instagram|FBAN|FBAV|FB_IAB|Line\//i.test(
-    ua,
   );
 }
 

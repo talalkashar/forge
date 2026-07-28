@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import Reveal from "@/components/ui/reveal";
+import { isHostileVideoWebview } from "@/lib/in-app-browser";
 
 const InActionLightbox = dynamic(
   () => import("./InActionLightbox").then((mod) => mod.default),
@@ -47,7 +48,6 @@ const inActionImages = Object.freeze<InActionMedia[]>([
     position: "center 40%",
   },
   {
-    // Midnight-graded lifestyle stills (matched to Training videos cooler grade).
     src: "/images/straps/lifestyle/in-action/straps-deadlift-setup.jpg",
     alt: "FORGE wrist straps wrapped around a loaded barbell",
     className: "h-[22rem] sm:h-[24rem] md:col-span-4 md:h-full",
@@ -77,79 +77,134 @@ const inActionImages = Object.freeze<InActionMedia[]>([
   },
 ]);
 
+/**
+ * Grid video tile.
+ * - TikTok/etc: poster only (no <video> — prevents native player + random play)
+ * - Normal browsers: muted loop, pointer-events none, play only when in view
+ */
 function GridVideo({
   src,
   poster,
   alt,
   objectClassName,
+  forcePoster,
 }: {
   src: string;
   poster?: string;
   alt: string;
   objectClassName: string;
+  forcePoster: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    if (forcePoster || failed) return;
     const el = videoRef.current;
-    if (!el || failed) return;
+    const root = containerRef.current;
+    if (!el || !root) return;
 
     el.muted = true;
     el.defaultMuted = true;
+    el.volume = 0;
     el.playsInline = true;
+    el.controls = false;
+    el.disablePictureInPicture = true;
+    el.setAttribute("muted", "");
+    el.setAttribute("playsinline", "");
+    el.setAttribute("webkit-playsinline", "true");
+    el.removeAttribute("controls");
 
     const tryPlay = () => {
-      const playPromise = el.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          // Autoplay blocked , poster / first frame still visible.
-        });
-      }
+      el.muted = true;
+      void el.play().catch(() => {});
     };
 
-    // Restart playback when the source becomes ready (Safari/Chrome both need this).
-    el.addEventListener("loadeddata", tryPlay);
-    el.addEventListener("canplay", tryPlay);
-    tryPlay();
+    const pause = () => {
+      el.pause();
+    };
+
+    // Only play when the tile is actually on screen (stops “random” play while scrolling).
+    const io =
+      typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(
+            ([entry]) => {
+              if (!entry) return;
+              if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+                tryPlay();
+              } else {
+                pause();
+              }
+            },
+            { threshold: [0, 0.35, 0.6] },
+          )
+        : null;
+
+    io?.observe(root);
 
     return () => {
-      el.removeEventListener("loadeddata", tryPlay);
-      el.removeEventListener("canplay", tryPlay);
+      io?.disconnect();
+      pause();
     };
-  }, [src, failed]);
+  }, [src, failed, forcePoster]);
 
-  if (failed && poster) {
+  if (forcePoster || failed || !poster) {
+    if (!poster) return null;
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={poster}
         alt={alt}
-        className={`absolute inset-0 h-full w-full ${objectClassName}`}
+        fill
+        sizes="(max-width: 768px) 100vw, 50vw"
+        quality={70}
+        className={objectClassName}
       />
     );
   }
 
   return (
-    <video
-      ref={videoRef}
-      className={`absolute inset-0 h-full w-full bg-[#080808] ${objectClassName}`}
-      src={src}
-      poster={poster}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      aria-label={alt}
-      onError={() => setFailed(true)}
-    />
+    <div ref={containerRef} className="absolute inset-0">
+      {poster ? (
+        <Image
+          src={poster}
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          quality={70}
+          className={`${objectClassName} pointer-events-none`}
+          aria-hidden="true"
+        />
+      ) : null}
+      <video
+        ref={videoRef}
+        className={`pointer-events-none absolute inset-0 h-full w-full bg-transparent ${objectClassName}`}
+        src={src}
+        // No poster attr — Next/Image poster sits under so we control layering
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        controls={false}
+        disablePictureInPicture
+        disableRemotePlayback
+        tabIndex={-1}
+        aria-hidden="true"
+        onError={() => setFailed(true)}
+      />
+    </div>
   );
 }
 
 function InActionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [hostileWebview, setHostileWebview] = useState(false);
   const visibleImages = inActionImages;
+
+  useEffect(() => {
+    setHostileWebview(isHostileVideoWebview());
+  }, []);
 
   const showPreviousImage = useCallback(() => {
     setActiveIndex((current) =>
@@ -215,6 +270,7 @@ function InActionSection() {
                       poster={image.poster}
                       alt={image.alt}
                       objectClassName={image.imageClassName}
+                      forcePoster={hostileWebview}
                     />
                   ) : (
                     <Image
@@ -234,7 +290,7 @@ function InActionSection() {
                   )}
                   {image.media === "video" ? (
                     <span className="pointer-events-none absolute bottom-3 left-3 z-[1] border border-white/25 bg-black/65 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.16em] text-white">
-                      Video
+                      {hostileWebview ? "Clip" : "Video"}
                     </span>
                   ) : null}
                 </button>
@@ -251,6 +307,7 @@ function InActionSection() {
           onClose={() => setActiveIndex(null)}
           onPrevious={showPreviousImage}
           onNext={showNextImage}
+          forcePosterForVideo={hostileWebview}
         />
       ) : null}
     </>
