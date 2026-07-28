@@ -199,12 +199,20 @@ function GridVideo({
 
 function InActionSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [hostileWebview, setHostileWebview] = useState(false);
+  /**
+   * Default poster-only so SSR never emits <video autoPlay> tags.
+   * TikTok scans the first HTML for video and opens a native player —
+   * even if we later swap to posters in useEffect, it's already too late.
+   * Unlock real video only after client confirms a normal browser.
+   */
+  const [allowGridVideo, setAllowGridVideo] = useState(false);
   const visibleImages = inActionImages;
 
   useEffect(() => {
-    setHostileWebview(isHostileVideoWebview());
+    setAllowGridVideo(!isHostileVideoWebview());
   }, []);
+
+  const forcePoster = !allowGridVideo;
 
   const showPreviousImage = useCallback(() => {
     setActiveIndex((current) =>
@@ -270,7 +278,7 @@ function InActionSection() {
                       poster={image.poster}
                       alt={image.alt}
                       objectClassName={image.imageClassName}
-                      forcePoster={hostileWebview}
+                      forcePoster={forcePoster}
                     />
                   ) : (
                     <Image
@@ -290,7 +298,7 @@ function InActionSection() {
                   )}
                   {image.media === "video" ? (
                     <span className="pointer-events-none absolute bottom-3 left-3 z-[1] border border-white/25 bg-black/65 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.16em] text-white">
-                      {hostileWebview ? "Clip" : "Video"}
+                      {forcePoster ? "Clip" : "Video"}
                     </span>
                   ) : null}
                 </button>
@@ -307,7 +315,7 @@ function InActionSection() {
           onClose={() => setActiveIndex(null)}
           onPrevious={showPreviousImage}
           onNext={showNextImage}
-          forcePosterForVideo={hostileWebview}
+          forcePosterForVideo={forcePoster}
         />
       ) : null}
     </>

@@ -75,8 +75,11 @@ export default function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoLive, setVideoLive] = useState(false);
-  /** Once true, we never inject a <video> tag (TikTok-safe). */
-  const [blockVideoElement, setBlockVideoElement] = useState(false);
+  /**
+   * Opt-in only. Starts false so SSR + first paint never emit <video>
+   * (TikTok hijacks any video tag in the initial HTML before effects run).
+   */
+  const [allowVideoElement, setAllowVideoElement] = useState(false);
   const upgradedRef = useRef(false);
 
   const isClient = useIsClient();
@@ -86,16 +89,18 @@ export default function Hero() {
     getReducedMotionServerSnapshot,
   );
 
-  // Detect TikTok etc. as early as possible — before mounting video.
+  // Unlock video only after client proves this is not a hostile webview.
   useEffect(() => {
     if (isHostileVideoWebview()) {
-      setBlockVideoElement(true);
+      setAllowVideoElement(false);
+      return;
     }
+    setAllowVideoElement(true);
   }, []);
 
-  // Only mount video outside hostile webviews.
+  // Only mount video outside hostile webviews, after client gate.
   const showVideo =
-    isClient && !preferStatic && !videoFailed && !blockVideoElement;
+    isClient && allowVideoElement && !preferStatic && !videoFailed;
 
   // Normal browsers: muted background autoplay (non-interactive).
   useEffect(() => {
@@ -104,7 +109,7 @@ export default function Hero() {
 
     // Double-check UA (covers late UA changes / odd embeds).
     if (isHostileVideoWebview()) {
-      setBlockVideoElement(true);
+      setAllowVideoElement(false);
       return;
     }
 
@@ -234,7 +239,7 @@ export default function Hero() {
     }, 2200);
 
     return () => window.clearTimeout(timer);
-  }, [videoLive, preferStatic, videoFailed, blockVideoElement]);
+  }, [videoLive, preferStatic, videoFailed, allowVideoElement]);
 
   return (
     <section
