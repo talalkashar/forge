@@ -128,6 +128,23 @@ export default function RootLayout({
       className="h-full antialiased"
       data-scroll-behavior="smooth"
     >
+      <head>
+        {/* Warm hero encodes early — correct file per viewport */}
+        <link
+          rel="preload"
+          as="video"
+          href="/videos/hero/forge-hero-berserk-mobile.mp4?v=20260722c"
+          type="video/mp4"
+          media="(max-width: 1024px)"
+        />
+        <link
+          rel="preload"
+          as="video"
+          href="/videos/hero/forge-hero-berserk.mp4?v=20260722c"
+          type="video/mp4"
+          media="(min-width: 1025px)"
+        />
+      </head>
       <body className="flex min-h-full flex-col bg-black text-white">
         <JsonLd data={orgAndSiteJsonLd} />
         <CartProvider>
