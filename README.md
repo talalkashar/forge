@@ -65,6 +65,7 @@ Do **not** put `SUPABASE_SERVICE_ROLE_KEY` in client components. Do **not** comm
 See:
 
 - `docs/marketplace-sync-roadmap.md`
+- `docs/instagram-shop-setup.md` — Meta catalog feed + Instagram Shop operator steps
 - `docs/deployment-checklist.md`
 - `docs/marketplace-credentials-setup.md`
 

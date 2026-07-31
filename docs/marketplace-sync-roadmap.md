@@ -6,6 +6,7 @@ Current channel state:
 
 - Website is ready.
 - Stripe is ready after `/admin/stripe` created or reused Product/Price IDs.
+- Instagram Shop (path A: catalog tags → website checkout) has a live product feed at `/api/feeds/meta-catalog`. Meta Business / Commerce Manager setup is still manual — see `docs/instagram-shop-setup.md`.
 - Amazon is blocked until real Seller Central/SP-API credentials and listing IDs are added.
 - TikTok Shop is blocked until real TikTok Shop credentials and product/listing IDs are added.
 - No Amazon/TikTok write automation exists yet.
@@ -104,6 +105,15 @@ TikTok approval and authorization flow:
     - `TIKTOK_SHOP_ACCESS_TOKEN`
     - `TIKTOK_SHOP_REFRESH_TOKEN`
     - `TIKTOK_SHOP_ID`
+
+## Phase 4b: Instagram / Meta Catalog (website checkout)
+
+- Product CSV feed: `GET /api/feeds/meta-catalog` (built from active Supabase variants).
+- Optional `META_CATALOG_FEED_TOKEN` query/Bearer gate.
+- Meta Commerce Manager connects the feed as a scheduled data source.
+- Product tags and Shop tab point shoppers to forgegym.us PDPs (Stripe).
+- No Meta Checkout, order import, or inventory write-back in this phase.
+- Full operator steps: `docs/instagram-shop-setup.md`.
 
 ## Phase 5: Dry-Run Write Sync
 
